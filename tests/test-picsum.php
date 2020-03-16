@@ -127,10 +127,29 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 
 		$img = Image_Tag::create( 'picsum', array(), array(
 			'random' => true,
+			'width' => 200,
 		) );
 
 		$this->assertNotFalse( $img->get_setting( 'random' ) );
 		$this->assertContains( 'random=', $img->get_attribute( 'src' ) );
+
+		$img_id = wp_remote_retrieve_header( wp_remote_get( $img->get_attribute( 'src' ) ), 'picsum-id' );
+
+		# Try a few times, because randomly generated numbers may be equal.
+		for ( $i = 0; $i < 3; $i++ ) {
+			$img2 = Image_Tag::create( 'picsum', array(), array(
+				'random' => true,
+				'width' => 200,
+			) );
+
+			$img2_id = wp_remote_retrieve_header( wp_remote_get( $img2->get_attribute( 'src' ) ), 'picsum-id' );
+
+			if ( $img_id !== $img2_id )
+				break;
+		}
+
+		$this->assertNotEquals( $img->get_setting( 'random' ), $img2->get_setting( 'random' ) );
+		$this->assertNotEquals( $img_id, $img2_id );
 	}
 
 	function test_image_id_setting() {
