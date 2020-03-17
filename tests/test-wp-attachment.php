@@ -158,7 +158,9 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 		$versions['__largest']  = &$versions['full'];
 		$versions['__smallest'] = &$versions['thumbnail'];
 
-		$this->assertEquals( $versions, $img->get_versions() );
+		$_versions = $img->get_versions();
+		$this->assertEquals( $versions, $_versions );
+		$this->assertEquals( $_versions, $img->get_versions() );
 	}
 
 }
