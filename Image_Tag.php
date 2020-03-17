@@ -47,7 +47,7 @@ class Image_Tag implements ArrayAccess {
 
 		# If integer, create WordPress attachment image.
 		if ( is_int( $source ) )
-			return new wp_attachment_img( $source, $attributes, $settings );
+			return new Image_Tag_WP_Attachment( $source, $attributes, $settings );
 
 		# If source is "picsum", create picsum.photos image.
 		if ( 'picsum' === $source )
@@ -65,7 +65,7 @@ class Image_Tag implements ArrayAccess {
 
 		# If string, create WordPress theme image.
 		if ( is_string( $source ) )
-			return new wp_theme_img( $source, $attribtues, $settings );
+			return new Image_Tag_WP_Theme( $source, $attribtues, $settings );
 
 		trigger_error( sprintf( 'Unable to determine image type from source: <code>%s</code>.', $source ), E_USER_WARNING );
 	}
@@ -275,9 +275,9 @@ class Image_Tag implements ArrayAccess {
 */
 
 /**
- * Class: wp_attachment_img
+ * Class: Image_Tag_WP_Attachment
  */
-class wp_attachment_img extends Image_Tag {
+class Image_Tag_WP_Attachment extends Image_Tag {
 
 	/**
 	 * @var int $attachment_id
@@ -365,9 +365,9 @@ class wp_attachment_img extends Image_Tag {
 */
 
 /**
- * Class: wp_theme_img
+ * Class: Image_Tag_WP_Theme
  */
-class wp_theme_img extends Image_Tag {
+class Image_Tag_WP_Theme extends Image_Tag {
 
 	/**
 	 * Construct.
