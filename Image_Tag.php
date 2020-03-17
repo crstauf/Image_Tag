@@ -318,6 +318,14 @@ class Image_Tag_WP_Attachment extends Image_Tag {
 	);
 
 	/**
+	 * @var array $versions
+	 */
+	protected $versions = array(
+		'__largest' => null,
+		'__smallest' => null,
+	);
+
+	/**
 	 * Construct.
 	 *
 	 * @param int $attachment_id
@@ -379,6 +387,62 @@ class Image_Tag_WP_Attachment extends Image_Tag {
 		$classes[] = 'size-' . $image_sizes[0];
 
 		return implode( ' ', array_unique( $classes ) );
+	}
+
+	function get_versions() {
+		if ( !empty( array_filter( $this->versions ) ) )
+			return $this->versions;
+
+		$image_sizes = $this->get_setting( 'image_sizes' );
+		$upload_dir = trailingslashit( wp_get_upload_dir()['basedir'] );
+
+		$largest  = null;
+		$smallest = null;
+
+		foreach ( $image_sizes as $image_size ) {
+
+			# If full size.
+			if ( 'full' === $image_size ) {
+				$version = wp_get_attachment_metadata( $this->attachment_id );
+				$version['path'] = $upload_dir . $version['file'];
+				$version['file'] = basename( $version['file'] );
+				$version['url'] = wp_get_attachment_image_src( $this->attachment_id, 'full' )[0];
+
+				unset(
+					$version['sizes'],
+					$version['image_meta']
+				);
+
+			# If intermediate image size.
+			} else {
+				$version = image_get_intermediate_size( $this->attachment_id, $image_size );
+
+				if ( empty( $version ) )
+					continue;
+
+				$version['path'] = $upload_dir . $version['path'];
+				unset( $version['mime-type'] );
+			}
+
+			$version = ( object ) $version;
+			$this->versions[$image_size] = $version;
+
+			# Determine if largest.
+			if (
+				is_null( $largest )
+				|| ( $version->width * $version->height ) > ( $largest->width * $largest->height )
+			)
+				$largest = $this->versions['__largest'] = &$this->versions[$image_size];
+
+			# Determine if smallest.
+			if (
+				is_null( $smallest )
+				|| ( $version->width * $version->height ) < ( $smallest->width * $smallest->height )
+			)
+				$smallest = $this->versions['__smallest'] = &$this->versions[$image_size];
+		}
+
+		return $this->versions;
 	}
 
 }

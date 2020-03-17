@@ -101,4 +101,64 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 		$this->assertEquals( Image_Tag::BLANK, $img->get_attribute( 'src' ) );
 	}
 
+	function test_image_versions() {
+		$img = Image_Tag::create( static::$attachment_id, array(), array(
+			'image_sizes' => array( 'thumbnail', 'medium', 'medium_large', 'large', 'full' ),
+		) );
+
+		$upload_dir = trailingslashit( wp_get_upload_dir()['path'] );
+		$upload_url = trailingslashit( wp_get_upload_dir()['url'] );
+
+		$versions = array(
+			'__largest' => null,
+			'__smallest' => null,
+
+			'thumbnail' => ( object ) array(
+				'file' => 'img-150x150.jpg',
+				'width'  => 150,
+				'height' => 150,
+				'path' => $upload_dir . 'img-150x150.jpg',
+				'url'  => $upload_url . 'img-150x150.jpg',
+			),
+
+			'medium' => ( object ) array(
+				'file' => 'img-300x200.jpg',
+				'width'  => 300,
+				'height' => 200,
+				'path' => $upload_dir . 'img-300x200.jpg',
+				'url'  => $upload_url . 'img-300x200.jpg',
+			),
+
+			'medium_large' => ( object ) array(
+				'file' => 'img-768x512.jpg',
+				'width'  => 768,
+				'height' => 512,
+				'path' => $upload_dir . 'img-768x512.jpg',
+				'url'  => $upload_url . 'img-768x512.jpg',
+			),
+
+			'large' => ( object ) array(
+				'file' => 'img-1024x682.jpg',
+				'width'  => 1024,
+				'height' => 682,
+				'path' => $upload_dir . 'img-1024x682.jpg',
+				'url'  => $upload_url . 'img-1024x682.jpg',
+			),
+
+			'full' => ( object ) array(
+				'file' => 'img.jpg',
+				'width'  => 2000,
+				'height' => 1333,
+				'path' => $upload_dir . 'img.jpg',
+				'url'  => $upload_url . 'img.jpg',
+			),
+
+		);
+
+		$versions['__largest']  = &$versions['full'];
+		$versions['__smallest'] = &$versions['thumbnail'];
+
+		$this->assertEquals( $versions, $img->get_versions() );
+	}
+
 }

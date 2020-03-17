@@ -24,7 +24,7 @@ add_action( 'wp_footer', function() {
 
 	if ( !empty( $attachment->posts ) )
 		echo Image_Tag::create( $attachment->posts[0], array(), array(
-			'image_sizes' => array( 'small', 'medium' ),
+			'image_sizes' => array( 'thumbnail', 'medium', 'medium_large', 'large', 'full' ),
 		) );
 
 	echo $img = Image_Tag::create( 'picsum', array(), array(
