@@ -70,7 +70,7 @@ class Image_Tag implements ArrayAccess {
 
 		# If string, create WordPress theme image.
 		if ( is_string( $source ) )
-			return new Image_Tag_WP_Theme( $source, $attribtues, $settings );
+			return new Image_Tag_WP_Theme( $source, $attributes, $settings );
 
 		trigger_error( sprintf( 'Unable to determine image type from source: <code>%s</code>.', $source ), E_USER_WARNING );
 	}
@@ -464,6 +464,11 @@ class Image_Tag_WP_Attachment extends Image_Tag {
 class Image_Tag_WP_Theme extends Image_Tag {
 
 	/**
+	 * @var string $path
+	 */
+	protected $path;
+
+	/**
 	 * Construct.
 	 *
 	 * @param string $source
@@ -472,7 +477,26 @@ class Image_Tag_WP_Theme extends Image_Tag {
 	 * @uses Image_Tag::__construct()
 	 */
 	protected function __construct( string $source, array $attributes = array(), array $settings = array() ) {
-		parent::__construct( $source, $attributes, $settings );
+		$path = locate_template( $source );
+
+		if ( empty( $path ) ) {
+			trigger_error( sprintf( 'Unable to find <code>%s</code> in theme.', $path ), E_USER_WARNING );
+			return false;
+		}
+
+		parent::__construct( $attributes, $settings );
+
+		$this->path = $path;
+		$this->set_source( $source );
+	}
+
+	protected function set_source( string $source ) {
+		foreach ( array(
+			STYLESHEETPATH => get_stylesheet_directory_uri(),
+			  TEMPLATEPATH => get_template_directory_uri(),
+		) as $themepath => $themeurl )
+			if ( false !== strpos( $this->path, $themepath ) )
+				$this->_set_attribute( 'src', trailingslashit( $themeurl ) . $source );
 	}
 
 }
