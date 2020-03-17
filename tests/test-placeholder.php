@@ -54,12 +54,19 @@ class Image_Tag_Placeholder_Test extends WP_UnitTestCase {
 		$this->assertContains( 'width="' . $width . '"', $img->__toString() );
 
 		$img = Image_Tag::create( 'placeholder' );
+		$this->assertNull( $img->get_attribute( 'width' ) );
 		$this->assertEmpty( @$img->__toString() );
 	}
 
 	function test_height() {
 		$width  = 200;
 		$height = 300;
+
+		$img = Image_Tag::create( 'placeholder', array(), array(
+			'width' => $width,
+		) );
+
+		$this->assertEquals( $width, $img->get_attribute( 'height' ) );
 
 		$img = Image_Tag::create( 'placeholder', array(), array(
 			 'width' => $width,
@@ -97,6 +104,9 @@ class Image_Tag_Placeholder_Test extends WP_UnitTestCase {
 		$this->assertEquals( $height * 2, $img->get_setting(   'height' ) );
 		$this->assertContains( '/' . ( 2 * $width ) . 'x' . ( 2 * $height ) . '/', $img->get_attribute( 'src' ) );
 		$this->assertContains( 'width="' . $width . '" height="' . $height . '"', $img->__toString() );
+
+		$img = Image_Tag::create( 'placeholder' );
+		$this->assertNull( $img->get_attribute( 'height' ) );
 	}
 
 	function test_bg_color() {

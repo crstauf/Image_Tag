@@ -45,8 +45,8 @@ class Image_Tag implements ArrayAccess {
 	 */
 	static function create( $source, array $attributes = array(), array $settings = array() ) {
 
-		# If numeric, create WordPress attachment image.
-		if ( is_numeric( $source ) )
+		# If integer, create WordPress attachment image.
+		if ( is_int( $source ) )
 			return new wp_attachment_img( $source, $attributes, $settings );
 
 		# If source is "picsum", create picsum.photos image.
@@ -156,6 +156,7 @@ class Image_Tag implements ArrayAccess {
 			return;
 		}
 
+		$classes = array_map( 'trim', $classes );
 		$this->_set_attribute( 'class', $classes );
 	}
 
@@ -168,6 +169,7 @@ class Image_Tag implements ArrayAccess {
 			return;
 		}
 
+		$styles = array_map( 'trim', $styles );
 		$this->_set_attribute( 'style', $styles );
 	}
 
@@ -198,7 +200,7 @@ class Image_Tag implements ArrayAccess {
 	}
 
 	protected function get_style_attribute() {
-		return implode( '; ', $this->attributes['style'] );
+		return trim( implode( '; ', $this->attributes['style'] ) );
 	}
 
 	protected function _get_attribute( string $key ) {
@@ -216,13 +218,15 @@ class Image_Tag implements ArrayAccess {
 	function http( bool $force = false ) {
 		static $_cache = array();
 
+		$src = $this->get_attribute( 'src' );
+
 		if (
 			!$force
-			&& isset( $_cache[ $this->get_attribute( 'src' ) ] )
+			&& isset( $_cache[$src] )
 		)
-			return $_cache;
+			return $_cache[$src];
 
-		return ( $_cache[ $this->get_attribute( 'src' ) ] = wp_remote_get( $this->get_attribute( 'src' ) ) );
+		return ( $_cache[$src] = wp_remote_get( $src ) );
 	}
 
 	/**
@@ -317,12 +321,12 @@ class wp_attachment_img extends Image_Tag {
 	protected function set_source( int $attachment_id ) {
 		$image_sizes = $this->get_setting( 'image_sizes' );
 
-		for ( $i = 0; $i < count( $image_sizes ), empty( $attachment ); $i++ )
+		for ( $i = 0; empty( $attachment ), $i < count( $image_sizes ); $i++ )
 			$attachment = wp_get_attachment_image_src( $attachment_id, $image_sizes[$i] );
 
 		if ( empty( $attachment ) ) {
 			trigger_error( sprintf( 'Attachment <code>%d</code> does not exist.', $attachment_id ), E_USER_WARNING );
-			$this->attributes['src'] = self::BLANK;
+			$this->_set_attribute( 'src', self::BLANK );
 			return;
 		}
 
@@ -330,7 +334,7 @@ class wp_attachment_img extends Image_Tag {
 	}
 
 	protected function get_id_attribute() {
-		if ( empty( $this->attributes['id'] ) )
+		if ( empty( $this->_get_attribute( 'id' ) ) )
 			return 'attachment-' . $this->attachment_id;
 
 		return $this->_get_attribute( 'id' );
@@ -539,7 +543,7 @@ class Image_Tag_Picsum extends Image_Tag {
 		$image_id = $this->get_setting( 'image_id' );
 
 		if ( empty( $image_id ) )
-			$image_id = ( int ) wp_remote_retrieve_header( wp_remote_get( $this->get_attribute( 'src' ) ), 'picsum-id' );
+			$image_id = ( int ) wp_remote_retrieve_header( $this->http(), 'picsum-id' );
 
 		$response = wp_remote_get( sprintf( '%sid/%d/info', self::BASE_URL, $image_id ) );
 

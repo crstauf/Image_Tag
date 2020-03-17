@@ -103,6 +103,7 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 		$this->assertContains( 'width="' . $width . '"', $img->__toString() );
 
 		$img = Image_Tag::create( 'picsum' );
+		$this->assertEquals( 1024, $img->get_attribute( 'width' ) );
 		$this->assertEmpty( @$img->__toString() );
 	}
 
@@ -159,6 +160,9 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 		$this->assertEquals( $height, $img->get_attribute( 'height' ) );
 		$this->assertContains( '/' . ( 2 * $width ) . '/' . ( 2 * $height ) . '/', $img->get_attribute( 'src' ) );
 		$this->assertContains( 'width="' . $width . '" height="' . $height . '"', $img->__toString() );
+
+		$img = Image_Tag::create( 'picsum' );
+		$this->assertEquals( 1024, $img->get_attribute( 'height' ) );
 	}
 
 	/**
@@ -193,6 +197,11 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 		$this->assertNotFalse( $img->get_setting( 'random' ) );
 		$this->assertContains( 'random=', $img->get_attribute( 'src' ) );
 		$this->assertNotEquals( $img->get_setting( 'random' ), $img2->get_setting( 'random' ) );
+
+		$img = Image_Tag::create( 'picsum', array(), array(
+			'random' => 'random',
+		) );
+		$this->assertEquals( 'random', $img->get_setting( 'random' ) );
 	}
 
 	/**

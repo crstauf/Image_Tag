@@ -70,4 +70,29 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 		$this->assertContains( 'size-' . $image_size, $img->get_attribute( 'class' ) );
 	}
 
+	function test_id_attribute() {
+		$image_size = 'medium';
+
+		$img = Image_Tag::create( static::$attachment_id, array(), array(
+			'image_sizes' => $image_size,
+		) );
+
+		$this->assertEquals( 'attachment-' . static::$attachment_id, $img->get_attribute( 'id' ) );
+
+		$img = Image_Tag::create( static::$attachment_id, array(
+			'id' => __FUNCTION__,
+		), array(
+			'image_sizes' => $image_size,
+		) );
+
+		$this->assertEquals( __FUNCTION__, $img->get_attribute( 'id' ) );
+	}
+
+	function test_invalid_attachment() {
+		$img = @Image_Tag::create( PHP_INT_MAX, array(), array(
+			'image_sizes' => 'medium',
+		) );
+		$this->assertEquals( Image_Tag::BLANK, $img->get_attribute( 'src' ) );
+	}
+
 }
