@@ -9,9 +9,14 @@
 
 /**
  * Class: Image_Tag
+ *
+ * @todo add helpers for srcset and sizes attributes
  */
 class Image_Tag implements ArrayAccess {
 
+	/**
+	 * @var string Encoded transparent gif.
+	 */
 	const BLANK = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
 	/**
@@ -76,12 +81,20 @@ class Image_Tag implements ArrayAccess {
 	 * @param $source
 	 * @param array $attributes
 	 * @param array $settings
+	 * @uses $this->set_attributes()
+	 * @uses $this->set_settings()
 	 */
 	function __construct( array $attributes = array(), array $settings = array() ) {
 		$this->set_attributes( $attributes );
 		$this->set_settings( $settings );
 	}
 
+	/**
+	 * Getter.
+	 *
+	 * @param string $key
+	 * @return mixed
+	 */
 	function __get( $key ) {
 		return $this->attributes[$key];
 	}
@@ -89,6 +102,7 @@ class Image_Tag implements ArrayAccess {
 	/**
 	 * To string.
 	 *
+	 * @uses $this->get_attributes()
 	 * @return string
 	 */
 	function __toString() {
@@ -284,6 +298,9 @@ class Image_Tag_WP_Attachment extends Image_Tag {
 	 */
 	protected $attachment_id;
 
+	/**
+	 * @var array $settings
+	 */
 	protected $settings = array(
 		'image_sizes' => array( 'full' ),
 	);
@@ -294,7 +311,8 @@ class Image_Tag_WP_Attachment extends Image_Tag {
 	 * @param int $attachment_id
 	 * @param array $attributes
 	 * @param array $settings
-	 * @uses img::__construct()
+	 * @uses Image_Tag::__construct()
+	 * @uses $this->set_source()
 	 */
 	protected function __construct( int $attachment_id, array $attributes = array(), array $settings = array() ) {
 		$this->attachment_id = $attachment_id;
@@ -375,7 +393,7 @@ class Image_Tag_WP_Theme extends Image_Tag {
 	 * @param string $source
 	 * @param array $attributes
 	 * @param array $settings
-	 * @uses img::__construct()
+	 * @uses Image_Tag::__construct()
 	 */
 	protected function __construct( string $source, array $attributes = array(), array $settings = array() ) {
 		parent::__construct( $source, $attributes, $settings );
@@ -401,8 +419,14 @@ class Image_Tag_WP_Theme extends Image_Tag {
  */
 class Image_Tag_Picsum extends Image_Tag {
 
+	/**
+	 * @var string Base URL.
+	 */
 	const BASE_URL = 'https://picsum.photos/';
 
+	/**
+	 * @var array $settings
+	 */
 	protected $settings = array(
 		'blur' => false,
 		'seed' => null,
@@ -413,8 +437,18 @@ class Image_Tag_Picsum extends Image_Tag {
 		'grayscale' => false,
 	);
 
+	/**
+	 * @var array $details
+	 */
 	protected $details = null;
 
+	/**
+	 * To string.
+	 *
+	 * @uses $this->get_setting()
+	 * @uses Image_Tag::__toString()
+	 * @return string
+	 */
 	function __toString() {
 		if ( empty( $this->get_setting( 'width' ) ) ) {
 			trigger_error( 'Picsum image requires width.', E_USER_WARNING );
@@ -573,8 +607,14 @@ class Image_Tag_Picsum extends Image_Tag {
  */
 class Image_Tag_Placeholder extends Image_Tag {
 
+	/**
+	 * @var string Base URL.
+	 */
 	const BASE_URL = 'https://via.placeholder.com/';
 
+	/**
+	 * @var array $settings
+	 */
 	protected $settings = array(
 		'text' => null,
 		'width' => null,
@@ -583,6 +623,13 @@ class Image_Tag_Placeholder extends Image_Tag {
 		'text-color' => null,
 	);
 
+	/**
+	 * To string.
+	 *
+	 * @uses $this->get_setting()
+	 * @uses Image_Tag::__toString()
+	 * @return string
+	 */
 	function __toString() {
 		if ( empty( $this->get_setting( 'width' ) ) ) {
 			trigger_error( 'Placeholder image requires width.', E_USER_WARNING );
