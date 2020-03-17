@@ -3,6 +3,8 @@
 /**
  * @link https://picsum.photos/
  * @group picsum
+ *
+ * @todo add tests for returning Placeholder
  */
 class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 

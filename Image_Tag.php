@@ -243,6 +243,16 @@ class Image_Tag implements ArrayAccess {
 		return ( $_cache[$src] = wp_remote_get( $src ) );
 	}
 
+	function picsum( array $attributes = array(), array $settings = array() ) {
+		$attributes = wp_parse_args( $attributes, $this->attributes );
+		return Image_Tag::create( 'picsum', $attributes, $settings );
+	}
+
+	function placeholder( array $attributes = array(), array $settings = array() ) {
+		$attributes = wp_parse_args( $attributes, $this->attributes );
+		return Image_Tag::create( 'placeholder', $attributes, $settings );
+	}
+
 	/**
 	 * ArrayAccess: exists
 	 *
@@ -587,6 +597,10 @@ class Image_Tag_Picsum extends Image_Tag {
 		return ( $this->details = json_decode( wp_remote_retrieve_body( $response ) ) );
 	}
 
+	function picsum( array $attributes = array(), array $settings = array() ) {
+		return $this;
+	}
+
 }
 
 
@@ -725,6 +739,10 @@ class Image_Tag_Placeholder extends Image_Tag {
 			return $this->_get_attribute( 'height' );
 
 		return null;
+	}
+
+	function placeholder( array $attributes = array(), array $settings = array() ) {
+		return $this;
 	}
 
 }

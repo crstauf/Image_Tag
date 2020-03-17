@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @todo add tests for returning Picsum or Placeholder
+ */
 class Image_Tag_Base_Test extends WP_UnitTestCase {
 
 	function test_external() {
