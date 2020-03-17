@@ -532,10 +532,7 @@ class Image_Tag_Picsum extends Image_Tag {
 		return $random;
 	}
 
-	/**
-	 * @todo define to use /id/{id}/info endpoint
-	 */
-	function get_details() {
+	function details() {
 		if ( !is_null( $this->details ) )
 			return $this->details;
 

@@ -5,7 +5,7 @@
 
 add_action( 'wp_footer', function() {
 
-	echo Image_Tag::create( site_url( 'wp-content/uploads/2019/11/arnold-exconde-544483.jpg' ), array(
+	echo Image_Tag::create( 'https://i.picsum.photos/id/866/536/354.jpg', array(
 		'class' => array(
 			'rosalie',
 		),
@@ -15,20 +15,28 @@ add_action( 'wp_footer', function() {
 		),
 	) );
 
-	echo Image_Tag::create( 22, array(), array(
-		'image_sizes' => array( 'small', 'medium' ),
+	$attachment = new WP_Query( array(
+		'post_type' => 'attachment',
+		'post_status' => 'inherit',
+		'posts_per_page' => 1,
+		'fields' => 'ids',
 	) );
+
+	if ( !empty( $attachment->posts ) )
+		echo Image_Tag::create( $attachment->posts[0], array(), array(
+			'image_sizes' => array( 'small', 'medium' ),
+		) );
 
 	echo $img = Image_Tag::create( 'picsum', array(), array(
 		'width' => 500,
 		'height' => 200,
-		// 'random' => true,
+		'random' => true,
 		'grayscale' => true,
-		'seed' => 237,
+		// 'seed' => 237,
 	) );
 
 	echo $img = Image_Tag::create( 'placeholder', array(
-		'width' => 500,
+		'width' => 400,
 		'height' => 300,
 	) );
 

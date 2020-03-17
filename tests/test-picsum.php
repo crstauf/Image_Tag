@@ -2,6 +2,7 @@
 
 /**
  * @link https://picsum.photos/
+ * @group picsum
  */
 class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 
@@ -306,7 +307,7 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 			'height' => 2848,
 			'url' => 'https://unsplash.com/photos/uDUiRS8YroY',
 			'download_url' => 'https://picsum.photos/id/47/4272/2848',
-		), $img->get_details() );
+		), $img->details() );
 	}
 
 }
