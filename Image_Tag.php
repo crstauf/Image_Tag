@@ -353,14 +353,24 @@ class Image_Tag_WP_Attachment extends Image_Tag {
 		$wp_image_sizes = get_intermediate_image_sizes();
 		$wp_image_sizes[] = 'full';
 
-		$this->_set_setting( 'image_sizes', array_values( array_intersect( $image_sizes, $wp_image_sizes ) ) );
+		$image_sizes = array_values( array_intersect( $image_sizes, $wp_image_sizes ) );
+
+		foreach ( $image_sizes as $i => $image_size )
+			if ( empty( wp_get_attachment_image_src( $this->attachment_id, $image_size ) ) )
+				unset( $image_sizes[$i] );
+
+		$this->_set_setting( 'image_sizes', $image_sizes );
 	}
 
 	protected function set_source( int $attachment_id ) {
 		$image_sizes = $this->get_setting( 'image_sizes' );
 
-		for ( $i = 0; empty( $attachment ), $i < count( $image_sizes ); $i++ )
+		for ( $i = 0; $i < count( $image_sizes ); $i++ ) {
 			$attachment = wp_get_attachment_image_src( $attachment_id, $image_sizes[$i] );
+
+			if ( !empty( $attachment ) )
+				break;
+		}
 
 		if ( empty( $attachment ) ) {
 			trigger_error( sprintf( 'Attachment <code>%d</code> does not exist.', $attachment_id ), E_USER_WARNING );
@@ -408,11 +418,6 @@ class Image_Tag_WP_Attachment extends Image_Tag {
 				$version['file'] = basename( $version['file'] );
 				$version['url'] = wp_get_attachment_image_src( $this->attachment_id, 'full' )[0];
 
-				unset(
-					$version['sizes'],
-					$version['image_meta']
-				);
-
 			# If intermediate image size.
 			} else {
 				$version = image_get_intermediate_size( $this->attachment_id, $image_size );
@@ -421,8 +426,13 @@ class Image_Tag_WP_Attachment extends Image_Tag {
 					continue;
 
 				$version['path'] = $upload_dir . $version['path'];
-				unset( $version['mime-type'] );
 			}
+
+			unset(
+				$version['sizes'],
+				$version['mime-type'],
+				$version['image_meta']
+			);
 
 			$version = ( object ) $version;
 			$this->versions[$image_size] = $version;

@@ -4,7 +4,7 @@
  * @group wp
  * @group wp_attachment
  *
-** @todo add tests for returning Picsum or Placeholder
+ * @todo add tests for returning Picsum or Placeholder
  */
 class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 

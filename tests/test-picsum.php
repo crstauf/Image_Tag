@@ -307,18 +307,32 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 	}
 
 	function test_details() {
+		$seed = 'seed'; # Seed returns image 1081.
+		$image_id = 1081;
+
 		$img = Image_Tag::create( 'picsum', array(), array(
-			'image_id' => 47,
+			'image_id' => $image_id,
 		) );
 
-		$this->assertEquals( ( object ) array(
-			'id' => 47,
-			'author' => 'Christopher Sardegna',
-			'width' => 4272,
-			'height' => 2848,
-			'url' => 'https://unsplash.com/photos/uDUiRS8YroY',
-			'download_url' => 'https://picsum.photos/id/47/4272/2848',
-		), $img->details() );
+		$details = ( object ) array(
+			'id' => $image_id,
+			'author' => 'Julien Moreau',
+			'width' => 5512,
+			'height' => 3708,
+			'url' => 'https://unsplash.com/photos/688Fna1pwOQ',
+			'download_url' => 'https://picsum.photos/id/1081/5512/3708',
+		);
+
+		$this->assertEquals( $details, $img->details() );
+		$this->assertEquals( $details, $img->details() ); # Check cached value.
+
+		# Test getting details without `image_id` setting.
+		$img = Image_Tag::create( 'picsum', array(), array(
+			'width' => 200,
+			'seed' => $seed,
+		) );
+
+		$this->assertEquals( $details, $img->details() );
 	}
 
 }
