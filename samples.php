@@ -36,8 +36,17 @@ add_action( 'wp_footer', function() {
 	) );
 
 	echo $img = Image_Tag::create( 'placeholder', array(
-		'width' => 400,
-		'height' => 300,
+		'width' => 1600,
+		'height' => 800,
+		'srcset' => array(
+			'https://via.placeholder.com/1600x800 1600w',
+			'https://via.placeholder.com/1200x600 1200w',
+			'https://via.placeholder.com/1000x500 1000w',
+			'https://via.placeholder.com/800x400   800w',
+			'https://via.placeholder.com/600x300   600w',
+			'https://via.placeholder.com/400x200   400w',
+			'https://via.placeholder.com/200x100   200w',
+		),
 	) );
 
 	echo $img = Image_Tag::create( 'assets/images/2020-landscape-1.png' );

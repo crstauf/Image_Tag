@@ -31,6 +31,14 @@ class Image_Tag_Test_Attributes extends WP_UnitTestCase {
 		$attributes['class'] = implode( ' ', array( __FUNCTION__ ) );
 		$this->assertEquals( $attributes, $image_tag->get_attributes() );
 
+		$image_tag->add_size( '100vw' );
+		$attributes['sizes'] = implode( ', ', array( '100vw' ) );
+		$this->assertEquals( $attributes, $image_tag->get_attributes() );
+
+		$image_tag->add_srcset( 'https://picsum.photos/400/300 400w' );
+		$attributes['srcset'] = implode( ', ', array( 'https://picsum.photos/400/300 400w' ) );
+		$this->assertEquals( $attributes, $image_tag->get_attributes() );
+
 		$image_tag->add_style( 'width: auto' );
 		$attributes['style'] = implode( '; ', array( 'width: auto' ) );
 		$this->assertEquals( $attributes, $image_tag->get_attributes() );

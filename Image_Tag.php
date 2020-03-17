@@ -34,6 +34,8 @@ class Image_Tag implements ArrayAccess {
 		# Arrays.
 		'class' => array(),
 		'style' => array(),
+		'sizes' => array(),
+		'srcset' => array(),
 
 	);
 
@@ -176,6 +178,32 @@ class Image_Tag implements ArrayAccess {
 		$this->_set_attribute( 'class', $classes );
 	}
 
+	protected function set_sizes_attribute( $sizes ) {
+		if ( is_string( $sizes ) )
+			$sizes = explode( ', ', $sizes );
+
+		if ( !is_array( $sizes ) ) {
+			trigger_error( sprintf( 'Value of type <code>%s</code> is not valid for <code>sizes</code> attribute.', gettype( $sizes ) ), E_USER_NOTICE );
+			return;
+		}
+
+		$sizes = array_map( 'trim', $sizes );
+		$this->_set_attribute( 'sizes', $sizes );
+	}
+
+	protected function set_srcset_attribute( $srcset ) {
+		if ( is_string( $srcset ) )
+			$sizes = explode( ', ', $srcset );
+
+		if ( !is_array( $srcset ) ) {
+			trigger_error( sprintf( 'Value of type <code>%s</code> is not valid for <code>srcset</code> attribute.', gettype( $srcset ) ), E_USER_NOTICE );
+			return;
+		}
+
+		$srcset = array_map( 'trim', $srcset );
+		$this->_set_attribute( 'srcset', $srcset );
+	}
+
 	protected function set_style_attribute( $styles ) {
 		if ( is_string( $styles ) )
 			$styles = explode( ';', $styles );
@@ -215,6 +243,14 @@ class Image_Tag implements ArrayAccess {
 		return implode( ' ', array_unique( $this->attributes['class'] ) );
 	}
 
+	protected function get_sizes_attribute() {
+		return implode( ', ', $this->attributes['sizes'] );
+	}
+
+	protected function get_srcset_attribute() {
+		return implode( ', ', $this->attributes['srcset'] );
+	}
+
 	protected function get_style_attribute() {
 		return trim( implode( '; ', $this->attributes['style'] ) );
 	}
@@ -225,6 +261,14 @@ class Image_Tag implements ArrayAccess {
 
 	function add_class( $class ) {
 		$this->attributes['class'][] = $class;
+	}
+
+	function add_size( string $size ) {
+		$this->attributes['sizes'][] = $size;
+	}
+
+	function add_srcset( string $srcset ) {
+		$this->attributes['srcset'][] = $srcset;
 	}
 
 	function add_style( string $style ) {
@@ -338,7 +382,42 @@ class Image_Tag_WP_Attachment extends Image_Tag {
 		$this->attachment_id = $attachment_id;
 
 		parent::__construct( $attributes, $settings );
-		$this->set_source( $attachment_id );
+		$this->set_source();
+		$this->set_srcset();
+	}
+
+	protected function set_source() {
+		$image_sizes = $this->get_setting( 'image_sizes' );
+
+		for ( $i = 0; $i < count( $image_sizes ); $i++ ) {
+			$attachment = wp_get_attachment_image_src( $this->attachment_id, $image_sizes[$i] );
+
+			if ( !empty( $attachment ) )
+				break;
+		}
+
+		if ( empty( $attachment ) ) {
+			trigger_error( sprintf( 'Attachment <code>%d</code> does not exist.', $this->attachment_id ), E_USER_WARNING );
+			$this->_set_attribute( 'src', self::BLANK );
+			return;
+		}
+
+		$this->_set_attribute( 'src', $attachment[0] );
+	}
+
+	protected function set_srcset() {
+		if ( !empty( $this->get_attribute( 'srcset' ) ) )
+			return;
+
+		$versions = $this->get_versions();
+		unset(
+			$versions['__largest'],
+			$versions['__smallest']
+		);
+
+		foreach ( $versions as $version )
+			$this->add_srcset( $version->url . ' ' . $version->width . 'w' );
+
 	}
 
 	protected function set_image_sizes_setting( $image_sizes ) {
@@ -360,25 +439,6 @@ class Image_Tag_WP_Attachment extends Image_Tag {
 				unset( $image_sizes[$i] );
 
 		$this->_set_setting( 'image_sizes', $image_sizes );
-	}
-
-	protected function set_source( int $attachment_id ) {
-		$image_sizes = $this->get_setting( 'image_sizes' );
-
-		for ( $i = 0; $i < count( $image_sizes ); $i++ ) {
-			$attachment = wp_get_attachment_image_src( $attachment_id, $image_sizes[$i] );
-
-			if ( !empty( $attachment ) )
-				break;
-		}
-
-		if ( empty( $attachment ) ) {
-			trigger_error( sprintf( 'Attachment <code>%d</code> does not exist.', $attachment_id ), E_USER_WARNING );
-			$this->_set_attribute( 'src', self::BLANK );
-			return;
-		}
-
-		$this->_set_attribute( 'src', $attachment[0] );
 	}
 
 	protected function get_id_attribute() {
