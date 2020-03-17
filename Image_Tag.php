@@ -213,6 +213,18 @@ class Image_Tag implements ArrayAccess {
 		$this->attributes['style'][] = $style;
 	}
 
+	function http( bool $force = false ) {
+		static $_cache = array();
+
+		if (
+			!$force
+			&& isset( $_cache[ $this->get_attribute( 'src' ) ] )
+		)
+			return $_cache;
+
+		return ( $_cache[ $this->get_attribute( 'src' ) ] = wp_remote_get( $this->get_attribute( 'src' ) ) );
+	}
+
 	/**
 	 * ArrayAccess: exists
 	 *

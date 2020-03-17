@@ -30,6 +30,18 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 		$this->assertNotContains( 'blur=5', remove_query_arg( 'blur', $img->get_attribute( 'src' ) ) );
 	}
 
+	/**
+	 * @group http
+	 */
+	function test_blur_http() {
+		$img = Image_Tag::create( 'picsum', array(), array(
+			'width' => 200,
+			'blur' => true,
+		) );
+
+		$this->assertEquals( 'image/jpeg', wp_remote_retrieve_header( $img->http(), 'content-type' ) );
+	}
+
 	function test_seed_setting() {
 		$img = Image_Tag::create( 'picsum' );
 		$this->assertNull( $img->get_setting( 'seed' ) );
@@ -43,6 +55,20 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 
 		$this->assertEquals( $seed, $img->get_setting( 'seed' ) );
 		$this->assertContains( 'seed/' . $seed . '/', $img->get_attribute( 'src' ) );
+	}
+
+	/**
+	 * @group http
+	 */
+	function test_seed_http() {
+		$seed = 'c&d/a?b';
+
+		$img = Image_Tag::create( 'picsum', array(), array(
+			'width' => 200,
+			'seed' => $seed,
+		) );
+
+		$this->assertEquals( 'image/jpeg', wp_remote_retrieve_header( $img->http(), 'content-type' ) );
 	}
 
 	function test_width() {
@@ -77,6 +103,19 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 
 		$img = Image_Tag::create( 'picsum' );
 		$this->assertEmpty( @$img->__toString() );
+	}
+
+	/**
+	 * @group http
+	 */
+	function test_width_http() {
+		$width = 200;
+
+		$img = Image_Tag::create( 'picsum', array(), array(
+			'width' => $width,
+		) );
+
+		$this->assertEquals( 'image/jpeg', wp_remote_retrieve_header( $img->http(), 'content-type' ) );
 	}
 
 	function test_height() {
@@ -121,6 +160,21 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 		$this->assertContains( 'width="' . $width . '" height="' . $height . '"', $img->__toString() );
 	}
 
+	/**
+	 * @group http
+	 */
+	function test_height_http() {
+		$width  = 200;
+		$height = 300;
+
+		$img = Image_Tag::create( 'picsum', array(), array(
+			 'width' => $width,
+			'height' => $height,
+		) );
+
+		$this->assertEquals( 'image/jpeg', wp_remote_retrieve_header( $img->http(), 'content-type' ) );
+	}
+
 	function test_random_setting() {
 		$img = Image_Tag::create( 'picsum' );
 		$this->assertFalse( $img->get_setting( 'random' ) );
@@ -130,10 +184,26 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 			'width' => 200,
 		) );
 
+		$img2 = Image_Tag::create( 'picsum', array(), array(
+			'random' => true,
+			'width' => 200,
+		) );
+
 		$this->assertNotFalse( $img->get_setting( 'random' ) );
 		$this->assertContains( 'random=', $img->get_attribute( 'src' ) );
+		$this->assertNotEquals( $img->get_setting( 'random' ), $img2->get_setting( 'random' ) );
+	}
 
-		$img_id = wp_remote_retrieve_header( wp_remote_get( $img->get_attribute( 'src' ) ), 'picsum-id' );
+	/**
+	 * @group http
+	 */
+	function test_random_http() {
+		$img = Image_Tag::create( 'picsum', array(), array(
+			'random' => true,
+			'width' => 200,
+		) );
+
+		$img_id = wp_remote_retrieve_header( $img->http(), 'picsum-id' );
 
 		# Try a few times, because randomly generated numbers may be equal.
 		for ( $i = 0; $i < 3; $i++ ) {
@@ -142,13 +212,14 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 				'width' => 200,
 			) );
 
-			$img2_id = wp_remote_retrieve_header( wp_remote_get( $img2->get_attribute( 'src' ) ), 'picsum-id' );
+			$img2_id = wp_remote_retrieve_header( $img2->http(), 'picsum-id' );
 
 			if ( $img_id !== $img2_id )
 				break;
 		}
 
-		$this->assertNotEquals( $img->get_setting( 'random' ), $img2->get_setting( 'random' ) );
+		$this->assertEquals( 'image/jpeg', wp_remote_retrieve_header(  $img->http(), 'content-type' ) );
+		$this->assertEquals( 'image/jpeg', wp_remote_retrieve_header( $img2->http(), 'content-type' ) );
 		$this->assertNotEquals( $img_id, $img2_id );
 	}
 
@@ -165,6 +236,22 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 		$this->assertContains( '/id/' . $image_id . '/', $img->get_attribute( 'src' ) );
 	}
 
+	/**
+	 * @group http
+	 */
+	function test_image_id_http() {
+		$image_id = mt_rand( 1, 999 );
+
+		$img = Image_Tag::create( 'picsum', array(), array(
+			'width' => 200,
+			'image_id' => $image_id,
+		) );
+
+		$type = wp_remote_retrieve_header( $img->http(), 'content-type' );
+		$message = sprintf( '%s is a %s.', $img->get_attribute( 'src' ), $type );
+		$this->assertEquals( 'image/jpeg', $type, $message );
+	}
+
 	function test_grayscale_setting() {
 		$img = Image_Tag::create( 'picsum' );
 		$this->assertFalse( $img->get_setting( 'grayscale' ) );
@@ -175,6 +262,18 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $img->get_setting( 'grayscale' ) );
 		$this->assertContains( 'grayscale=1', $img->get_attribute( 'src' ) );
+	}
+
+	/**
+	 * @group http
+	 */
+	function test_grayscale_http() {
+		$img = Image_Tag::create( 'picsum', array(), array(
+			'width' => 200,
+			'grayscale' => true,
+		) );
+
+		$this->assertEquals( 'image/jpeg', wp_remote_retrieve_header( $img->http(), 'content-type' ) );
 	}
 
 	function test_multiple() {
