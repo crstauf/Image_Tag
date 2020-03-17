@@ -113,7 +113,9 @@ class Image_Tag implements ArrayAccess {
 
 		$array[] = '/>';
 
-		return implode( ' ', $array );
+		$array = apply_filters( 'image_tag/_output', $array );
+
+		return apply_filters( 'image_tag/output', implode( ' ', $array ) );
 	}
 
 	function set_settings( array $settings ) {
