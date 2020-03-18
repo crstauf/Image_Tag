@@ -178,4 +178,14 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 		$this->assertEquals( 0.6665, $img->get_ratio() );
 	}
 
+	function test_picsum() {
+		$img = Image_Tag::create( static::$attachment_id );
+		$this->assertInstanceOf( 'Image_Tag_Picsum', $img->picsum() );
+	}
+
+	function test_placeholder() {
+		$img = Image_Tag::create( static::$attachment_id );
+		$this->assertInstanceOf( 'Image_Tag_Placeholder', $img->placeholder() );
+	}
+
 }

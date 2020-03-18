@@ -22,10 +22,13 @@ add_action( 'wp_footer', function() {
 		'fields' => 'ids',
 	) );
 
-	if ( !empty( $attachment->posts ) )
-		echo Image_Tag::create( $attachment->posts[0], array(), array(
+	if ( !empty( $attachment->posts ) ) {
+		echo $img = Image_Tag::create( $attachment->posts[0], array(), array(
 			'image_sizes' => array( 'thumbnail', 'medium', 'medium_large', 'large', 'full' ),
 		) );
+		echo $img->picsum();
+		echo $img->placeholder();
+	}
 
 	echo $img = Image_Tag::create( 'picsum', array(), array(
 		'width' => 500,

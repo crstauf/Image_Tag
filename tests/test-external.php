@@ -18,4 +18,18 @@ class Image_Tag_Base_Test extends WP_UnitTestCase {
 		$this->assertEquals( $img->http(), $img->http() );
 	}
 
+	function test_picsum() {
+		$src = 'https://picsum.photos/400/300';
+		$img = Image_Tag::create( $src );
+
+		$this->assertInstanceOf( 'Image_Tag_Picsum', $img->picsum() );
+	}
+
+	function test_placeholder() {
+		$src = 'https://picsum.photos/400/300';
+		$img = Image_Tag::create( $src );
+
+		$this->assertInstanceOf( 'Image_Tag_Placeholder', $img->placeholder() );
+	}
+
 }

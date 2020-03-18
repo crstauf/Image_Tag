@@ -142,6 +142,22 @@ class Image_Tag_Placeholder_Test extends WP_UnitTestCase {
 		$this->assertContains( '/' . urlencode( $bg_color ) . '/' . urlencode( $text_color ) . '/', $img->get_attribute( 'src' ) );
 	}
 
+	function test_placeholder() {
+		$img = Image_Tag::create( 'placeholder', array(), array(
+			'width' => 200,
+		) );
+
+		$this->assertEquals( $img, $img->placeholder() );
+	}
+
+	function test_picsum() {
+		$img = Image_Tag::create( 'picsum', array(), array(
+			'width' => 200,
+		) );
+
+		$this->assertInstanceOf( 'Image_Tag_Picsum', $img->picsum() );
+	}
+
 }
 
 ?>

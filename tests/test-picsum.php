@@ -335,4 +335,20 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 		$this->assertEquals( $details, $img->details() );
 	}
 
+	function test_picsum() {
+		$img = Image_Tag::create( 'picsum', array(), array(
+			'width' => 200,
+		) );
+
+		$this->assertEquals( $img, $img->picsum() );
+	}
+
+	function test_placeholder() {
+		$img = Image_Tag::create( 'picsum', array(), array(
+			'width' => 200,
+		) );
+
+		$this->assertInstanceOf( 'Image_Tag_Placeholder', $img->placeholder() );
+	}
+
 }

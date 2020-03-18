@@ -28,4 +28,14 @@ class Image_Tag_WP_Theme_Test extends WP_UnitTestCase {
 		$this->assertEquals( 0.640833333333333, $img->get_ratio() );
 	}
 
+	function test_picsum() {
+		$img = Image_Tag::create( static::SRC );
+		$this->assertInstanceOf( 'Image_Tag_Picsum', $img->picsum() );
+	}
+
+	function test_placeholder() {
+		$img = Image_Tag::create( static::SRC );
+		$this->assertInstanceOf( 'Image_Tag_Placeholder', $img->placeholder() );
+	}
+
 }

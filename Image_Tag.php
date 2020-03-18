@@ -275,6 +275,14 @@ class Image_Tag implements ArrayAccess {
 		$this->attributes['style'][] = $style;
 	}
 
+	function get_width() {
+		return $this->get_attribute( 'width' );
+	}
+
+	function get_height() {
+		return $this->get_attribute( 'height' );
+	}
+
 	function http( bool $force = false ) {
 		static $_cache = array();
 
@@ -291,11 +299,21 @@ class Image_Tag implements ArrayAccess {
 
 	function picsum( array $attributes = array(), array $settings = array() ) {
 		$attributes = wp_parse_args( $attributes, $this->attributes );
+		$settings = wp_parse_args( $settings, array(
+			 'width' => $this->get_width(),
+			'height' => $this->get_height(),
+		) );
+
 		return Image_Tag::create( 'picsum', $attributes, $settings );
 	}
 
 	function placeholder( array $attributes = array(), array $settings = array() ) {
 		$attributes = wp_parse_args( $attributes, $this->attributes );
+		$settings = wp_parse_args( $settings, array(
+			 'width' => $this->get_width(),
+			'height' => $this->get_height(),
+		) );
+
 		return Image_Tag::create( 'placeholder', $attributes, $settings );
 	}
 
@@ -545,6 +563,57 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 		}
 
 		return $this->versions;
+	}
+
+	function picsum( array $attributes = array(), array $settings = array() ) {
+		$picsum = parent::picsum( $attributes, $settings );
+
+		if (
+			empty( $attributes['srcset'] )
+			&& !empty( $picsum->get_attribute( 'srcset' ) )
+		) {
+			$picsum->set_attribute( 'srcset', array() );
+
+			foreach ( $this->get_versions() as $image_size => $version ) {
+				if ( in_array( $image_size, array( '__largest', '__smallest' ) ) )
+					continue;
+
+				$tmp = Image_Tag::create( 'picsum', array(), array(
+					 'width' => $version->width,
+					'height' => $version->height,
+					'random' => true,
+				) );
+
+				$picsum->add_srcset( $tmp->get_attribute( 'src' ) . ' ' . $version->width . 'w' );
+			}
+		}
+
+		return $picsum;
+	}
+
+	function placeholder( array $attributes = array(), array $settings = array() ) {
+		$placeholder = parent::placeholder( $attributes, $settings );
+
+		if (
+			empty( $attributes['srcset'] )
+			&& !empty( $placeholder->get_attribute( 'srcset' ) )
+		) {
+			$placeholder->set_attribute( 'srcset', array() );
+
+			foreach ( $this->get_versions() as $image_size => $version ) {
+				if ( in_array( $image_size, array( '__largest', '__smallest' ) ) )
+					continue;
+
+				$tmp = Image_Tag::create( 'placeholder', array(), array(
+					 'width' => $version->width,
+					'height' => $version->height,
+				) );
+
+				$placeholder->add_srcset( $tmp->get_attribute( 'src' ) . ' ' . $version->width . 'w' );
+			}
+		}
+
+		return $placeholder;
 	}
 
 }
