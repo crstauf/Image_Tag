@@ -113,9 +113,13 @@ class Image_Tag implements ArrayAccess {
 
 		$array[] = '/>';
 
-		$array = apply_filters( 'image_tag/_output', $array );
+		$array = apply_filters( 'image_tag/_output/array', $array );
 
-		return apply_filters( 'image_tag/output', implode( ' ', $array ) );
+		$string  = $this->get_setting( 'before_output' );
+		$string .= apply_filters( 'image_tag/_output/string', implode( ' ', $array ) );
+		$string .= $this->get_setting( 'after_output' );
+
+		return apply_filters( 'image_tag/output', $string );
 	}
 
 	/**
@@ -169,6 +173,18 @@ class Image_Tag implements ArrayAccess {
 		return method_exists( $this, $method_name )
 			? $this->$method_name()
 			: $this->_get_setting( $key );
+	}
+
+	protected function get_before_output_setting() {
+		return array_key_exists(   'before_output', $this->settings )
+			? $this->_get_setting( 'before_output' )
+			: '';
+	}
+
+	protected function get_after_output_setting() {
+		return array_key_exists(   'after_output', $this->settings )
+			? $this->_get_setting( 'after_output' )
+			: '';
 	}
 
 	/**
@@ -485,6 +501,20 @@ class Image_Tag implements ArrayAccess {
 		) );
 
 		return Image_Tag::create( 'placeholder', $attributes, $settings );
+	}
+
+	function noscript( array $attributes = array(), array $settings = array() ) {
+		$nojs = clone $this;
+
+		$nojs->set_attributes( $attributes );
+		$nojs->set_settings( $settings );
+
+		$nojs->set_setting( 'before_output',  '<noscript>' . $this->get_setting( 'before_output' ) );
+		$nojs->set_setting(  'after_output', '</noscript>' . $this->get_setting(  'after_output' ) );
+
+		$nojs->add_class( 'no-js' );
+
+		return $nojs;
 	}
 
 	/**
