@@ -543,6 +543,50 @@ class Image_Tag implements ArrayAccess {
 	}
 
 	/**
+	 * Create lazyloaded version of image tag.
+	 *
+	 * @param array $attributes
+	 * @param array $settings
+	 *
+	 * @uses $this->set_attributes()
+	 * @uses $this->set_settings()
+	 * @uses $this->add_class()
+	 * @uses $this->get_attribute()
+	 * @uses $this->set_attribute()
+	 * @uses $this->noscript()
+	 *
+	 * @return $this
+	 */
+	function lazyload( array $attributes = array(), array $settings = array() ) {
+		$lazyload = clone $this;
+
+		$lazyload->set_attributes( $attributes );
+		$lazyload->set_settings( $settings );
+
+		$lazyload->add_class( 'lazyload hide-if-no-js' );
+
+		if ( !empty( $lazyload->get_attribute( 'src' ) ) ) {
+			$lazyload->set_attribute( 'data-src', $lazyload->get_attribute( 'src' ) );
+			$lazyload->set_attribute( 'src', static::BLANK );
+		}
+
+		if ( !empty( $lazyload->get_attribute( 'srcset' ) ) ) {
+			$lazyload->set_attribute( 'data-srcset', $lazyload->get_attribute( 'srcset' ) );
+			$lazyload->set_attribute( 'srcset', array() );
+		}
+
+		if ( !empty( $lazyload->get_attribute( 'sizes' ) ) ) {
+			$lazyload->set_attribute( 'data-sizes', $lazyload->get_attribute( 'sizes' ) );
+			$lazyload->set_attribute( 'sizes', array() );
+		} else if ( !empty( $lazyload->get_attribute( 'data-srcset' ) ) )
+			$lazyload->set_attribute( 'data-sizes', 'auto' );
+
+		$lazyload->set_setting( 'after_output', $this->noscript() );
+
+		return $lazyload;
+	}
+
+	/**
 	 * ArrayAccess: exists
 	 *
 	 * @param $offset

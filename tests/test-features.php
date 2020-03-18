@@ -2,6 +2,8 @@
 
 /**
  * @group features
+ *
+ * @todo add tests for lazyload
  */
 class Image_Tag_Features_Test extends WP_UnitTestCase {
 
