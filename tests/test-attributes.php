@@ -46,4 +46,12 @@ class Image_Tag_Test_Attributes extends WP_UnitTestCase {
 		$this->assertEquals( $attributes, $image_tag->get_attributes() );
 	}
 
+	function test_remove_from_attribute_array() {
+		$img = new Image_Tag( array( 'class' => 'remove' ) );
+		$this->assertEquals( 'remove', $img->get_attribute( 'class' ) );
+
+		$img->remove_class( 'remove' );
+		$this->assertEmpty( $img->get_attribute( 'class' ) );
+	}
+
 }
