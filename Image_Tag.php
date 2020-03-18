@@ -503,6 +503,20 @@ class Image_Tag implements ArrayAccess {
 		return Image_Tag::create( 'placeholder', $attributes, $settings );
 	}
 
+	/**
+	 * Create noscript version of image tag.
+	 *
+	 * @param array $attributes
+	 * @param array $settings
+	 *
+	 * @uses $this->set_attributes()
+	 * @uses $this->set_settings()
+	 * @uses $this->set_setting()
+	 * @uses $this->get_setting()
+	 * @uses $this->add_class()
+	 *
+	 * @return $this
+	 */
 	function noscript( array $attributes = array(), array $settings = array() ) {
 		$nojs = clone $this;
 
