@@ -118,12 +118,25 @@ class Image_Tag implements ArrayAccess {
 		return apply_filters( 'image_tag/output', implode( ' ', $array ) );
 	}
 
+	/**
+	 * Set an array of settings.
+	 *
+	 * @param array
+	 * @uses $this->set_setting()
+	 */
 	function set_settings( array $settings ) {
 		foreach ( $settings as $key => $value )
 			$this->set_setting( $key, $value );
 	}
 
-	function set_setting( $key, $value ) {
+	/**
+	 * Public acccess to set setting.
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 * @uses $this->_set_setting()
+	 */
+	function set_setting( string $key, $value ) {
 		$method_name = 'set_' . $key . '_setting';
 		$method_name = str_replace( '-', '_', $method_name );
 
@@ -132,10 +145,23 @@ class Image_Tag implements ArrayAccess {
 			: $this->_set_setting( $key, $value );
 	}
 
+	/**
+	 * Internal access to set setting.
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 */
 	protected function _set_setting( string $key, $value ) {
 		$this->settings[$key] = $value;
 	}
 
+	/**
+	 * Public access to get setting.
+	 *
+	 * @param string $key
+	 * @uses $this->_get_setting()
+	 * @return mixed
+	 */
 	function get_setting( string $key ) {
 		$method_name = 'get_' . $key . '_setting';
 		$method_name = str_replace( '-', '_', $method_name );
@@ -145,15 +171,34 @@ class Image_Tag implements ArrayAccess {
 			: $this->_get_setting( $key );
 	}
 
+	/**
+	 * Internal access to get setting.
+	 *
+	 * @param string $key
+	 * @return mixed
+	 */
 	protected function _get_setting( string $key ) {
 		return $this->settings[$key];
 	}
 
+	/**
+	 * Set an array of attributes.
+	 *
+	 * @param array $attributes
+	 * @uses $this->set_attribute()
+	 */
 	function set_attributes( array $attributes ) {
 		foreach ( $attributes as $key => $value )
 			$this->set_attribute( $key, $value );
 	}
 
+	/**
+	 * Public access to set attribute.
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 * @uses $this->_set_attribute()
+	 */
 	function set_attribute( string $key, $value ) {
 		$method_name = 'set_' . $key . '_attribute';
 		$method_name = str_replace( '-', '_', $method_name );
@@ -163,6 +208,12 @@ class Image_Tag implements ArrayAccess {
 			: $this->_set_attribute( $key, $value );
 	}
 
+	/**
+	 * Internal setter for "class" attribute.
+	 *
+	 * @param array|string $classes
+	 * @uses $this->_set_attribute()
+	 */
 	protected function set_class_attribute( $classes ) {
 		if ( is_string( $classes ) )
 			$classes = explode( ' ', $classes );
@@ -176,6 +227,12 @@ class Image_Tag implements ArrayAccess {
 		$this->_set_attribute( 'class', $classes );
 	}
 
+	/**
+	 * Internal setter for "sizes" attribute.
+	 *
+	 * @param array|string $sizes
+	 * @uses $this->_set_attribute()
+	 */
 	protected function set_sizes_attribute( $sizes ) {
 		if ( is_string( $sizes ) )
 			$sizes = explode( ', ', $sizes );
@@ -189,6 +246,12 @@ class Image_Tag implements ArrayAccess {
 		$this->_set_attribute( 'sizes', $sizes );
 	}
 
+	/**
+	 * Internal setter for "srcset" attribute.
+	 *
+	 * @param array|string $srcset
+	 * @uses $this->_set_attribute()
+	 */
 	protected function set_srcset_attribute( $srcset ) {
 		if ( is_string( $srcset ) )
 			$srcset = explode( ', ', $srcset );
@@ -202,6 +265,12 @@ class Image_Tag implements ArrayAccess {
 		$this->_set_attribute( 'srcset', $srcset );
 	}
 
+	/**
+	 * Internal setter for "style" attribute.
+	 *
+	 * @param array|string $styles
+	 * @uses $this->_set_attribute()
+	 */
 	protected function set_style_attribute( $styles ) {
 		if ( is_string( $styles ) )
 			$styles = explode( ';', $styles );
@@ -215,10 +284,22 @@ class Image_Tag implements ArrayAccess {
 		$this->_set_attribute( 'style', $styles );
 	}
 
+	/**
+	 * Internal setter for attribute.
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 */
 	protected function _set_attribute( string $key, $value ) {
 		$this->attributes[$key] = $value;
 	}
 
+	/**
+	 * Public access to get attributes.
+	 *
+	 * @uses $this->get_attribute()
+	 * @return array
+	 */
 	function get_attributes() {
 		$attributes = array();
 
@@ -228,6 +309,13 @@ class Image_Tag implements ArrayAccess {
 		return array_filter( $attributes );
 	}
 
+	/**
+	 * Public access to get attribute.
+	 *
+	 * @param string $key
+	 * @uses $this->_get_attribute()
+	 * @return mixed
+	 */
 	function get_attribute( string $key ) {
 		$method_name = 'get_' . $key . '_attribute';
 		$method_name = str_replace( '-', '_', $method_name );
@@ -237,50 +325,116 @@ class Image_Tag implements ArrayAccess {
 			: $this->_get_attribute( $key );
 	}
 
+	/**
+	 * Internal getter for "class" attribute.
+	 *
+	 * @return string
+	 */
 	protected function get_class_attribute() {
 		return implode( ' ', array_unique( $this->attributes['class'] ) );
 	}
 
+	/**
+	 * Internal getter for "sizes" attribute.
+	 *
+	 * @return string
+	 */
 	protected function get_sizes_attribute() {
 		return implode( ', ', $this->attributes['sizes'] );
 	}
 
+	/**
+	 * Internal getter for "srcset" attribute.
+	 *
+	 * @return string
+	 */
 	protected function get_srcset_attribute() {
 		return implode( ', ', $this->attributes['srcset'] );
 	}
 
+	/**
+	 * Internal getter for "style" attribute.
+	 *
+	 * @return string
+	 */
 	protected function get_style_attribute() {
 		return trim( implode( '; ', $this->attributes['style'] ) );
 	}
 
+	/**
+	 * Internal access to get attribute.
+	 *
+	 * @param string $key
+	 * @return mixed
+	 */
 	protected function _get_attribute( string $key ) {
 		return $this->attributes[$key];
 	}
 
-	function add_class( $class ) {
+	/**
+	 * Helper to add class name.
+	 *
+	 * @param string $class
+	 */
+	function add_class( string $class ) {
 		$this->attributes['class'][] = $class;
 	}
 
+	/**
+	 * Helper to add size to "sizes" attribute.
+	 *
+	 * @param string $size
+	 */
 	function add_size( string $size ) {
 		$this->attributes['sizes'][] = $size;
 	}
 
+	/**
+	 * Helper to add source to "srcset" attribute.
+	 *
+	 * @param string $srcset
+	 */
 	function add_srcset( string $srcset ) {
 		$this->attributes['srcset'][] = $srcset;
 	}
 
+	/**
+	 * Helper to add style to "style" attribute.
+	 *
+	 * @param string $style
+	 */
 	function add_style( string $style ) {
 		$this->attributes['style'][] = $style;
 	}
 
+	/**
+	 * Get primary width of image.
+	 *
+	 * @uses $this->get_attribute()
+	 * @return null|int
+	 */
 	function get_width() {
 		return $this->get_attribute( 'width' );
 	}
 
+	/**
+	 * Get primary height of image.
+	 *
+	 * @uses $this->get_attribute()
+	 * @return null|int
+	 */
 	function get_height() {
 		return $this->get_attribute( 'height' );
 	}
 
+	/**
+	 * Request image with GET method.
+	 *
+	 * @param bool $force Flag to use cached value or make new request.
+	 * @uses $this->get_attribute()
+	 * @uses wp_remote_get()
+	 * @return WP_Error|array
+	 */
 	function http( bool $force = false ) {
 		static $_cache = array();
 
@@ -295,6 +449,15 @@ class Image_Tag implements ArrayAccess {
 		return ( $_cache[$src] = wp_remote_get( $src ) );
 	}
 
+	/**
+	 * Transpose attributes and settings into Picsum image.
+	 *
+	 * @param array $attributes
+	 * @param array $settings
+	 * @uses $this->get_width()
+	 * @uses $this->get_height()
+	 * @return Image_Tag_Picsum
+	 */
 	function picsum( array $attributes = array(), array $settings = array() ) {
 		$attributes = wp_parse_args( $attributes, $this->attributes );
 		$settings = wp_parse_args( $settings, array(
@@ -305,6 +468,15 @@ class Image_Tag implements ArrayAccess {
 		return Image_Tag::create( 'picsum', $attributes, $settings );
 	}
 
+	/**
+	 * Transpose attributes and settings into Placeholder image.
+	 *
+	 * @param array $attributes
+	 * @param array $settings
+	 * @uses $this->get_width()
+	 * @uses $this->get_height()
+	 * @return Image_Tag_Placeholder
+	 */
 	function placeholder( array $attributes = array(), array $settings = array() ) {
 		$attributes = wp_parse_args( $attributes, $this->attributes );
 		$settings = wp_parse_args( $settings, array(
@@ -344,7 +516,19 @@ class Image_Tag implements ArrayAccess {
 		return null;
 	}
 
+	/**
+	 * ArrayAccess: set
+	 *
+	 * @param $offset
+	 * @param $value
+	 */
 	function offsetSet( $offset, $value ) {}
+
+	/**
+	 * ArrayAccess: unset
+	 *
+	 * @param $offset
+	 */
 	function offsetUnset( $offset ) {}
 
 }
@@ -360,14 +544,33 @@ class Image_Tag implements ArrayAccess {
  ###  ###  ##
 */
 
+/**
+ * Abstract class: Image_Tag_WP
+ */
 abstract class Image_Tag_WP extends Image_Tag {
 
+	/**
+	 * @var null|string $orientation
+	 */
 	protected $orientation = null;
 
+	/**
+	 * Get image ratio.
+	 *
+	 * @uses $this->get_height()
+	 * @uses $this->get_width()
+	 * @return float
+	 */
 	function get_ratio() {
 		return $this->get_height() / $this->get_width();
 	}
 
+	/**
+	 * Determine and set image orientation.
+	 *
+	 * @uses $this->get_ratio()
+	 * @uses $this->add_class()
+	 */
 	function set_orientation() {
 		$ratio = $this->get_ratio();
 
@@ -386,7 +589,15 @@ abstract class Image_Tag_WP extends Image_Tag {
 		$this->add_class( 'orientation-' . $this->orientation );
 	}
 
-	protected function _get_colors( $path, $count = 3 ) {
+	/**
+	 * Get common colors.
+	 *
+	 * @param string $path Path to image.
+	 * @param int $count Number of colors to determine.
+	 * @uses GetImageMostCommonColors->Get_Colors()
+	 * @return array
+	 */
+	protected function _get_colors( string $path, int $count = 3 ) {
 		static $util = null;
 		require_once trailingslashit( __DIR__ ) . 'class-get-image-most-common-colors.php';
 
@@ -402,8 +613,24 @@ abstract class Image_Tag_WP extends Image_Tag {
 		return $colors;
 	}
 
-	abstract function get_colors( $count = 3 );
+	/**
+	 * Public access to get common colors.
+	 *
+	 * Abstract to pass proper image path, and
+	 * opportunity to implement caching.
+	 *
+	 * @param int $count
+	 * @uses $this->_get_colors()
+	 * @return array
+	 */
+	abstract function get_colors( int $count = 3 );
 
+	/**
+	 * Get most common color.
+	 *
+	 * @uses $this->get_colors()
+	 * @return string
+	 */
 	function get_mode_color() {
 		return array_keys( $this->get_colors() )[0];
 	}
@@ -435,7 +662,7 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 	 * @var array $settings
 	 */
 	protected $settings = array(
-		'image_sizes' => array( 'full' ),
+		'image-sizes' => array( 'full' ),
 	);
 
 	/**
@@ -464,8 +691,14 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 		$this->set_orientation();
 	}
 
+	/**
+	 * Set attachment image source.
+	 *
+	 * @uses $this->get_setting()
+	 * @uses $this->_set_attribute()
+	 */
 	protected function set_source() {
-		$image_sizes = $this->get_setting( 'image_sizes' );
+		$image_sizes = $this->get_setting( 'image-sizes' );
 
 		for ( $i = 0; $i < count( $image_sizes ); $i++ ) {
 			$attachment = wp_get_attachment_image_src( $this->attachment_id, $image_sizes[$i] );
@@ -483,6 +716,13 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 		$this->_set_attribute( 'src', $attachment[0] );
 	}
 
+	/**
+	 * Set "srcset" attribute from image versions.
+	 *
+	 * @uses $this->get_attribute()
+	 * @uses $this->get_versions()
+	 * @uses $this->add_srcset()
+	 */
 	protected function set_srcset() {
 		if ( !empty( $this->get_attribute( 'srcset' ) ) )
 			return;
@@ -498,6 +738,12 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 
 	}
 
+	/**
+	 * Set "image_sizes" setting.
+	 *
+	 * @param array|string
+	 * @uses $this->_set_setting()
+	 */
 	protected function set_image_sizes_setting( $image_sizes ) {
 		if ( is_string( $image_sizes ) )
 			$image_sizes = explode( ' ', $image_sizes );
@@ -516,17 +762,35 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 			if ( empty( wp_get_attachment_image_src( $this->attachment_id, $image_size ) ) )
 				unset( $image_sizes[$i] );
 
-		$this->_set_setting( 'image_sizes', $image_sizes );
+		$this->_set_setting( 'image-sizes', $image_sizes );
 	}
 
+	/**
+	 * Get width of largest image version.
+	 *
+	 * @uses $this->get_versions()
+	 * @return int
+	 */
 	function get_width() {
-		return $this->get_versions()['__largest']->width;
+		return ( int ) $this->get_versions()['__largest']->width;
 	}
 
+	/**
+	 * Get height of largest image version.
+	 *
+	 * @uses $this->get_versions()
+	 * @return int
+	 */
 	function get_height() {
-		return $this->get_versions()['__largest']->height;
+		return ( int ) $this->get_versions()['__largest']->height;
 	}
 
+	/**
+	 * Magical getter for "id" attribute.
+	 *
+	 * @uses $this->_get_attribute()
+	 * @return string
+	 */
 	protected function get_id_attribute() {
 		if ( empty( $this->_get_attribute( 'id' ) ) )
 			return 'attachment-' . $this->attachment_id;
@@ -534,22 +798,34 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 		return $this->_get_attribute( 'id' );
 	}
 
+	/**
+	 * Magical getter for "class" attribute.
+	 *
+	 * @uses $this->_get_attribute()
+	 * @uses $this->get_setting()
+	 */
 	protected function get_class_attribute() {
 		$classes = $this->_get_attribute( 'class' );
 
 		$classes[] = 'attachment-' . $this->attachment_id;
 
-		$image_sizes = $this->get_setting( 'image_sizes' );
+		$image_sizes = $this->get_setting( 'image-sizes' );
 		$classes[] = 'size-' . $image_sizes[0];
 
 		return implode( ' ', array_unique( $classes ) );
 	}
 
+	/**
+	 * Get data for versions of image from specified image sizes.
+	 *
+	 * @uses $this->get_setting()
+	 * @return array
+	 */
 	function get_versions() {
 		if ( !empty( array_filter( $this->versions ) ) )
 			return $this->versions;
 
-		$image_sizes = $this->get_setting( 'image_sizes' );
+		$image_sizes = $this->get_setting( 'image-sizes' );
 		$upload_dir = trailingslashit( wp_get_upload_dir()['basedir'] );
 
 		$largest  = null;
@@ -601,7 +877,15 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 		return $this->versions;
 	}
 
-	function get_colors( $count = 3 ) {
+	/**
+	 * Get common colors (cached to attachment's meta data).
+	 *
+	 * @param int $count
+	 * @uses $this->_get_colors()
+	 * @uses $this->get_versions()
+	 * @return array
+	 */
+	function get_colors( int $count = 3 ) {
 		$meta_key = '_common_colors';
 		$meta = get_post_meta( $this->attachment_id, $meta_key, true );
 
@@ -617,6 +901,19 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 		return $colors;
 	}
 
+	/**
+	 * Transpose WP attachment image to Picsum image.
+	 *
+	 * @param array $attributes
+	 * @param array $settings
+	 * @uses Image_Tag->picsum()
+	 * @uses Image_Tag_Picsum->get_attribute()
+	 * @uses Image_Tag_Picsum->set_attribute()
+	 * @uses $this->get_versions()
+	 * @uses Image_Tag::create()
+	 * @uses Image_Tag_Picsum->add_srcset()
+	 * @return Image_Tag_Picsum
+	 */
 	function picsum( array $attributes = array(), array $settings = array() ) {
 		$picsum = parent::picsum( $attributes, $settings );
 
@@ -643,6 +940,19 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 		return $picsum;
 	}
 
+	/**
+	 * Transpose WP attachment image to Placeholder image.
+	 *
+	 * @param array $attributes
+	 * @param array $settings
+	 * @uses Image_Tag->placeholder()
+	 * @uses Image_Tag_Placeholder->get_attribute()
+	 * @uses Image_Tag_Placeholder->set_attribute()
+	 * @uses $this->get_versions()
+	 * @uses Image_Tag::create()
+	 * @uses Image_Tag_Placeholder->add_srcset()
+	 * @return Image_Tag_Placeholder
+	 */
 	function placeholder( array $attributes = array(), array $settings = array() ) {
 		$placeholder = parent::placeholder( $attributes, $settings );
 
@@ -714,6 +1024,12 @@ class Image_Tag_WP_Theme extends Image_Tag_WP {
 		$this->set_orientation();
 	}
 
+	/**
+	 * Set theme image source.
+	 *
+	 * @param string $source
+	 * @uses $this->_set_attribute()
+	 */
 	protected function set_source( string $source ) {
 		foreach ( array(
 			STYLESHEETPATH => get_stylesheet_directory_uri(),
@@ -723,15 +1039,32 @@ class Image_Tag_WP_Theme extends Image_Tag_WP {
 				$this->_set_attribute( 'src', trailingslashit( $themeurl ) . $source );
 	}
 
+	/**
+	 * Get image width.
+	 *
+	 * @return int
+	 */
 	function get_width() {
-		return getimagesize( $this->path )[0];
+		return ( int ) getimagesize( $this->path )[0];
 	}
 
+	/**
+	 * Get image height.
+	 *
+	 * @return int
+	 */
 	function get_height() {
-		return getimagesize( $this->path )[1];
+		return ( int ) getimagesize( $this->path )[1];
 	}
 
-	function get_colors( $count = 3 ) {
+	/**
+	 * Get common colors (cached to transient).
+	 *
+	 * @param int $count
+	  *@uses $this->_get_colors()
+	 * @return array
+	 */
+	function get_colors( int $count = 3 ) {
 		$transient_key = 'theme_img_colors_' . md5( $this->path );
 		$transient = get_transient( $transient_key );
 
@@ -806,6 +1139,12 @@ class Image_Tag_Picsum extends Image_Tag {
 		return parent::__toString();
 	}
 
+	/**
+	 * Generate source URL.
+	 *
+	 * @uses $this->get_setting()
+	 * @return string
+	 */
 	function get_src_attribute() {
 		$src = self::BASE_URL;
 
@@ -841,32 +1180,53 @@ class Image_Tag_Picsum extends Image_Tag {
 		return $src;
 	}
 
+	/**
+	 * Magical getter for "width" attribute.
+	 *
+	 * @uses $this->_get_attribute()
+	 * @uses $this->_get_setting()
+	 * @return int
+	 */
 	function get_width_attribute() {
 		if ( !empty( $this->_get_attribute( 'width' ) ) )
-			return $this->_get_attribute( 'width' );
+			return ( int ) $this->_get_attribute( 'width' );
 
 		if ( !empty( $this->_get_setting( 'width' ) ) )
-			return $this->_get_setting( 'width' );
+			return ( int ) $this->_get_setting( 'width' );
 
 		return 1024;
 	}
 
+	/**
+	 * Magical getter for "height" attribute.
+	 *
+	 * If specified, returns the height value.
+	 * Otherwise, returns the width value.
+	 *
+	 * @uses $this->_get_attribute()
+	 * @uses $this->_get_setting()
+	 * @uses $this->get_width_attribute()
+	 * @return int
+	 */
 	function get_height_attribute() {
 		if ( !empty( $this->_get_attribute( 'height' ) ) )
-			return $this->_get_attribute( 'height' );
+			return ( int ) $this->_get_attribute( 'height' );
 
 		if ( !empty( $this->_get_setting( 'height' ) ) )
-			return $this->_get_setting( 'height' );
+			return ( int ) $this->_get_setting( 'height' );
 
-		if ( !empty( $this->_get_attribute( 'width' ) ) )
-			return $this->_get_attribute( 'width' );
-
-		if ( !empty( $this->_get_setting( 'width' ) ) )
-			return $this->_get_setting( 'width' );
+		if ( !empty( $this->get_width_attribute() ) )
+			return ( int ) $this->get_width_attribute();
 
 		return 1024;
 	}
 
+	/**
+	 * Get "blur" setting.
+	 *
+	 * @uses $this->_get_setting()
+	 * @return mixed
+	 */
 	function get_blur_setting() {
 		$blur = $this->_get_setting( 'blur' );
 
@@ -876,6 +1236,12 @@ class Image_Tag_Picsum extends Image_Tag {
 		return $blur;
 	}
 
+	/**
+	 * Get "seed" setting.
+	 *
+	 * @uses $this->_get_setting()
+	 * @return string
+	 */
 	function get_seed_setting() {
 		$seed = $this->_get_setting( 'seed' );
 
@@ -885,26 +1251,46 @@ class Image_Tag_Picsum extends Image_Tag {
 		return urlencode( sanitize_title_with_dashes( $seed ) );
 	}
 
+	/**
+	 * Get "width" setting.
+	 *
+	 * @uses $this->_get_setting()
+	 * @uses $this->_get_attribute()
+	 * @return null|int
+	 */
 	function get_width_setting() {
 		if ( !empty( $this->_get_setting( 'width' ) ) )
-			return $this->_get_setting( 'width' );
+			return ( int ) $this->_get_setting( 'width' );
 
 		if ( !empty( $this->_get_attribute( 'width' ) ) )
-			return $this->_get_attribute( 'width' );
+			return ( int ) $this->_get_attribute( 'width' );
 
 		return null;
 	}
 
+	/**
+	 * Get "height" setting.
+	 *
+	 * @uses $this->_get_setting()
+	 * @uses $this->_get_attribute()
+	 * @return null|int
+	 */
 	function get_height_setting() {
 		if ( !empty( $this->_get_setting( 'height' ) ) )
-			return $this->_get_setting( 'height' );
+			return ( int ) $this->_get_setting( 'height' );
 
 		if ( !empty( $this->_get_attribute( 'height' ) ) )
-			return $this->_get_attribute( 'height' );
+			return ( int ) $this->_get_attribute( 'height' );
 
 		return null;
 	}
 
+	/**
+	 * Get "random" setting.
+	 *
+	 * @uses $this->_get_setting()
+	 * @return mixed
+	 */
 	function get_random_setting() {
 		static $_random = 0;
 		$random = $this->_get_setting( 'random' );
@@ -918,6 +1304,14 @@ class Image_Tag_Picsum extends Image_Tag {
 		return $random;
 	}
 
+	/**
+	 * Get image details from API (cached locally).
+	 *
+	 * @uses $this->get_setting()
+	 * @uses $this->http()
+	 * @uses wp_remote_get()
+	 * @return object
+	 */
 	function details() {
 		if ( !is_null( $this->details ) )
 			return $this->details;
@@ -935,6 +1329,13 @@ class Image_Tag_Picsum extends Image_Tag {
 		return ( $this->details = json_decode( wp_remote_retrieve_body( $response ) ) );
 	}
 
+	/**
+	 * Prevent transposing into Picsum image.
+	 *
+	 * @param array $attributes
+	 * @param array $settings
+	 * @return $this
+	 */
 	function picsum( array $attributes = array(), array $settings = array() ) {
 		return $this;
 	}
@@ -991,14 +1392,30 @@ class Image_Tag_Placeholder extends Image_Tag {
 		return parent::__toString();
 	}
 
+	/**
+	 * Get "bg-color" setting.
+	 *
+	 * @return string
+	 */
 	function get_bg_color_setting() {
 		return urlencode( str_replace( '#', '', $this->settings['bg-color'] ) );
 	}
 
+	/**
+	 * Get "text-color" setting.
+	 *
+	 * @return string
+	 */
 	function get_text_color_setting() {
 		return urlencode( str_replace( '#', '', $this->settings['text-color'] ) );
 	}
 
+	/**
+	 * Generate source URL.
+	 *
+	 * @uses $this->get_setting()
+	 * @return string
+	 */
 	function get_src_attribute() {
 		$src = self::BASE_URL;
 
@@ -1033,52 +1450,87 @@ class Image_Tag_Placeholder extends Image_Tag {
 		return $src;
 	}
 
+	/**
+	 * Magical getter for "width" attribute.
+	 *
+	 * @uses $this->_get_attribute()
+	 * @uses $this->_get_setting()
+	 * @return null|int
+	 */
 	function get_width_attribute() {
 		if ( !empty( $this->_get_attribute( 'width' ) ) )
-			return $this->_get_attribute( 'width' );
+			return ( int ) $this->_get_attribute( 'width' );
 
 		if ( !empty( $this->_get_setting( 'width' ) ) )
-			return $this->_get_setting( 'width' );
+			return ( int ) $this->_get_setting( 'width' );
 
 		return null;
 	}
 
+	/**
+	 * Magical getter for "height" attribute.
+	 *
+	 * @uses $this->_get_attribute()
+	 * @uses $this->_get_setting()
+	 * @return null|int
+	 */
 	function get_height_attribute() {
 		if ( !empty( $this->_get_attribute( 'height' ) ) )
-			return $this->_get_attribute( 'height' );
+			return ( int ) $this->_get_attribute( 'height' );
 
 		if ( !empty( $this->_get_setting( 'height' ) ) )
-			return $this->_get_setting( 'height' );
+			return ( int ) $this->_get_setting( 'height' );
 
 		if ( !empty( $this->_get_attribute( 'width' ) ) )
-			return $this->_get_attribute( 'width' );
+			return ( int ) $this->_get_attribute( 'width' );
 
 		if ( !empty( $this->_get_setting( 'width' ) ) )
-			return $this->_get_setting( 'width' );
+			return ( int ) $this->_get_setting( 'width' );
 
 		return null;
 	}
 
+	/**
+	 * Magical getter for "width" setting.
+	 *
+	 * @uses $this->_get_setting()
+	 * @uses $this->_get_attribute()
+	 * @return null|int
+	 */
 	function get_width_setting() {
 		if ( !empty( $this->_get_setting( 'width' ) ) )
-			return $this->_get_setting( 'width' );
+			return ( int ) $this->_get_setting( 'width' );
 
 		if ( !empty( $this->_get_attribute( 'width' ) ) )
-			return $this->_get_attribute( 'width' );
+			return ( int ) $this->_get_attribute( 'width' );
 
 		return null;
 	}
 
+	/**
+	 * Magical getter for "height" setting.
+	 *
+	 * @uses $this->_get_setting()
+	 * @uses $this->_get_attribute()
+	 * @return null|int
+	 */
 	function get_height_setting() {
 		if ( !empty( $this->_get_setting( 'height' ) ) )
-			return $this->_get_setting( 'height' );
+			return ( int ) $this->_get_setting( 'height' );
 
 		if ( !empty( $this->_get_attribute( 'height' ) ) )
-			return $this->_get_attribute( 'height' );
+			return ( int ) $this->_get_attribute( 'height' );
 
 		return null;
 	}
 
+	/**
+	 * Prevent transposing into a Placeholder image.
+	 *
+	 * @param array $attributes
+	 * @param array $settings
+	 * @return $this
+	 */
 	function placeholder( array $attributes = array(), array $settings = array() ) {
 		return $this;
 	}
