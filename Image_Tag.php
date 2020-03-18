@@ -335,6 +335,30 @@ class Image_Tag implements ArrayAccess {
 
 
 /*
+##      ## ########
+##  ##  ## ##     ##
+##  ##  ## ##     ##
+##  ##  ## ########
+##  ##  ## ##
+##  ##  ## ##
+ ###  ###  ##
+*/
+
+abstract class Image_Tag_WP extends Image_Tag {
+
+	protected $orientation = null;
+
+	function get_ratio() {
+		return $this->get_height() / $this->get_width();
+	}
+
+	abstract function get_width();
+	abstract function get_height();
+
+}
+
+
+/*
 ##      ## ########   ##        ###    ######## ########    ###     ######  ##     ## ##     ## ######## ##    ## ########
 ##  ##  ## ##     ## ####      ## ##      ##       ##      ## ##   ##    ## ##     ## ###   ### ##       ###   ##    ##
 ##  ##  ## ##     ##  ##      ##   ##     ##       ##     ##   ##  ##       ##     ## #### #### ##       ####  ##    ##
@@ -347,7 +371,7 @@ class Image_Tag implements ArrayAccess {
 /**
  * Class: Image_Tag_WP_Attachment
  */
-class Image_Tag_WP_Attachment extends Image_Tag {
+class Image_Tag_WP_Attachment extends Image_Tag_WP {
 
 	/**
 	 * @var int $attachment_id
@@ -441,6 +465,14 @@ class Image_Tag_WP_Attachment extends Image_Tag {
 		$this->_set_setting( 'image_sizes', $image_sizes );
 	}
 
+	function get_width() {
+		return $this->get_versions()['__largest']->width;
+	}
+
+	function get_height() {
+		return $this->get_versions()['__largest']->height;
+	}
+
 	protected function get_id_attribute() {
 		if ( empty( $this->_get_attribute( 'id' ) ) )
 			return 'attachment-' . $this->attachment_id;
@@ -531,7 +563,7 @@ class Image_Tag_WP_Attachment extends Image_Tag {
 /**
  * Class: Image_Tag_WP_Theme
  */
-class Image_Tag_WP_Theme extends Image_Tag {
+class Image_Tag_WP_Theme extends Image_Tag_WP {
 
 	/**
 	 * @var string $path
@@ -567,6 +599,14 @@ class Image_Tag_WP_Theme extends Image_Tag {
 		) as $themepath => $themeurl )
 			if ( false !== strpos( $this->path, $themepath ) )
 				$this->_set_attribute( 'src', trailingslashit( $themeurl ) . $source );
+	}
+
+	function get_width() {
+		return getimagesize( $this->path )[0];
+	}
+
+	function get_height() {
+		return getimagesize( $this->path )[1];
 	}
 
 }

@@ -163,4 +163,19 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 		$this->assertEquals( $_versions, $img->get_versions() );
 	}
 
+	function test_width() {
+		$img = Image_Tag::create( static::$attachment_id );
+		$this->assertEquals( 2000, $img->get_width() );
+	}
+
+	function test_height() {
+		$img = Image_Tag::create( static::$attachment_id );
+		$this->assertEquals( 1333, $img->get_height() );
+	}
+
+	function test_ratio() {
+		$img = Image_Tag::create( static::$attachment_id );
+		$this->assertEquals( 0.6665, $img->get_ratio() );
+	}
+
 }
