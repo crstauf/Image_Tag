@@ -188,4 +188,16 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 		$this->assertInstanceOf( 'Image_Tag_Placeholder', $img->placeholder() );
 	}
 
+	function test_colors() {
+		$img = Image_Tag::create( static::$attachment_id );
+		$colors = array(
+			'#202020' => 0.51737373737374,
+    		'#304060' => 0.19494949494949,
+    		'#303040' => 0.12673400673401,
+		);
+
+		$this->assertEquals( $colors, $img->get_colors() );
+		$this->assertEquals( array_keys( $colors )[0], $img->get_mode_color() );
+	}
+
 }

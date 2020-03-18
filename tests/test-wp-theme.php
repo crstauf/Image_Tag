@@ -38,4 +38,16 @@ class Image_Tag_WP_Theme_Test extends WP_UnitTestCase {
 		$this->assertInstanceOf( 'Image_Tag_Placeholder', $img->placeholder() );
 	}
 
+	function test_colors() {
+		$img = Image_Tag::create( static::SRC );
+		$colors = array(
+			'#c03050' => 0.48354166666666665,
+			'#802040' => 0.31951388888888888,
+			'#602030' => 0.19229166666666667,
+		);
+
+		$this->assertEquals( $colors, $img->get_colors() );
+		$this->assertEquals( array_keys( $colors )[0], $img->get_mode_color() );
+	}
+
 }

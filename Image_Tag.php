@@ -386,6 +386,28 @@ abstract class Image_Tag_WP extends Image_Tag {
 		$this->add_class( 'orientation-' . $this->orientation );
 	}
 
+	protected function _get_colors( $path, $count = 3 ) {
+		static $util = null;
+		require_once trailingslashit( __DIR__ ) . 'class-get-image-most-common-colors.php';
+
+		if ( is_null( $util ) )
+			$util = new GetImageMostCommonColors;
+
+		$_colors = $util->Get_Colors( $path, $count );
+		$colors = array();
+
+		foreach ( $_colors as $color => $percentage )
+			$colors['#' . $color] = $percentage;
+
+		return $colors;
+	}
+
+	abstract function get_colors( $count = 3 );
+
+	function get_mode_color() {
+		return array_keys( $this->get_colors() )[0];
+	}
+
 }
 
 
@@ -579,6 +601,22 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 		return $this->versions;
 	}
 
+	function get_colors( $count = 3 ) {
+		$meta_key = '_common_colors';
+		$meta = get_post_meta( $this->attachment_id, $meta_key, true );
+
+		if (
+			  !empty( $meta )
+			&& count( $meta ) >= $count
+		)
+			return $meta;
+
+		$colors = $this->_get_colors( $this->get_versions()['__smallest']->path, $count );
+		add_post_meta( $this->attachment_id, $meta_key, $colors, true );
+
+		return $colors;
+	}
+
 	function picsum( array $attributes = array(), array $settings = array() ) {
 		$picsum = parent::picsum( $attributes, $settings );
 
@@ -691,6 +729,22 @@ class Image_Tag_WP_Theme extends Image_Tag_WP {
 
 	function get_height() {
 		return getimagesize( $this->path )[1];
+	}
+
+	function get_colors( $count = 3 ) {
+		$transient_key = 'theme_img_colors_' . md5( $this->path );
+		$transient = get_transient( $transient_key );
+
+		if (
+			  !empty( $transient )
+			&& count( $transient ) >= $count
+		)
+			return $transient;
+
+		$colors = $this->_get_colors( $this->path, $count );
+		set_transient( $transient_key, $colors );
+
+		return $colors;
 	}
 
 }

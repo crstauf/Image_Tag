@@ -5,7 +5,7 @@
 
 add_action( 'wp_footer', function() {
 
-	echo Image_Tag::create( 'https://i.picsum.photos/id/866/536/354.jpg', array(
+	echo $img = Image_Tag::create( 'https://i.picsum.photos/id/866/536/354.jpg', array(
 		'class' => array(
 			'rosalie',
 		),
@@ -28,6 +28,7 @@ add_action( 'wp_footer', function() {
 		) );
 		echo $img->picsum();
 		echo $img->placeholder();
+		echo $img->get_mode_color();
 	}
 
 	echo $img = Image_Tag::create( 'picsum', array(), array(
@@ -53,6 +54,7 @@ add_action( 'wp_footer', function() {
 	) );
 
 	echo $img = Image_Tag::create( 'assets/images/2020-landscape-1.png' );
+	echo $img->get_mode_color();
 
 } );
 
