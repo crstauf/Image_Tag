@@ -397,6 +397,17 @@ class Image_Tag implements ArrayAccess {
 	}
 
 	/**
+	 * Helper to remove class name.
+	 *
+	 * @param string $class
+	 */
+	function remove_class( string $class ) {
+		foreach ( $this->attributes['class'] as $i => $_class )
+			if ( $class === $_class )
+				unset( $this->attributes['class'][$i] );
+	}
+
+	/**
 	 * Helper to add size to "sizes" attribute.
 	 *
 	 * @param string $size
