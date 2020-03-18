@@ -9,8 +9,6 @@
 
 /**
  * Class: Image_Tag
- *
- * @todo add helpers for srcset and sizes attributes
  */
 class Image_Tag implements ArrayAccess {
 
@@ -193,7 +191,7 @@ class Image_Tag implements ArrayAccess {
 
 	protected function set_srcset_attribute( $srcset ) {
 		if ( is_string( $srcset ) )
-			$sizes = explode( ', ', $srcset );
+			$srcset = explode( ', ', $srcset );
 
 		if ( !is_array( $srcset ) ) {
 			trigger_error( sprintf( 'Value of type <code>%s</code> is not valid for <code>srcset</code> attribute.', gettype( $srcset ) ), E_USER_NOTICE );
@@ -370,8 +368,23 @@ abstract class Image_Tag_WP extends Image_Tag {
 		return $this->get_height() / $this->get_width();
 	}
 
-	abstract function get_width();
-	abstract function get_height();
+	function set_orientation() {
+		$ratio = $this->get_ratio();
+
+		if ( $ratio > 1 )
+			$this->orientation = 'portrait';
+
+		else if ( $ratio < 1 )
+			$this->orientation = 'landscape';
+
+		else if ( 1 === $ratio )
+			$this->orientation = 'square';
+
+		else
+			$this->orientation = 'unknown';
+
+		$this->add_class( 'orientation-' . $this->orientation );
+	}
 
 }
 
@@ -426,6 +439,7 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 		parent::__construct( $attributes, $settings );
 		$this->set_source();
 		$this->set_srcset();
+		$this->set_orientation();
 	}
 
 	protected function set_source() {
@@ -659,6 +673,7 @@ class Image_Tag_WP_Theme extends Image_Tag_WP {
 
 		$this->path = $path;
 		$this->set_source( $source );
+		$this->set_orientation();
 	}
 
 	protected function set_source( string $source ) {

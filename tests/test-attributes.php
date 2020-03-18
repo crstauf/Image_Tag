@@ -8,6 +8,8 @@ class Image_Tag_Test_Attributes extends WP_UnitTestCase {
 		$image_tag = new Image_Tag( array(
 			'id' => __FUNCTION__,
 			'class' => __FUNCTION__,
+			'srcset' => 'https://picsum.photos/400/300 400w',
+			'sizes' => '100vw',
 			'style' => $styles,
 		) );
 
