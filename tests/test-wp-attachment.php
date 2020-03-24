@@ -61,6 +61,13 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 		$this->assertEquals( esc_attr( $attachment[0] ), esc_attr( $img->get_attribute( 'src' ) ) );
 	}
 
+	function test_getter() {
+		$img = Image_Tag::create( static::$attachment_id );
+
+		$this->assertEquals( static::$attachment_id, $img->attachment_id );
+		$this->assertContains( 'img.jpg', $img->src );
+	}
+
 	function test_attribute_defaults() {
 		$image_size = 'medium';
 
@@ -68,30 +75,9 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 			'image_sizes' => $image_size,
 		) );
 
-		# Attribute: id.
-		$this->assertEquals( 'attachment-' . static::$attachment_id, $img->get_attribute( 'id' ) );
-
 		# Attribute: class.
-		$this->assertContains( 'attachment-' . static::$attachment_id, $img->get_attribute( 'class' ) );
+		$this->assertContains( 'post-' . static::$attachment_id, $img->get_attribute( 'class' ) );
 		$this->assertContains( 'size-' . $image_size, $img->get_attribute( 'class' ) );
-	}
-
-	function test_id_attribute() {
-		$image_size = 'medium';
-
-		$img = Image_Tag::create( static::$attachment_id, array(), array(
-			'image_sizes' => $image_size,
-		) );
-
-		$this->assertEquals( 'attachment-' . static::$attachment_id, $img->get_attribute( 'id' ) );
-
-		$img = Image_Tag::create( static::$attachment_id, array(
-			'id' => __FUNCTION__,
-		), array(
-			'image_sizes' => $image_size,
-		) );
-
-		$this->assertEquals( __FUNCTION__, $img->get_attribute( 'id' ) );
 	}
 
 	function test_invalid_attachment() {
@@ -179,25 +165,55 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 	}
 
 	function test_picsum() {
-		$img = Image_Tag::create( static::$attachment_id );
-		$this->assertInstanceOf( 'Image_Tag_Picsum', $img->picsum() );
+		$img = Image_Tag::create( static::$attachment_id, array(), array( 'image-sizes' => array( 'medium', 'large' ) ) );
+		$picsum = $img->picsum();
+
+		$this->assertInstanceOf( 'Image_Tag_Picsum', $picsum );
+		$this->assertNotEmpty( $picsum->get_attribute( 'srcset' ) );
 	}
 
 	function test_placeholder() {
-		$img = Image_Tag::create( static::$attachment_id );
-		$this->assertInstanceOf( 'Image_Tag_Placeholder', $img->placeholder() );
+		$img = Image_Tag::create( static::$attachment_id, array(), array( 'image-sizes' => array( 'medium', 'large' ) ) );
+		$placeholder = $img->placeholder();
+
+		$this->assertInstanceOf( 'Image_Tag_Placeholder', $placeholder );
+		$this->assertNotEmpty( $placeholder->get_attribute( 'srcset' ) );
 	}
 
 	function test_colors() {
 		$img = Image_Tag::create( static::$attachment_id );
 		$colors = array(
 			'#202020' => 0.51737373737374,
-    		'#304060' => 0.19494949494949,
-    		'#303040' => 0.12673400673401,
+			'#304060' => 0.19494949494949,
+			'#303040' => 0.12673400673401,
 		);
 
 		$this->assertEquals( $colors, $img->get_colors() );
 		$this->assertEquals( array_keys( $colors )[0], $img->get_mode_color() );
+	}
+
+	function test_lqip() {
+		$img = Image_Tag::create( static::$attachment_id, array(), array( 'image-sizes' => 'medium' ) );
+		$lqip = $img->lqip();
+
+		$this->assertEquals( $lqip->get_attribute( 'src' ), $img->get_attribute( 'src' ) );
+		$this->assertEquals( array( '__largest', '__smallest', 'medium' ), array_keys( $lqip->get_versions() ) );
+		$this->assertContains( 'lqip', $lqip->get_attribute( 'class' ) );
+	}
+
+	function test_lazyload() {
+		$img = Image_Tag::create( static::$attachment_id, array(), array(
+			'image-sizes' => array( 'medium', 'large' ),
+		) );
+
+		$lazyload = $img->lazyload();
+
+		$this->assertEquals( $img->get_attribute( 'srcset' ), $lazyload->get_attribute( 'data-srcset' ) );
+		$this->assertEquals( 'auto', $lazyload->get_attribute( 'data-sizes' ) );
+
+		$img->set_attribute( 'sizes', '100vw' );
+
+		$this->assertEquals( '100vw', $img->lazyload()->get_attribute( 'data-sizes' ) );
 	}
 
 }

@@ -561,6 +561,12 @@ class Image_Tag implements ArrayAccess {
 	 * @return $this
 	 */
 	function lazyload( array $attributes = array(), array $settings = array() ) {
+		$attributes = wp_parse_args( $attributes, array(
+			'data-src' => null,
+			'data-sizes' => null,
+			'data-srcset' => null,
+		) );
+
 		$lazyload = clone $this;
 
 		$lazyload->set_attributes( $attributes );
@@ -794,6 +800,20 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 	}
 
 	/**
+	 * Getter.
+	 *
+	 * @param string $key
+	 * @uses Image_Tag::__get()
+	 * @return string
+	 */
+	function __get( $key ) {
+		if ( 'attachment_id' === $key )
+			return $this->attachment_id;
+
+		return parent::__get( $key );
+	}
+
+	/**
 	 * Set attachment image source.
 	 *
 	 * @uses $this->get_setting()
@@ -834,6 +854,9 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 			$versions['__largest'],
 			$versions['__smallest']
 		);
+
+		if ( 1 === count( $versions ) )
+			return;
 
 		foreach ( $versions as $version )
 			$this->add_srcset( $version->url . ' ' . $version->width . 'w' );
@@ -888,19 +911,6 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 	}
 
 	/**
-	 * Magical getter for "id" attribute.
-	 *
-	 * @uses $this->_get_attribute()
-	 * @return string
-	 */
-	protected function get_id_attribute() {
-		if ( empty( $this->_get_attribute( 'id' ) ) )
-			return 'attachment-' . $this->attachment_id;
-
-		return $this->_get_attribute( 'id' );
-	}
-
-	/**
 	 * Magical getter for "class" attribute.
 	 *
 	 * @uses $this->_get_attribute()
@@ -909,10 +919,10 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 	protected function get_class_attribute() {
 		$classes = $this->_get_attribute( 'class' );
 
-		$classes[] = 'attachment-' . $this->attachment_id;
-
 		$image_sizes = $this->get_setting( 'image-sizes' );
 		$classes[] = 'size-' . $image_sizes[0];
+
+		$classes = get_post_class( $classes, $this->attachment_id );
 
 		return implode( ' ', array_unique( $classes ) );
 	}
@@ -1078,6 +1088,31 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 		}
 
 		return $placeholder;
+	}
+
+	/**
+	 * Get low-quality image placeholder.
+	 *
+	 * @param array $attributes
+	 * @param array $settings
+	 * @uses Images_Tag::create()
+	 * @uses Image_Tag->add_class()
+	 * @return self
+	 */
+	function lqip( array $attributes = array(), array $settings = array( 'image-sizes' => 'medium' ) ) {
+		$_attributes = $this->attributes;
+		unset(
+			$_attributes['srcset'],
+			$_attributes['sizes']
+		);
+
+		$attributes = wp_parse_args( $attributes, $_attributes );
+		$settings   = wp_parse_args( $settings, $this->settings );
+
+		$lqip = Image_Tag::create( $this->attachment_id, $attributes, $settings );
+		$lqip->add_class( 'lqip' );
+
+		return $lqip;
 	}
 
 }
@@ -1317,10 +1352,7 @@ class Image_Tag_Picsum extends Image_Tag {
 		if ( !empty( $this->_get_setting( 'height' ) ) )
 			return ( int ) $this->_get_setting( 'height' );
 
-		if ( !empty( $this->get_width_attribute() ) )
-			return ( int ) $this->get_width_attribute();
-
-		return 1024;
+		return ( int ) $this->get_width_attribute();
 	}
 
 	/**
@@ -1638,23 +1670,5 @@ class Image_Tag_Placeholder extends Image_Tag {
 	}
 
 }
-
-/**
- * Script implementation: lazysizes
- *
- * @link https://github.com/aFarkas/lazysizes
- */
-trait img_lazysizes {
-
-	/**
-	 * @var array $settings__lazysizes
-	 */
-	protected $settings__lazysizes = array(
-		'enabled' => false,
-	);
-
-}
-
-require_once 'samples.php';
 
 ?>

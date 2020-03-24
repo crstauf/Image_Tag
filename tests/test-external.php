@@ -32,4 +32,22 @@ class Image_Tag_Base_Test extends WP_UnitTestCase {
 		$this->assertInstanceOf( 'Image_Tag_Placeholder', $img->placeholder() );
 	}
 
+	function test_lazyload() {
+		$src = 'https://picsum.photos/400/300';
+
+		$img = Image_Tag::create( $src, array(
+			'id' => 'tester',
+			'width' => 400,
+			'height' => 300,
+		) );
+
+		$lazyload = $img->lazyload( array(
+			'id' => 'tester-lazyload',
+		) );
+
+		$this->assertEquals( $img->get_attribute( 'width' ), $lazyload->get_attribute( 'width' ) );
+		$this->assertNotEquals( $img->get_attribute( 'id' ), $lazyload->get_attribute( 'id' ) );
+		$this->assertEquals( $img->get_attribute( 'src' ), $lazyload->get_attribute( 'data-src' ) );
+	}
+
 }

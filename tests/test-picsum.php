@@ -162,9 +162,6 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 		$this->assertEquals( $height, $img->get_attribute( 'height' ) );
 		$this->assertContains( '/' . ( 2 * $width ) . '/' . ( 2 * $height ) . '/', $img->get_attribute( 'src' ) );
 		$this->assertContains( 'width="' . $width . '" height="' . $height . '"', $img->__toString() );
-
-		$img = Image_Tag::create( 'picsum' );
-		$this->assertEquals( 1024, $img->get_attribute( 'height' ) );
 	}
 
 	/**
