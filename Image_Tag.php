@@ -65,6 +65,10 @@ class Image_Tag implements ArrayAccess {
 		if ( 'placeholder' === $source )
 			return new Image_Tag_Placeholder( $attributes, $settings );
 
+		# If source is "joeschmoe", create JoeSchmoe image.
+		if ( 'joeschmoe' === $source )
+			return new Image_Tag_JoeSchmoe( $attributes, $settings );
+
 		# If URL, create external image.
 		if ( ( bool ) wp_http_validate_url( $source ) ) {
 			$attributes['src'] = $source;
@@ -154,6 +158,7 @@ class Image_Tag implements ArrayAccess {
 			case '__placeholder':
 				return (
 					   $this->is_type( 'picsum' )
+					|| $this->is_type( 'joeschmoe' )
 					|| $this->is_type( 'placeholder' )
 				);
 
@@ -175,6 +180,9 @@ class Image_Tag implements ArrayAccess {
 
 			case 'picsum':
 				return is_a( $this, 'Image_Tag_Picsum' );
+
+			case 'joeschmoe':
+				return is_a( $this, 'Image_Tag_JoeSchmoe' );
 
 			case 'placeholder':
 				return is_a( $this, 'Image_Tag_Placeholder' );
@@ -1764,6 +1772,86 @@ class Image_Tag_Placeholder extends Image_Tag {
 	 */
 	function placeholder( array $attributes = array(), array $settings = array() ) {
 		return $this;
+	}
+
+}
+
+
+/*
+      ##  #######  ########  ######   ######  ##     ## ##     ##  #######  ########
+      ## ##     ## ##       ##    ## ##    ## ##     ## ###   ### ##     ## ##
+      ## ##     ## ##       ##       ##       ##     ## #### #### ##     ## ##
+      ## ##     ## ######    ######  ##       ######### ## ### ## ##     ## ######
+##    ## ##     ## ##             ## ##       ##     ## ##     ## ##     ## ##
+##    ## ##     ## ##       ##    ## ##    ## ##     ## ##     ## ##     ## ##
+ ######   #######  ########  ######   ######  ##     ## ##     ##  #######  ########
+*/
+
+/**
+ * Class: Image_Tag_JoeSchmoe
+ *
+ * @link https://joeschmoe.io/
+ */
+class Image_Tag_JoeSchmoe extends Image_Tag {
+
+	/**
+	 * @var string Base URL.
+	 */
+	const BASE_URL = 'https://joeschmoe.io/api/v1/';
+
+	/**
+	 * @var array
+	 */
+	protected $settings = array(
+		'gender' => null,
+		'seed' => null,
+	);
+
+	/**
+	 * Construct.
+	 */
+	function __construct( array $attributes = array(), array $settings = array() ) {
+		parent::__construct( $attributes, $settings );
+	}
+
+	/**
+	 * Get "gender" setting.
+	 *
+	 * @uses $this->_get_setting()
+	 * @return null|string
+	 */
+	function get_gender_setting() {
+		$setting = $this->_get_setting( 'gender' );
+
+		if ( !in_array( $setting, array(
+			'male',
+			'female',
+		) ) )
+			return null;
+
+		return $setting;
+	}
+
+	/**
+	 * Generate "src" attribute.
+	 *
+	 * @uses $this->get_setting()
+	 * @return string
+	 */
+	protected function get_src_attribute() {
+		$src = static::BASE_URL;
+
+		# Add gender.
+		if ( !empty( $this->get_setting( 'gender' ) ) )
+			$src .= $this->get_setting( 'gender' ) . '/';
+
+		# Add seed, or random.
+		if ( !empty( $this->get_setting( 'seed' ) ) )
+			$src .= $this->get_setting( 'seed' ) . '/';
+		else
+			$src .= 'random/';
+
+		return $src;
 	}
 
 }

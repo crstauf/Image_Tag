@@ -56,6 +56,10 @@ add_action( 'wp_footer', function() {
 	echo $img = Image_Tag::create( 'assets/images/2020-landscape-1.png' );
 	echo $img->lazyload();
 
+	echo $img = Image_Tag::create( 'joeschmoe', array(), array(
+		'gender' => 'male',
+	) );
+
 } );
 
 ?>
