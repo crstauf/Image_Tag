@@ -126,6 +126,16 @@ class Image_Tag implements ArrayAccess {
 	}
 
 	/**
+	 * Check if the image is valid.
+	 *
+	 * @uses $this->get_attribute()
+	 * @return bool
+	 */
+	function is_valid() {
+		return !empty( $this->get_attribute( 'src' ) );
+	}
+
+	/**
 	 * Check type of image.
 	 *
 	 * @param string $type
@@ -852,6 +862,10 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 		$this->attachment_id = $attachment_id;
 
 		parent::__construct( $attributes, $settings );
+
+		if ( !$this->is_valid() )
+			return;
+
 		$this->set_source();
 		$this->set_srcset();
 		$this->set_orientation();
@@ -869,6 +883,20 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 			return $this->attachment_id;
 
 		return parent::__get( $key );
+	}
+
+	/**
+	 * Check if the image is valid.
+	 *
+	 * @uses get_post_type()
+	 * @uses wp_attachment_is_image()
+	 * @return bool
+	 */
+	function is_valid() {
+		return (
+			'attachment' === get_post_type( $this->attachment_id )
+			&& wp_attachment_is_image( $this->attachment_id )
+		);
 	}
 
 	/**
@@ -1205,18 +1233,29 @@ class Image_Tag_WP_Theme extends Image_Tag_WP {
 	 * @uses Image_Tag::__construct()
 	 */
 	protected function __construct( string $source, array $attributes = array(), array $settings = array() ) {
-		$path = locate_template( $source );
+		$this->path = locate_template( $source );
 
-		if ( empty( $path ) ) {
-			trigger_error( sprintf( 'Unable to find <code>%s</code> in theme.', $path ), E_USER_WARNING );
-			return false;
+		if ( !$this->is_valid() ) {
+			trigger_error( sprintf( 'Unable to find <code>%s</code> in theme.', $this->path ), E_USER_WARNING );
+			return;
 		}
 
 		parent::__construct( $attributes, $settings );
 
-		$this->path = $path;
 		$this->set_source( $source );
 		$this->set_orientation();
+	}
+
+	/**
+	 * Check if the image is valid.
+	 *
+	 * @return bool
+	 */
+	function is_valid() {
+		return (
+			!empty( $this->path )
+			&& file_exists( $this->path )
+		);
 	}
 
 	/**

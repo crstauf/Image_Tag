@@ -68,4 +68,14 @@ class Image_Tag_WP_Theme_Test extends WP_UnitTestCase {
 		$this->assertFalse( $img->is_type( 'external' ) );
 	}
 
+	function test_valid() {
+		$img = Image_Tag::create( static::SRC );
+
+		$this->assertTrue( $img->is_valid() );
+
+		$img = @Image_Tag::create( 'does-not-exist.jpg' );
+
+		$this->assertFalse( $img->is_valid() );
+	}
+
 }

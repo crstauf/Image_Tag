@@ -80,13 +80,6 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 		$this->assertContains( 'size-' . $image_size, $img->get_attribute( 'class' ) );
 	}
 
-	function test_invalid_attachment() {
-		$img = @Image_Tag::create( PHP_INT_MAX, array(), array(
-			'image_sizes' => 'medium',
-		) );
-		$this->assertEquals( Image_Tag::BLANK, $img->get_attribute( 'src' ) );
-	}
-
 	function test_image_versions() {
 		$img = Image_Tag::create( static::$attachment_id, array(), array(
 			'image_sizes' => array( 'thumbnail', 'medium', 'medium_large', 'large', 'full' ),
@@ -232,6 +225,16 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 		$this->assertFalse( $img->is_type( 'wordpress-theme' ) );
 
 		$this->assertFalse( $img->is_type( 'remote' ) );
+	}
+
+	function test_valid() {
+		$img = Image_Tag::create( static::$attachment_id );
+
+		$this->assertTrue( $img->is_valid() );
+
+		$img = Image_Tag::create( 1 );
+
+		$this->assertFalse( $img->is_valid() );
 	}
 
 }

@@ -74,4 +74,11 @@ class Image_Tag_Base_Test extends WP_UnitTestCase {
 		$this->assertFalse( $img->is_type( 'unrecognized type' ) );
 	}
 
+	function test_valid() {
+		$src = 'https://picsum.photos/400/300';
+		$img = Image_Tag::create( $src );
+
+		$this->assertTrue( $img->is_valid() );
+	}
+
 }

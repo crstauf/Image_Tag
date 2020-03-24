@@ -374,4 +374,10 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 		$this->assertFalse( $img->is_type( 'wp' ) );
 	}
 
+	function test_valid() {
+		$img = Image_Tag::create( 'picsum' );
+
+		$this->assertTrue( $img->is_valid() );
+	}
+
 }

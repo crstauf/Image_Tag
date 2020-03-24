@@ -180,6 +180,12 @@ class Image_Tag_Placeholder_Test extends WP_UnitTestCase {
 		$this->assertFalse( $img->is_type( 'local' ) );
 	}
 
+	function test_valid() {
+		$img = Image_Tag::create( 'placeholder' );
+
+		$this->assertTrue( $img->is_valid() );
+	}
+
 }
 
 ?>
