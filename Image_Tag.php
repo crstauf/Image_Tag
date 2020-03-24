@@ -126,6 +126,55 @@ class Image_Tag implements ArrayAccess {
 	}
 
 	/**
+	 * Check type of image.
+	 *
+	 * @param string $type
+	 * @return bool
+	 */
+	function is_type( string $type ) {
+		switch ( strtolower( $type ) ) {
+
+			case 'remote':
+			case 'external':
+				return (
+					Image_Tag::class === get_class( $this )
+					|| $this->is_type( '__placeholder' )
+				);
+
+			case '__placeholder':
+				return (
+					   $this->is_type( 'picsum' )
+					|| $this->is_type( 'placeholder' )
+				);
+
+			case 'attachment':
+			case 'wp-attachment':
+			case 'wordpress-attachment':
+				return is_a( $this, 'Image_Tag_WP_Attachment' );
+
+			case 'theme':
+			case 'wp-theme':
+			case 'wordpress-theme':
+				return is_a( $this, 'Image_Tag_WP_Theme' );
+
+			case 'wp':
+			case 'local':
+			case 'internal':
+			case 'wordpress':
+				return is_a( $this, 'Image_Tag_WP' );
+
+			case 'picsum':
+				return is_a( $this, 'Image_Tag_Picsum' );
+
+			case 'placeholder':
+				return is_a( $this, 'Image_Tag_Placeholder' );
+
+		}
+
+		return false;
+	}
+
+	/**
 	 * Set an array of settings.
 	 *
 	 * @param array

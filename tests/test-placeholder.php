@@ -169,6 +169,17 @@ class Image_Tag_Placeholder_Test extends WP_UnitTestCase {
 		$this->assertEquals( 2, $img->get_ratio() );
 	}
 
+	function test_type() {
+		$img = Image_Tag::create( 'placeholder' );
+
+		$this->assertTrue( $img->is_type(        'remote' ) );
+		$this->assertTrue( $img->is_type(      'external' ) );
+		$this->assertTrue( $img->is_type(   'placeholder' ) );
+		$this->assertTrue( $img->is_type( '__placeholder' ) );
+
+		$this->assertFalse( $img->is_type( 'local' ) );
+	}
+
 }
 
 ?>

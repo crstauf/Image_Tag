@@ -50,4 +50,22 @@ class Image_Tag_WP_Theme_Test extends WP_UnitTestCase {
 		$this->assertEquals( array_keys( $colors )[0], $img->get_mode_color() );
 	}
 
+	function test_type() {
+		$img = Image_Tag::create( static::SRC );
+
+		$this->assertTrue( $img->is_type(              'wp' ) );
+		$this->assertTrue( $img->is_type(           'local' ) );
+		$this->assertTrue( $img->is_type(           'theme' ) );
+		$this->assertTrue( $img->is_type(        'internal' ) );
+		$this->assertTrue( $img->is_type(        'wp-theme' ) );
+		$this->assertTrue( $img->is_type(       'wordpress' ) );
+		$this->assertTrue( $img->is_type( 'wordpress-theme' ) );
+
+		$this->assertFalse( $img->is_type(           'attachment' ) );
+		$this->assertFalse( $img->is_type(        'wp-attachment' ) );
+		$this->assertFalse( $img->is_type( 'wordpress-attachment' ) );
+
+		$this->assertFalse( $img->is_type( 'external' ) );
+	}
+
 }

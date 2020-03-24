@@ -216,4 +216,22 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 		$this->assertEquals( '100vw', $img->lazyload()->get_attribute( 'data-sizes' ) );
 	}
 
+	function test_type() {
+		$img = Image_Tag::create( static::$attachment_id );
+
+		$this->assertTrue( $img->is_type(                   'wp' ) );
+		$this->assertTrue( $img->is_type(                'local' ) );
+		$this->assertTrue( $img->is_type(             'internal' ) );
+		$this->assertTrue( $img->is_type(            'wordpress' ) );
+		$this->assertTrue( $img->is_type(           'attachment' ) );
+		$this->assertTrue( $img->is_type(        'wp-attachment' ) );
+		$this->assertTrue( $img->is_type( 'wordpress-attachment' ) );
+
+		$this->assertFalse( $img->is_type(           'theme' ) );
+		$this->assertFalse( $img->is_type(        'wp-theme' ) );
+		$this->assertFalse( $img->is_type( 'wordpress-theme' ) );
+
+		$this->assertFalse( $img->is_type( 'remote' ) );
+	}
+
 }

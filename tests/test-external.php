@@ -63,4 +63,15 @@ class Image_Tag_Base_Test extends WP_UnitTestCase {
 		$this->assertEquals( 2, $img->get_ratio() );
 	}
 
+	function test_type() {
+		$src = 'https://picsum.photos/400/300';
+		$img = Image_Tag::create( $src );
+
+		$this->assertTrue( $img->is_type(   'remote' ) );
+		$this->assertTrue( $img->is_type( 'external' ) );
+
+		$this->assertFalse( $img->is_type( '__placeholder' ) );
+		$this->assertFalse( $img->is_type( 'unrecognized type' ) );
+	}
+
 }

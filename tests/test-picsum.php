@@ -303,6 +303,9 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 		$this->assertEquals( '<img src="https://picsum.photos/id/333/1920/1080/?blur=2" width="1920" height="1080" />', $img->__toString() );
 	}
 
+	/**
+	 * @group http
+	 */
 	function test_details() {
 		$seed = 'seed'; # Seed returns image 1081.
 		$image_id = 1081;
@@ -358,6 +361,17 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 		$img->set_setting( 'height', 200 );
 
 		$this->assertEquals( 2, $img->get_ratio() );
+	}
+
+	function test_type() {
+		$img = Image_Tag::create( 'picsum' );
+
+		$this->assertTrue( $img->is_type(        'remote' ) );
+		$this->assertTrue( $img->is_type(        'picsum' ) );
+		$this->assertTrue( $img->is_type(      'external' ) );
+		$this->assertTrue( $img->is_type( '__placeholder' ) );
+
+		$this->assertFalse( $img->is_type( 'wp' ) );
 	}
 
 }
