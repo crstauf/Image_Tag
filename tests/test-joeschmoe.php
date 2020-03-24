@@ -39,4 +39,16 @@ class Image_Tag_JoeSchmoe_Test extends WP_UnitTestCase {
 		$this->assertContains( __FUNCTION__, $img->get_attribute( 'src' ) );
 	}
 
+	function test_type() {
+		$img = Image_Tag::create( 'joeschmoe' );
+
+		$this->assertTrue( $img->is_type( 'joeschmoe' ) );
+	}
+
+	function test_valid() {
+		$img = Image_Tag::create( 'joeschmoe' );
+
+		$this->assertTrue( $img->is_valid() );
+	}
+
 }
