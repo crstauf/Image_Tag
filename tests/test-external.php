@@ -50,4 +50,17 @@ class Image_Tag_Base_Test extends WP_UnitTestCase {
 		$this->assertEquals( $img->get_attribute( 'src' ), $lazyload->get_attribute( 'data-src' ) );
 	}
 
+	function test_ratio() {
+		$src = 'https://picsum.photos/400/300';
+
+		$img = Image_Tag::create( $src );
+
+		$this->assertNull( $img->get_ratio() );
+
+		$img->set_attribute( 'width',  '100' );
+		$img->set_attribute( 'height', '200' );
+
+		$this->assertEquals( 2, $img->get_ratio() );
+	}
+
 }

@@ -158,6 +158,17 @@ class Image_Tag_Placeholder_Test extends WP_UnitTestCase {
 		$this->assertInstanceOf( 'Image_Tag_Picsum', $img->picsum() );
 	}
 
+	function test_ratio() {
+		$img = Image_Tag::create( 'picsum' );
+
+		$this->assertEquals( 1, $img->get_ratio() );
+
+		$img->set_setting( 'width',  100 );
+		$img->set_setting( 'height', 200 );
+
+		$this->assertEquals( 2, $img->get_ratio() );
+	}
+
 }
 
 ?>

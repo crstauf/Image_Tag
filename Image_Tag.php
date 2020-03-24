@@ -458,6 +458,26 @@ class Image_Tag implements ArrayAccess {
 	}
 
 	/**
+	 * Get image ratio.
+	 *
+	 * @uses $this->get_height()
+	 * @uses $this->get_width()
+	 * @return float
+	 */
+	function get_ratio() {
+		$height = $this->get_height();
+		$width  = $this->get_width();
+
+		if (
+			   !is_numeric( $width  )
+			|| !is_numeric( $height )
+		)
+			return null;
+
+		return $height / $width;
+	}
+
+	/**
 	 * Request image with GET method.
 	 *
 	 * @param bool $force Flag to use cached value or make new request.
@@ -661,17 +681,6 @@ abstract class Image_Tag_WP extends Image_Tag {
 	 * @var null|string $orientation
 	 */
 	protected $orientation = null;
-
-	/**
-	 * Get image ratio.
-	 *
-	 * @uses $this->get_height()
-	 * @uses $this->get_width()
-	 * @return float
-	 */
-	function get_ratio() {
-		return $this->get_height() / $this->get_width();
-	}
 
 	/**
 	 * Determine and set image orientation.
