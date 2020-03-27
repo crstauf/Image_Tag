@@ -1126,26 +1126,38 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 
 		return $version;
 	}
+
+	/**
+	 * Get transient key for attachment common colors.
+	 *
+	 * @param int $attachment_id
+	 * @return string
+	 */
+	static function colors_transient_key( int $attachment_id ) {
+		return sprintf( 'attachment_%d_common_colors', $attachment_id );
+	}
+
 	/**
 	 * Get common colors (cached to attachment's meta data).
 	 *
 	 * @param int $count
+	 * @uses static::colors_transient_key()
 	 * @uses $this->_get_colors()
-	 * @uses $this->get_versions()
+	 * @uses $this->get_version()
 	 * @return array
 	 */
 	function get_colors( int $count = 3 ) {
-		$meta_key = '_common_colors';
-		$meta = get_post_meta( $this->attachment_id, $meta_key, true );
+		$transient_key = static::colors_transient_key( $this->attachment_id );
+		$transient = get_transient( $transient_key );
 
 		if (
-			  !empty( $meta )
-			&& count( $meta ) >= $count
+			  !empty( $transient )
+			&& count( $transient ) >= $count
 		)
-			return $meta;
+			return $transient;
 
-		$colors = $this->_get_colors( $this->get_versions()['__smallest']->path, $count );
-		add_post_meta( $this->attachment_id, $meta_key, $colors, true );
+		$colors = $this->_get_colors( $this->get_version( '__smallest' )->path, $count );
+		set_transient( $transient_key, $colors, DAY_IN_SECONDS );
 
 		return $colors;
 	}

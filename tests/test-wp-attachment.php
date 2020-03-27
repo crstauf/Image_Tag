@@ -191,6 +191,17 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 
 		$this->assertEquals( $colors, $img->get_colors() );
 		$this->assertEquals( array_keys( $colors )[0], $img->get_mode_color() );
+
+		$transient_key = Image_Tag_WP_Attachment::colors_transient_key( static::$attachment_id );
+		$this->assertEquals( $colors, get_transient( $transient_key ) );
+
+		$transient_timeout = get_option( '_transient_timeout_' . $transient_key );
+		$life = $transient_timeout - time();
+		$this->assertGreaterThanOrEqual( DAY_IN_SECONDS,     $life );
+		$this->assertLessThanOrEqual(    DAY_IN_SECONDS + 1, $life );
+
+		# Test retrieval from transient.
+		$this->assertEquals( $colors, $img->get_colors() );
 	}
 
 	function test_lqip() {
