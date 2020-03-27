@@ -14,4 +14,13 @@ class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 		$this->assertEquals( 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', Image_Tag::BLANK );
 	}
 
+	function test_wp_version() {
+		global $wp_version;
+		$this->assertEquals( 0, version_compare( '5.3.2', $wp_version ) );
+	}
+
+	function test_php_version() {
+		$this->assertEquals( 0, version_compare( '7.3.2', phpversion() ) );
+	}
+
 }
