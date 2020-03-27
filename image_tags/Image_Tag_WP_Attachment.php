@@ -128,7 +128,11 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 			return;
 
 		foreach ( $versions as $version )
-			$this->add_srcset( $version->url . ' ' . $version->width . 'w' );
+			if (
+				   !empty( $version->url )
+				&& !empty( $version->width )
+			)
+				$this->add_srcset( $version->url . ' ' . $version->width . 'w' );
 
 	}
 
@@ -245,11 +249,15 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 	 * Get data for specified version of image from image sizes.
 	 *
 	 * @param string $image_size
+	 * @uses $this->get_versions()
 	 * @return object
 	 */
 	function get_version( string $image_size ) {
-		if ( isset( $this->versions[$image_size] ) )
+		if ( !empty( $this->versions[$image_size] ) )
 			return $this->versions[$image_size];
+
+		if ( in_array( $image_size, array( '__largest', '__smallest' ) ) )
+			return $this->get_versions()[$image_size];
 
 		$upload_dir = trailingslashit( wp_get_upload_dir()['basedir'] );
 
@@ -265,7 +273,7 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 			$version = image_get_intermediate_size( $this->attachment_id, $image_size );
 
 			if ( empty( $version ) )
-				return;
+				return ( object ) array();
 
 			$version['path'] = $upload_dir . $version['path'];
 		}
@@ -296,14 +304,17 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 	 * Get common colors (cached to attachment's meta data).
 	 *
 	 * @param int $count
+	 * @param bool $force
 	 * @uses static::colors_transient_key()
 	 * @uses $this->_get_colors()
 	 * @uses $this->get_version()
 	 * @return array
 	 */
-	function get_colors( int $count = 3 ) {
+	function get_colors( int $count = 3, bool $force = false ) {
 		$transient_key = static::colors_transient_key( $this->attachment_id );
-		$transient = get_transient( $transient_key );
+
+		if ( !$force )
+			$transient = get_transient( $transient_key );
 
 		if (
 			  !empty( $transient )
@@ -311,7 +322,7 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 		)
 			return $transient;
 
-		$colors = $this->_get_colors( $this->get_version( '__smallest' )->path, $count );
+		$colors = $this->_get_colors( $this->get_version( '__largest' )->path, $count );
 		set_transient( $transient_key, $colors, DAY_IN_SECONDS );
 
 		return $colors;
