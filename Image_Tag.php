@@ -1454,14 +1454,25 @@ class Image_Tag_WP_Theme extends Image_Tag_WP {
 	}
 
 	/**
+	 * Transient key for common colors.
+	 *
+	 * @param string $path
+	 * @return string
+	 */
+	static function colors_transient_key( string $path ) {
+		return sprintf( 'theme_img_colors_%s', md5( $path ) );
+	}
+
+	/**
 	 * Get common colors (cached to transient).
 	 *
 	 * @param int $count
-	  *@uses $this->_get_colors()
+	 * @uses static::colors_transient_key()
+	 * @uses $this->_get_colors()
 	 * @return array
 	 */
 	function get_colors( int $count = 3 ) {
-		$transient_key = 'theme_img_colors_' . md5( $this->path );
+		$transient_key = static::colors_transient_key( $this->path );
 		$transient = get_transient( $transient_key );
 
 		if (
@@ -1471,7 +1482,7 @@ class Image_Tag_WP_Theme extends Image_Tag_WP {
 			return $transient;
 
 		$colors = $this->_get_colors( $this->path, $count );
-		set_transient( $transient_key, $colors );
+		set_transient( $transient_key, $colors, DAY_IN_SECONDS );
 
 		return $colors;
 	}
