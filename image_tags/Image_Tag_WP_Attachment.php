@@ -437,6 +437,7 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 			'lqip-height' => null,  // height of generated LQIP
 			'lqip-crop'   => false, // crop or maintain aspect ratio of LQIP
 			'lqip-force'  => false, // force regenerate LQIP
+			'lqip-life'   => DAY_IN_SECONDS,
 		) );
 
 		$attributes = wp_parse_args( $attributes, $_attributes );
@@ -498,7 +499,7 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 		$data = file_get_contents( $lqip_meta['path'] );
 		$base64 = 'data:image/' . $type . ';base64,' . base64_encode( $data );
 
-		set_transient( static::lqip_transient_key( $this->attachment_id ), $base64, DAY_IN_SECONDS );
+		set_transient( static::lqip_transient_key( $this->attachment_id ), $base64, $settings['lqip-life'] );
 
 		$this->versions['__lqip'] = ( object ) array(
 			'url' => $base64,
