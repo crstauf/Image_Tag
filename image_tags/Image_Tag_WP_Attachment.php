@@ -480,6 +480,8 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 	 * @uses $this->get_version()
 	 * @uses static::lqip_transient_key()
 	 * @return self
+	 *
+	 * @todo check if image size already exists
 	 */
 	protected function generate_lqip( array $attributes, array $settings ) {
 		$editor = wp_get_image_editor( $this->get_version( 'full' )->path );
