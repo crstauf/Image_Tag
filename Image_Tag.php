@@ -1395,6 +1395,20 @@ class Image_Tag_WP_Theme extends Image_Tag_WP {
 	}
 
 	/**
+	 * Getter.
+	 *
+	 * @param string $key
+	 * @uses Image_Tag_WP::__get()
+	 * @return mixed
+	 */
+	function __get( $key ) {
+		if ( 'path' === $key )
+			return $this->path;
+
+		return parent::__get( $key );
+	}
+
+	/**
 	 * Check if the image is valid.
 	 *
 	 * @return bool
