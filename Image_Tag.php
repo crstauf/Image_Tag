@@ -538,6 +538,8 @@ class Image_Tag implements ArrayAccess {
 		if (
 			   !is_numeric( $width  )
 			|| !is_numeric( $height )
+			|| empty( $width  )
+			|| empty( $height )
 		)
 			return null;
 
@@ -573,6 +575,7 @@ class Image_Tag implements ArrayAccess {
 	 * @param array $settings
 	 * @uses $this->get_width()
 	 * @uses $this->get_height()
+	 * @uses Image_Tag::create()
 	 * @return Image_Tag_Picsum
 	 */
 	function picsum( array $attributes = array(), array $settings = array() ) {
@@ -592,6 +595,7 @@ class Image_Tag implements ArrayAccess {
 	 * @param array $settings
 	 * @uses $this->get_width()
 	 * @uses $this->get_height()
+	 * @uses Image_Tag::create()
 	 * @return Image_Tag_Placeholder
 	 */
 	function placeholder( array $attributes = array(), array $settings = array() ) {
@@ -698,6 +702,8 @@ class Image_Tag implements ArrayAccess {
 			$lazyload->set_attribute( 'data-sizes', 'auto' );
 
 		$lazyload->set_setting( 'after_output', $this->noscript() );
+
+		do_action( 'created_lazyload_image', $lazyload );
 
 		return $lazyload;
 	}
@@ -903,8 +909,8 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 	 * Getter.
 	 *
 	 * @param string $key
-	 * @uses Image_Tag::__get()
-	 * @return string
+	 * @uses Image_Tag_WP::__get()
+	 * @return mixed
 	 */
 	function __get( $key ) {
 		if ( 'attachment_id' === $key )
@@ -1579,7 +1585,11 @@ class Image_Tag_Picsum extends Image_Tag {
 			$src = add_query_arg( 'blur', $this->get_setting( 'blur' ), $src );
 
 		# Add random.
-		if ( !empty( $this->get_setting( 'random' ) ) )
+		if (
+			  !empty( $this->get_setting( 'random'   ) )
+			&& empty( $this->get_setting( 'image_id' ) )
+			&& empty( $this->get_setting( 'seed'     ) )
+		)
 			$src = add_query_arg( 'random', $this->get_setting( 'random' ), $src );
 
 		# Add grayscale.

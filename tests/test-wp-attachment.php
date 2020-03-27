@@ -208,11 +208,11 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 		$img = Image_Tag::create( static::$attachment_id, array(), array( 'image-sizes' => 'medium' ) );
 		$lqip = $img->lqip();
 
-		$this->assertContains( 'base64', $lqip->get_attribute( 'src' ) );
-		$this->assertContains( 'lqip', $lqip->get_attribute( 'class' ) );
+		$this->assertContains( 'base64', $lqip->get_attribute(   'src' ) );
+		$this->assertContains(   'lqip', $lqip->get_attribute( 'class' ) );
 
 		$transient_key = Image_Tag_WP_Attachment::lqip_transient_key( static::$attachment_id );
-		$this->assertNotEmpty( get_transient( $transient_key ) );
+		$this->assertEquals( $lqip->get_attribute( 'src' ), get_transient( $transient_key ) );
 
 		$transient_timeout = get_option( '_transient_timeout_' . $transient_key );
 		$life = $transient_timeout - time();
