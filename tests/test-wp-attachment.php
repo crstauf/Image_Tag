@@ -189,9 +189,27 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 		$img = Image_Tag::create( static::$attachment_id, array(), array( 'image-sizes' => 'medium' ) );
 		$lqip = $img->lqip();
 
-		$this->assertEquals( $lqip->get_attribute( 'src' ), $img->get_attribute( 'src' ) );
-		$this->assertEquals( array( '__largest', '__smallest', 'medium' ), array_keys( $lqip->get_versions() ) );
+		$this->assertContains( 'base64', $lqip->get_attribute( 'src' ) );
 		$this->assertContains( 'lqip', $lqip->get_attribute( 'class' ) );
+
+		$transient_key = Image_Tag_WP_Attachment::lqip_transient_key( static::$attachment_id );
+		$this->assertNotEmpty( get_transient( $transient_key ) );
+
+		$transient_timeout = get_option( '_transient_timeout_' . $transient_key );
+		$life = $transient_timeout - time();
+		$this->assertGreaterThanOrEqual( DAY_IN_SECONDS,     $life );
+		$this->assertLessThanOrEqual(    DAY_IN_SECONDS + 1, $life );
+
+		# Test retrieval from transient.
+		$this->assertEquals( $lqip->get_attribute( 'src' ), $img->lqip()->get_attribute( 'src' ) );
+
+		$decoded = base64_decode( explode( ',', $lqip->get_attribute( 'src' ) )[1] );
+		$size = getimagesizefromstring( $decoded );
+		$this->assertEquals( 100, $lqip->get_setting( 'lqip-width' ) );
+		$this->assertEquals( $lqip->get_setting( 'lqip-width' ), $size[0] );
+
+		$this->assertEquals( $lqip->get_attribute( 'src' ),  $img->get_version( '__lqip' )->url );
+		$this->assertEquals( $lqip->get_attribute( 'src' ), $lqip->get_version( '__lqip' )->url );
 	}
 
 	function test_lazyload() {

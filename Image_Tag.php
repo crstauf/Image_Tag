@@ -1025,6 +1025,7 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 	 * Get data for versions of image from specified image sizes.
 	 *
 	 * @uses $this->get_setting()
+	 * @uses $this->get_version()
 	 * @return array
 	 */
 	function get_versions() {
@@ -1032,38 +1033,11 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 			return $this->versions;
 
 		$image_sizes = $this->get_setting( 'image-sizes' );
-		$upload_dir = trailingslashit( wp_get_upload_dir()['basedir'] );
-
 		$largest  = null;
 		$smallest = null;
 
 		foreach ( $image_sizes as $image_size ) {
-
-			# If full size.
-			if ( 'full' === $image_size ) {
-				$version = wp_get_attachment_metadata( $this->attachment_id );
-				$version['path'] = $upload_dir . $version['file'];
-				$version['file'] = basename( $version['file'] );
-				$version['url'] = wp_get_attachment_image_src( $this->attachment_id, 'full' )[0];
-
-			# If intermediate image size.
-			} else {
-				$version = image_get_intermediate_size( $this->attachment_id, $image_size );
-
-				if ( empty( $version ) )
-					continue;
-
-				$version['path'] = $upload_dir . $version['path'];
-			}
-
-			unset(
-				$version['sizes'],
-				$version['mime-type'],
-				$version['image_meta']
-			);
-
-			$version = ( object ) $version;
-			$this->versions[$image_size] = $version;
+			$version = $this->get_version( $image_size );
 
 			# Determine if largest.
 			if (
@@ -1080,9 +1054,58 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 				$smallest = $this->versions['__smallest'] = &$this->versions[$image_size];
 		}
 
+		# If no versions, use "full" image size.
+		if ( empty( array_filter( $this->versions ) ) ) {
+			trigger_error( sprintf( 'Attachment <code>%d</code> does not have the following sizes: <code>%s</code>; using <code>full</code> image size.', $this->attachment_id, implode( '</code>, <code>', $image_sizes ) ), E_USER_WARNING );
+
+			$this->set_setting( 'image-sizes', array( 'full' ) );
+
+			return $this->get_versions();
+		}
+
 		return $this->versions;
 	}
 
+	/**
+	 * Get data for specified version of image from image sizes.
+	 *
+	 * @param string $image_size
+	 * @return object
+	 */
+	function get_version( string $image_size ) {
+		if ( isset( $this->versions[$image_size] ) )
+			return $this->versions[$image_size];
+
+		$upload_dir = trailingslashit( wp_get_upload_dir()['basedir'] );
+
+		# If full size.
+		if ( 'full' === $image_size ) {
+			$version = wp_get_attachment_metadata( $this->attachment_id );
+			$version['path'] = $upload_dir . $version['file'];
+			$version['file'] = basename( $version['file'] );
+			$version['url'] = wp_get_attachment_image_src( $this->attachment_id, 'full' )[0];
+
+		# If intermediate image size.
+		} else {
+			$version = image_get_intermediate_size( $this->attachment_id, $image_size );
+
+			if ( empty( $version ) )
+				return;
+
+			$version['path'] = $upload_dir . $version['path'];
+		}
+
+		unset(
+			$version['sizes'],
+			$version['mime-type'],
+			$version['image_meta']
+		);
+
+		$version = ( object ) $version;
+		$this->versions[$image_size] = $version;
+
+		return $version;
+	}
 	/**
 	 * Get common colors (cached to attachment's meta data).
 	 *
@@ -1185,26 +1208,111 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 	}
 
 	/**
+	 * Get transient key for base64 encoded LQIP.
+	 *
+	 * @param int $attachment_id
+	 * @return string
+	 */
+	static function lqip_transient_key( int $attachment_id ) {
+		return sprintf( 'attachment_%d_lqip_base64', $attachment_id );
+	}
+
+	/**
 	 * Get low-quality image placeholder.
 	 *
 	 * @param array $attributes
 	 * @param array $settings
-	 * @uses Images_Tag::create()
-	 * @uses Image_Tag->add_class()
+	 * @uses $this->generate_lqip()
+	 * @uses static::lqip_transient_key()
 	 * @return self
 	 */
-	function lqip( array $attributes = array(), array $settings = array( 'image-sizes' => 'medium' ) ) {
+	function lqip( array $attributes = array(), array $settings = array() ) {
 		$_attributes = $this->attributes;
+
 		unset(
 			$_attributes['srcset'],
 			$_attributes['sizes']
 		);
 
+		$defaults = apply_filters( 'image_tag/lqip_defaults', array(
+			'lqip-width'  => 100,   // width of generated LQIP
+			'lqip-height' => null,  // height of generated LQIP
+			'lqip-crop'   => false, // crop or maintain aspect ratio of LQIP
+			'lqip-force'  => false, // force regenerate LQIP
+		) );
+
 		$attributes = wp_parse_args( $attributes, $_attributes );
 		$settings   = wp_parse_args( $settings, $this->settings );
+		$settings   = wp_parse_args( $settings, $defaults );
 
-		$lqip = Image_Tag::create( $this->attachment_id, $attributes, $settings );
+		# Force generate the LQIP.
+		if ( $settings['lqip-force'] )
+			return $this->generate_lqip( $attributes, $settings );
+
+		# Get transient value.
+		$transient = get_transient( static::lqip_transient_key( $this->attachment_id ) );
+
+		# Check transient exists.
+		if ( !empty( $transient ) ) {
+			$this->versions['__lqip'] = ( object ) array(
+				'url' => $transient,
+			);
+			$lqip = clone $this;
+
+			$this->set_attributes( $attributes );
+			$this->set_settings( $settings );
+
+			$lqip->set_attribute( 'src', $transient );
+			$lqip->add_class( 'lqip' );
+
+			return $lqip;
+		}
+
+		# Generate the LQIP.
+		return $this->generate_lqip( $attributes, $settings );
+	}
+
+	/**
+	 * Generate LQIP.
+	 *
+	 * @link https://stackoverflow.com/questions/3967515/how-to-convert-an-image-to-base64-encoding
+	 * @param array $attributes
+	 * @param array $settings
+	 * @uses $this->get_version()
+	 * @uses static::lqip_transient_key()
+	 * @return self
+	 */
+	protected function generate_lqip( array $attributes, array $settings ) {
+		$editor = wp_get_image_editor( $this->get_version( 'full' )->path );
+
+		if (
+			   is_wp_error( $editor )
+			|| is_wp_error( $editor->resize( $settings['lqip-width'], $settings['lqip-height'], $settings['lqip-crop'] ) )
+		) {
+			$lqip = clone $this;
+			$lqip->set_setting( 'image-sizes', 'medium' );
+			return $lqip;
+		}
+
+		$lqip_meta = $editor->save();
+
+		$type = pathinfo( $lqip_meta['path'], PATHINFO_EXTENSION );
+		$data = file_get_contents( $lqip_meta['path'] );
+		$base64 = 'data:image/' . $type . ';base64,' . base64_encode( $data );
+
+		set_transient( static::lqip_transient_key( $this->attachment_id ), $base64, DAY_IN_SECONDS );
+
+		$this->versions['__lqip'] = ( object ) array(
+			'url' => $base64,
+		);
+
+		$lqip = clone $this;
+
+		$lqip->set_attributes( $attributes );
+		$lqip->set_settings( $settings );
+
 		$lqip->add_class( 'lqip' );
+		$lqip->set_attribute( 'src', $base64 );
 
 		return $lqip;
 	}
@@ -1339,6 +1447,8 @@ class Image_Tag_WP_Theme extends Image_Tag_WP {
  * Class: Image_Tag_Picsum
  *
  * @link https://picsum.photos
+ *
+ * @todo add lqip
  */
 class Image_Tag_Picsum extends Image_Tag {
 
