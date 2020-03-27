@@ -605,6 +605,26 @@ class Image_Tag implements ArrayAccess {
 	}
 
 	/**
+	 * Transpose attributes and settings into Joe Schmoe image.
+	 *
+	 * @param array $attributes
+	 * @param array $settings
+	 * @uses Image_Tag::create()
+	 * @return Image_Tag_JoeSchmoe
+	 */
+	function joeschmoe( array $attributes = array(), array $settings = array() ) {
+		$_attributes = $this->attributes;
+
+		unset(
+			$_attributes['srcset']
+		);
+
+		$attributes = wp_parse_args( $attributes, $_attributes );
+
+		return Image_Tag::create( 'joeschmoe', $attributes, $settings );
+	}
+
+	/**
 	 * Create noscript version of image tag.
 	 *
 	 * @param array $attributes
@@ -1962,6 +1982,26 @@ class Image_Tag_JoeSchmoe extends Image_Tag {
 			$src .= 'random/';
 
 		return $src;
+	}
+
+	/**
+	 * Get ratio.
+	 *
+	 * @return int
+	 */
+	function get_ratio() {
+		return 1;
+	}
+
+	/**
+	 * Prevent transposing into a JoeSchmoe image.
+	 *
+	 * @param array $attributes
+	 * @param array $settings
+	 * @return $this
+	 */
+	function joeschmoe( array $attributes = array(), array $settings = array() ) {
+		return $this;
 	}
 
 }

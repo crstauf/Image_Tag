@@ -173,6 +173,14 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 		$this->assertNotEmpty( $placeholder->get_attribute( 'srcset' ) );
 	}
 
+	function test_joeschmoe() {
+		$img = Image_Tag::create( static::$attachment_id, array(), array( 'image-sizes' => array( 'medium', 'large' ) ) );
+		$joeschmoe = $img->joeschmoe();
+
+		$this->assertInstanceOf( 'Image_Tag_JoeSchmoe', $joeschmoe );
+		$this->assertEmpty( $joeschmoe->get_attribute( 'srcset' ) );
+	}
+
 	function test_colors() {
 		$img = Image_Tag::create( static::$attachment_id );
 		$colors = array(

@@ -38,6 +38,11 @@ class Image_Tag_WP_Theme_Test extends WP_UnitTestCase {
 		$this->assertInstanceOf( 'Image_Tag_Placeholder', $img->placeholder() );
 	}
 
+	function test_joeschmoe() {
+		$img = Image_Tag::create( static::SRC );
+		$this->assertInstanceOf( 'Image_Tag_JoeSchmoe', $img->joeschmoe() );
+	}
+
 	function test_colors() {
 		$img = Image_Tag::create( static::SRC );
 		$colors = array(
