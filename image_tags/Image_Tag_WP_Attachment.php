@@ -438,7 +438,7 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 			'lqip-crop'   => false, // crop or maintain aspect ratio of LQIP
 			'lqip-force'  => false, // force regenerate LQIP
 			'lqip-life'   => DAY_IN_SECONDS,
-		) );
+		), $this );
 
 		$attributes = wp_parse_args( $attributes, $_attributes );
 		$settings   = wp_parse_args( $settings, $this->settings );
