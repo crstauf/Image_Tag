@@ -51,4 +51,16 @@ class Image_Tag_JoeSchmoe_Test extends WP_UnitTestCase {
 		$this->assertTrue( $img->is_valid() );
 	}
 
+	function test_ratio() {
+		$img = Image_Tag::create( 'joeschmoe' );
+
+		$this->assertEquals( 1, $img->get_ratio() );
+	}
+
+	function test_joeschmoe() {
+		$img = Image_Tag::create( 'joeschmoe' );
+
+		$this->assertEquals( $img, $img->joeschmoe() );
+	}
+
 }
