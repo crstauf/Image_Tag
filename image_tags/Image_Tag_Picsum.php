@@ -9,8 +9,6 @@ defined( 'ABSPATH' ) || die();
 
 /**
  * Class: Image_Tag_Picsum
- *
- * @todo add lqip
  */
 class Image_Tag_Picsum extends Image_Tag {
 
@@ -233,8 +231,13 @@ class Image_Tag_Picsum extends Image_Tag {
 
 		$image_id = $this->get_setting( 'image_id' );
 
-		if ( empty( $image_id ) )
+		if ( empty( $image_id ) ) {
 			$image_id = ( int ) wp_remote_retrieve_header( $this->http(), 'picsum-id' );
+		}
+
+		$this->set_setting( 'image_id', $image_id );
+		$this->set_setting(   'random', false );
+		$this->set_setting(     'seed', false );
 
 		$response = wp_remote_get( sprintf( '%sid/%d/info', self::BASE_URL, $image_id ) );
 
@@ -253,6 +256,51 @@ class Image_Tag_Picsum extends Image_Tag {
 	 */
 	function picsum( array $attributes = array(), array $settings = array() ) {
 		return $this;
+	}
+
+	/**
+	 * Get an LQIP.
+	 *
+	 * Note: depending on the order of things, the LQIP may not be the same
+	 * as the original image. Storing the objects or calling `Image_Tag_Picsum->details()`
+	 * before printing the tags can resolve this.
+	 *
+	 * @param array $attributes
+	 * @param array $settings
+	 * @return Image_Tag_Picsum
+	 */
+	function lqip( array $attributes = array(), array $settings = array() ) {
+
+		# Call this so that the image's ID is determined and stored.
+		if ( empty( $this->get_setting( 'image_id' ) ) )
+			$this->details();
+
+		$_attributes = $this->attributes;
+		$_settings   = $this->settings;
+
+		unset(
+			$_attributes['srcset'],
+			$_attributes['sizes'],
+			$_settings['width'],
+			$_settings['height']
+		);
+
+		$ratio = $this->get_ratio();
+		$lqip_width = 100;
+
+		$defaults = apply_filters( 'image_tag/lqip_defaults', array(
+			'width'  => $lqip_width,
+			'height' => round( $lqip_width * $ratio ),
+		), $this );
+
+		$attributes = wp_parse_args( $attributes, $_attributes );
+		$settings   = wp_parse_args(   $settings, $_settings   );
+		$settings   = wp_parse_args(   $settings, $defaults    );
+
+		$lqip = new Image_Tag_Picsum( $attributes, $settings );
+		$lqip->add_class( 'lqip' );
+
+		return $lqip;
 	}
 
 }

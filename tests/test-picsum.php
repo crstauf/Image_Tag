@@ -380,4 +380,16 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 		$this->assertTrue( $img->is_valid() );
 	}
 
+	function test_lqip() {
+		$img = Image_Tag::create( 'picsum', array(
+			'width' => 1000,
+		) );
+		$lqip = $img->lqip();
+
+		$this->assertInstanceOf( 'Image_Tag_Picsum', $lqip );
+		$this->assertNotEmpty( $img->get_setting( 'image_id' ) );
+		$this->assertEquals( $img->get_setting( 'image_id' ), $lqip->get_setting( 'image_id' ) );
+		$this->assertEquals( 100, $lqip->get_setting( 'width' ) );
+	}
+
 }
