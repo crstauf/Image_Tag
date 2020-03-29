@@ -423,6 +423,8 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 	 * @uses $this->generate_lqip()
 	 * @uses static::lqip_transient_key()
 	 * @return self
+	 *
+	 * @todo check if LQIP file already exists
 	 */
 	function lqip( array $attributes = array(), array $settings = array() ) {
 		$_attributes = $this->attributes;
@@ -444,46 +446,61 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 		$settings   = wp_parse_args( $settings, $this->settings );
 		$settings   = wp_parse_args( $settings, $defaults );
 
-		# Force generate the LQIP.
-		if ( $settings['lqip-force'] )
-			return $this->generate_lqip( $attributes, $settings );
+		# Check if skipping cache.
+		if ( !$settings['lqip-force'] ) {
 
-		# Get transient value.
-		$transient = get_transient( static::lqip_transient_key( $this->attachment_id ) );
+			# Get transient value.
+			$transient = get_transient( static::lqip_transient_key( $this->attachment_id ) );
 
-		# Check transient exists.
-		if ( !empty( $transient ) ) {
-			$this->versions['__lqip'] = ( object ) array(
-				'url' => $transient,
-			);
-			$lqip = clone $this;
+			# Check transient exists.
+			if ( !empty( $transient ) ) {
+				$this->versions['__lqip'] = ( object ) array(
+					'url' => $transient,
+				);
+				$lqip = clone $this;
 
-			$this->set_attributes( $attributes );
-			$this->set_settings( $settings );
+				$this->set_attributes( $attributes );
+				$this->set_settings( $settings );
 
-			$lqip->set_attribute( 'src', $transient );
-			$lqip->add_class( 'lqip' );
+				$lqip->set_attribute( 'src', $transient );
+				$lqip->add_class( 'lqip' );
 
-			return $lqip;
+				return $lqip;
+			}
+
 		}
 
 		# Generate the LQIP.
-		return $this->generate_lqip( $attributes, $settings );
+		$lqip_meta = $this->generate_lqip( $settings );
+
+		# Get base64 encoded LQIP.
+		$base64 = $this->base64_encode_lqip( $lqip_meta['path'] );
+
+		# Save to transient.
+		set_transient( static::lqip_transient_key( $this->attachment_id ), $base64, $settings['lqip-life'] );
+
+		# Start creating the object.
+		$lqip = clone $this;
+
+		$lqip->set_attributes( $attributes );
+		$lqip->set_settings( $settings );
+
+		$lqip->add_class( 'lqip' );
+		$lqip->set_attribute( 'src', $base64 );
+
+		return $lqip;
 	}
 
 	/**
-	 * Generate LQIP.
+	 * Generate LQIP image.
 	 *
 	 * @link https://stackoverflow.com/questions/3967515/how-to-convert-an-image-to-base64-encoding
-	 * @param array $attributes
 	 * @param array $settings
 	 * @uses $this->get_version()
-	 * @uses static::lqip_transient_key()
-	 * @return self
-	 *
-	 * @todo check if image size already exists
+	 * @uses Image_Tag_WP_Attachment->set_setting()
+	 * @return array
 	 */
-	protected function generate_lqip( array $attributes, array $settings ) {
+	protected function generate_lqip( array $settings ) {
 		$editor = wp_get_image_editor( $this->get_version( 'full' )->path );
 
 		if (
@@ -497,25 +514,30 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 
 		$lqip_meta = $editor->save();
 
-		$type = pathinfo( $lqip_meta['path'], PATHINFO_EXTENSION );
-		$data = file_get_contents( $lqip_meta['path'] );
-		$base64 = 'data:image/' . $type . ';base64,' . base64_encode( $data );
-
-		set_transient( static::lqip_transient_key( $this->attachment_id ), $base64, $settings['lqip-life'] );
-
 		$this->versions['__lqip'] = ( object ) array(
-			'url' => $base64,
+			'path' => $lqip_meta['path'],
 		);
 
-		$lqip = clone $this;
+		return $lqip_meta;
+	}
 
-		$lqip->set_attributes( $attributes );
-		$lqip->set_settings( $settings );
+	/**
+	 * Base64 encode LQIP image.
+	 *
+	 * @param string $path
+	 * @return string
+	 */
+	function base64_encode_lqip( string $path ) {
+		$type = pathinfo( $path, PATHINFO_EXTENSION );
+		$data = file_get_contents( $path );
+		$base64 = 'data:image/' . $type . ';base64,' . base64_encode( $data );
 
-		$lqip->add_class( 'lqip' );
-		$lqip->set_attribute( 'src', $base64 );
+		if ( !isset( $this->versions['__lqip'] ) )
+			$this->versions['__lqip'] = ( object ) array();
 
-		return $lqip;
+		$this->versions['__lqip']->url = $base64;
+
+		return $base64;
 	}
 
 }
