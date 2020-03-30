@@ -21,7 +21,7 @@ class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 	}
 
 	function test_php_version() {
-		$this->assertEquals( 0, version_compare( '7.3.2', phpversion() ) );
+		$this->assertEquals( 0, version_compare( '7.3.2', phpversion() ), sprintf( 'PHP version %s has not been tested.', phpversion() ) );
 	}
 
 }
