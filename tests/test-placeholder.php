@@ -2,6 +2,7 @@
 
 /**
  * @link https://placeholder.com/
+ * @group _placeholder
  * @group placeholder
  */
 class Image_Tag_Placeholder_Test extends WP_UnitTestCase {

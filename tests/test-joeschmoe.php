@@ -2,6 +2,7 @@
 
 /**
  * @link https://joeschmoe.io/
+ * @group _placeholder
  * @group joeschmoe
  */
 class Image_Tag_JoeSchmoe_Test extends WP_UnitTestCase {

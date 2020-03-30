@@ -134,6 +134,7 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 			)
 				$this->add_srcset( $version->url . ' ' . $version->width . 'w' );
 
+		$this->set_attribute( 'src', $this->get_version( '__smallest' ) );
 	}
 
 	/**
@@ -155,10 +156,6 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 		$wp_image_sizes[] = 'full';
 
 		$image_sizes = array_values( array_intersect( $image_sizes, $wp_image_sizes ) );
-
-		foreach ( $image_sizes as $i => $image_size )
-			if ( empty( wp_get_attachment_image_src( $this->attachment_id, $image_size ) ) )
-				unset( $image_sizes[$i] );
 
 		$this->_set_setting( 'image-sizes', $image_sizes );
 	}
@@ -350,9 +347,8 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 		) {
 			$picsum->set_attribute( 'srcset', array() );
 
-			foreach ( $this->get_versions() as $image_size => $version ) {
-				if ( in_array( $image_size, array( '__largest', '__smallest' ) ) )
-					continue;
+			foreach ( $this->get_setting( 'image-sizes' ) as $image_size ) {
+				$version = $this->get_version( $image_size );
 
 				$tmp = Image_Tag::create( 'picsum', array(), array(
 					 'width' => $version->width,
@@ -389,9 +385,8 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 		) {
 			$placeholder->set_attribute( 'srcset', array() );
 
-			foreach ( $this->get_versions() as $image_size => $version ) {
-				if ( in_array( $image_size, array( '__largest', '__smallest' ) ) )
-					continue;
+			foreach ( $this->get_setting( 'image-sizes' ) as $image_size ) {
+				$version = $this->get_version( $image_size );
 
 				$tmp = Image_Tag::create( 'placeholder', array(), array(
 					 'width' => $version->width,

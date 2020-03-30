@@ -3,8 +3,6 @@
 /**
  * @group wp
  * @group wp_attachment
- *
- * @todo add tests for returning Picsum or Placeholder
  */
 class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 
@@ -46,6 +44,8 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 			'image_sizes' => $image_sizes,
 		) );
 
+		$this->assertNotContains( 'small', $img->get_setting( 'image-sizes' ) );
+
 		$wp_image_sizes = get_intermediate_image_sizes();
 		$wp_images_sizes[] = 'full';
 
@@ -59,6 +59,16 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 		}
 
 		$this->assertEquals( esc_attr( $attachment[0] ), esc_attr( $img->get_attribute( 'src' ) ) );
+	}
+
+	function test_srcset() {
+		$image_sizes = array( 'medium', 'medium_large', 'large' );
+		$img = Image_Tag::create( static::$attachment_id, array(), array(
+			'image_sizes' => $image_sizes,
+		) );
+
+		$this->assertEquals( count( $image_sizes ), count( $img['srcset'] ) );
+		$this->assertEquals( $img->get_version( '__smallest' ), $img->get_attribute( 'src' ) );
 	}
 
 	function test_getter() {
@@ -158,19 +168,21 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 	}
 
 	function test_picsum() {
-		$img = Image_Tag::create( static::$attachment_id, array(), array( 'image-sizes' => array( 'medium', 'large' ) ) );
+		$image_sizes = array( 'medium', 'large' );
+		$img = Image_Tag::create( static::$attachment_id, array(), array( 'image-sizes' => $image_sizes ) );
 		$picsum = $img->picsum();
 
 		$this->assertInstanceOf( 'Image_Tag_Picsum', $picsum );
-		$this->assertNotEmpty( $picsum->get_attribute( 'srcset' ) );
+		$this->assertEquals( count( $image_sizes ), count( $picsum['srcset'] ) );
 	}
 
 	function test_placeholder() {
-		$img = Image_Tag::create( static::$attachment_id, array(), array( 'image-sizes' => array( 'medium', 'large' ) ) );
+		$image_sizes = array( 'medium', 'large' );
+		$img = Image_Tag::create( static::$attachment_id, array(), array( 'image-sizes' => $image_sizes ) );
 		$placeholder = $img->placeholder();
 
 		$this->assertInstanceOf( 'Image_Tag_Placeholder', $placeholder );
-		$this->assertNotEmpty( $placeholder->get_attribute( 'srcset' ) );
+		$this->assertEquals( count( $image_sizes ), count( $placeholder['srcset'] ) );
 	}
 
 	function test_joeschmoe() {
