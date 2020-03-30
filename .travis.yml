@@ -49,5 +49,5 @@ script:
   - |
     if [[ ! -z "$WP_VERSION" ]] ; then
       phpunit --exclude-group=http
-      WP_MULTISITE=1 phpunit
+      WP_MULTISITE=1 phpunit --exclude-group=http
     fi
