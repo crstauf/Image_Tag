@@ -54,6 +54,6 @@ before_script:
 script:
   - |
     if [[ ! -z "$WP_VERSION" ]] ; then
-      vendor/bin/phpunit --exclude-group=http
-      WP_MULTISITE=1 vendor/bin/phpunit --exclude-group=http
+      phpunit --exclude-group=http
+      WP_MULTISITE=1 phpunit --exclude-group=http
     fi
