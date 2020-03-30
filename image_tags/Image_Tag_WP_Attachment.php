@@ -41,7 +41,7 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 	 * @uses Image_Tag::__construct()
 	 * @uses $this->set_source()
 	 */
-	protected function __construct( int $attachment_id, array $attributes = array(), array $settings = array() ) {
+	function __construct( int $attachment_id, array $attributes = array(), array $settings = array() ) {
 		$this->attachment_id = $attachment_id;
 
 		parent::__construct( $attributes, $settings );
