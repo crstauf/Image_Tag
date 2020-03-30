@@ -25,7 +25,7 @@ class Image_Tag_WP_Theme extends Image_Tag_WP {
 	 * @param array $settings
 	 * @uses Image_Tag::__construct()
 	 */
-	protected function __construct( string $source, array $attributes = array(), array $settings = array() ) {
+	function __construct( string $source, array $attributes = array(), array $settings = array() ) {
 		$this->path = locate_template( $source );
 
 		if ( !$this->is_valid() ) {
