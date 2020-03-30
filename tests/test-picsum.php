@@ -379,6 +379,9 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 		$this->assertTrue( $img->is_valid() );
 	}
 
+	/**
+	 * @group http
+	 */
 	function test_lqip() {
 		$img = Image_Tag::create( 'picsum', array(
 			'width' => 1000,

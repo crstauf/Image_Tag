@@ -48,6 +48,6 @@ before_script:
 script:
   - |
     if [[ ! -z "$WP_VERSION" ]] ; then
-      phpunit
+      phpunit --exclude-group=http
       WP_MULTISITE=1 phpunit
     fi
