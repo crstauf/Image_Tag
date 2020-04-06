@@ -16,13 +16,14 @@ class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 
 	function test_wp_version() {
 		global $wp_version;
-		$test_version = '5.3.2';
-		$this->assertEquals( 0, version_compare( $wp_version, $test_version ), sprintf( 'WordPress version %s has not been tested.', $wp_version ) );
+
+		$this->assertEquals(  1, version_compare( $wp_version, '5.1', '>=' ), sprintf( 'WordPress version %s has not been tested.', $wp_version ) );
+		$this->assertEquals( -1, version_compare( $wp_version, '5.5', '<'  ), sprintf( 'WordPress version %s has not been tested.', $wp_version ) );
 	}
 
 	function test_php_version() {
-		$this->assertTrue( version_compare( phpversion(), '7.4', '<' ), sprintf( 'PHP version %s has not been tested.', phpversion() ) );
-		$this->assertTrue( version_compare( phpversion(), '7.0', '>' ), sprintf( 'PHP version %s has not been tested.', phpversion() ) );
+		$this->assertTrue( version_compare( phpversion(), '7.4', '<'  ), sprintf( 'PHP version %s has not been tested.', phpversion() ) );
+		$this->assertTrue( version_compare( phpversion(), '7.1', '>=' ), sprintf( 'PHP version %s has not been tested.', phpversion() ) );
 	}
 
 }
