@@ -235,7 +235,7 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 		$img = Image_Tag::create( 'picsum' );
 		$this->assertNull( $img->get_setting( 'image_id' ) );
 
-		$image_id = mt_rand( 1, 999 );
+		$image_id = 500;
 		$img = Image_Tag::create( 'picsum', array(), array(
 			'image_id' => $image_id,
 		) );
@@ -248,7 +248,7 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 	 * @group http
 	 */
 	function test_image_id_http() {
-		$image_id = mt_rand( 1, 999 );
+		$image_id = 500;
 
 		$img = Image_Tag::create( 'picsum', array(), array(
 			'width' => 200,
