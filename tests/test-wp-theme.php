@@ -6,7 +6,7 @@
  */
 class Image_Tag_WP_Theme_Test extends WP_UnitTestCase {
 
-	const SRC = 'assets/images/2020-landscape-1.png';
+	const SRC = 'screenshot.png';
 
 	function test_source() {
 		$img = Image_Tag::create( static::SRC );
@@ -20,12 +20,12 @@ class Image_Tag_WP_Theme_Test extends WP_UnitTestCase {
 
 	function test_height() {
 		$img = Image_Tag::create( static::SRC );
-		$this->assertEquals( 769, $img->get_height() );
+		$this->assertEquals( 900, $img->get_height() );
 	}
 
 	function test_ratio() {
 		$img = Image_Tag::create( static::SRC );
-		$this->assertEquals( 0.640833333333333, $img->get_ratio() );
+		$this->assertEquals( 0.75, $img->get_ratio() );
 	}
 
 	function test_picsum() {
@@ -46,9 +46,9 @@ class Image_Tag_WP_Theme_Test extends WP_UnitTestCase {
 	function test_colors() {
 		$img = Image_Tag::create( static::SRC );
 		$colors = array(
-			'#c03050' => 0.48354166666666665,
-			'#802040' => 0.31951388888888888,
-			'#602030' => 0.19229166666666667,
+			'#ffffff' => 0.41791666666666666,
+			'#606060' => 0.38815476190476189,
+			'#000000' => 0.17232142857142857,
 		);
 
 		$this->assertEquals( $colors, $img->get_colors() );
