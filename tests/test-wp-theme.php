@@ -33,13 +33,62 @@ class Image_Tag_WP_Theme_Test extends WP_UnitTestCase {
 		$this->assertInstanceOf( 'Image_Tag_Picsum', $img->picsum() );
 	}
 
+	/**
+	 * @group _placeholder
+	 * @group picsum
+	 */
+	function test_picsum_from_invalid() {
+		$img = Image_Tag::create( 'image-does-not-exist.jpg' );
+		$this->assertInstanceOf( 'Image_Tag_Picsum', $img->picsum() );
+
+		$picsum = $img->picsum( array(
+			'width' => 160,
+			'height' => 90,
+		) );
+		$this->assertEquals( 160, $picsum->get_attribute( 'width' ) );
+		$this->assertEquals(  90, $picsum->get_attribute( 'height' ) );
+	}
+
+	/**
+	 * @group _placeholder
+	 * @group placeholder
+	 */
 	function test_placeholder() {
 		$img = Image_Tag::create( static::SRC );
 		$this->assertInstanceOf( 'Image_Tag_Placeholder', $img->placeholder() );
 	}
 
+	/**
+	 * @group _placeholder
+	 * @group placeholder
+	 */
+	function test_placeholder_from_invalid() {
+		$img = Image_Tag::create( 'image-does-not-exist.jpg' );
+		$this->assertInstanceOf( 'Image_Tag_Placeholder', $img->placeholder() );
+
+		$placeholder = $img->placeholder( array(
+			'width' => 160,
+			'height' => 90,
+		) );
+		$this->assertEquals( 160, $placeholder->get_attribute( 'width' ) );
+		$this->assertEquals(  90, $placeholder->get_attribute( 'height' ) );
+	}
+
+	/**
+	 * @group _placeholder
+	 * @group joeschmoe
+	 */
 	function test_joeschmoe() {
 		$img = Image_Tag::create( static::SRC );
+		$this->assertInstanceOf( 'Image_Tag_JoeSchmoe', $img->joeschmoe() );
+	}
+
+	/**
+	 * @group _placeholder
+	 * @group joeschmoe
+	 */
+	function test_joeschmoe_from_invalid() {
+		$img = Image_Tag::create( 'image-does-not-exist.jpg' );
 		$this->assertInstanceOf( 'Image_Tag_JoeSchmoe', $img->joeschmoe() );
 	}
 
@@ -86,11 +135,11 @@ class Image_Tag_WP_Theme_Test extends WP_UnitTestCase {
 
 	function test_valid() {
 		$img = Image_Tag::create( static::SRC );
-
 		$this->assertTrue( $img->is_valid() );
+	}
 
-		$img = @Image_Tag::create( 'does-not-exist.jpg' );
-
+	function test_invalid() {
+		$img = Image_Tag::create( 'does-not-exist.jpg' );
 		$this->assertFalse( $img->is_valid() );
 	}
 

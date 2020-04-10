@@ -194,6 +194,13 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 		$this->assertEquals( 1024, $picsum->get_attribute( 'height' ) );
 		$this->assertNotEmpty( $picsum->get_attribute( 'src' ) );
 		$this->assertEmpty( $picsum['srcset'] );
+
+		$picsum = $img->picsum( array(
+			'width' => 160,
+			'height' => 90,
+		) );
+		$this->assertEquals( 160, $picsum->get_attribute( 'width' ) );
+		$this->assertEquals(  90, $picsum->get_attribute( 'height' ) );
 	}
 
 	/**
@@ -334,11 +341,11 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 
 	function test_valid() {
 		$img = Image_Tag::create( static::$attachment_id );
-
 		$this->assertTrue( $img->is_valid() );
+	}
 
+	function test_invalid() {
 		$img = Image_Tag::create( 0 );
-
 		$this->assertFalse( $img->is_valid() );
 	}
 

@@ -30,13 +30,27 @@ class Image_Tag_WP_Theme extends Image_Tag_WP {
 
 		parent::__construct( $attributes, $settings );
 
-		if ( !$this->is_valid() ) {
-			trigger_error( sprintf( 'Unable to find <code>%s</code> in theme.', $source ), E_USER_WARNING );
+		if ( !$this->is_valid() )
 			return;
-		}
 
 		$this->set_source( $source );
 		$this->set_orientation();
+	}
+
+	/**
+	 * To string.
+	 *
+	 * @uses $this->is_valid()
+	 * @uses Image_Tag->__toString()
+	 * @return string
+	 */
+	function __toString() {
+		if ( !$this->is_valid() ) {
+			trigger_error( sprintf( 'Unable to find <code>%s</code> in theme.', $source ), E_USER_WARNING );
+			return '';
+		}
+
+		return parent::__toString();
 	}
 
 	/**
@@ -83,18 +97,34 @@ class Image_Tag_WP_Theme extends Image_Tag_WP {
 	/**
 	 * Get image width.
 	 *
+	 * @uses Image_Tag->get_width()
+	 * @uses $this->is_valid()
 	 * @return int
 	 */
 	function get_width() {
+		if ( !empty( parent::get_width() ) )
+			return parent::get_width();
+
+		if ( !$this->is_valid() )
+			return 0;
+
 		return ( int ) getimagesize( $this->path )[0];
 	}
 
 	/**
 	 * Get image height.
 	 *
+	 * @uses Image_Tag->get_height()
+	 * @uses $this->is_valid()
 	 * @return int
 	 */
 	function get_height() {
+		if ( !empty( parent::get_height() ) )
+			return parent::get_height();
+
+		if ( !$this->is_valid() )
+			return 0;
+
 		return ( int ) getimagesize( $this->path )[1];
 	}
 

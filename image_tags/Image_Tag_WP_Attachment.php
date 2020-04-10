@@ -69,6 +69,22 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 	}
 
 	/**
+	 * To string.
+	 *
+	 * @uses $this->is_valid()
+	 * @uses Image_Tag::__toString()
+	 * @return string
+	 */
+	function __toString() {
+		if ( !$this->is_valid() ) {
+			trigger_error( sprintf( 'Attachment <code>%d</code> does not exist.', $this->attachment_id ) );
+			return '';
+		}
+
+		return parent::__toString();
+	}
+
+	/**
 	 * Check if the image is valid.
 	 *
 	 * @uses get_post_type()
@@ -99,7 +115,6 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 		}
 
 		if ( empty( $attachment ) ) {
-			trigger_error( sprintf( 'Attachment <code>%d</code> does not exist.', $this->attachment_id ), E_USER_WARNING );
 			$this->_set_attribute( 'src', self::BLANK );
 			return;
 		}
