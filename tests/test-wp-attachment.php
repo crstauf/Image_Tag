@@ -68,7 +68,7 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 		) );
 
 		$this->assertEquals( count( $image_sizes ), count( $img['srcset'] ) );
-		$this->assertEquals( $img->get_version( '__smallest' ), $img->get_attribute( 'src' ) );
+		$this->assertEquals( $img->get_version( '__smallest' )->url, $img->get_attribute( 'src' ) );
 	}
 
 	function test_getter() {
@@ -167,6 +167,10 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 		$this->assertEquals( 0.6665, $img->get_ratio() );
 	}
 
+	/**
+	 * @group placeholder
+	 * @group picsum
+	 */
 	function test_picsum() {
 		$image_sizes = array( 'medium', 'large' );
 		$img = Image_Tag::create( static::$attachment_id, array(), array( 'image-sizes' => $image_sizes ) );
@@ -176,6 +180,10 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 		$this->assertEquals( count( $image_sizes ), count( $picsum['srcset'] ) );
 	}
 
+	/**
+	 * @group placeholder
+	 * @group picsum
+	 */
 	function test_placeholder() {
 		$image_sizes = array( 'medium', 'large' );
 		$img = Image_Tag::create( static::$attachment_id, array(), array( 'image-sizes' => $image_sizes ) );

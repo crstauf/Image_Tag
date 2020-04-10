@@ -134,7 +134,7 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 			)
 				$this->add_srcset( $version->url . ' ' . $version->width . 'w' );
 
-		$this->set_attribute( 'src', $this->get_version( '__smallest' ) );
+		$this->set_attribute( 'src', $this->get_version( '__smallest' )->url );
 	}
 
 	/**

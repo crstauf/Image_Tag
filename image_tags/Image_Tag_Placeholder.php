@@ -97,7 +97,7 @@ class Image_Tag_Placeholder extends Image_Tag {
 
 		# Add text.
 		if ( !empty( $this->get_setting( 'text' ) ) )
-			$src = add_query_arg( 'text', urlencode( $this->get_setting( 'text' ) ) );
+			$src = add_query_arg( 'text', urlencode( $this->get_setting( 'text' ) ), $src );
 
 		return $src;
 	}
