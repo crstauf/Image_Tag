@@ -163,20 +163,50 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 	/**
 	 * Get width of largest image version.
 	 *
+	 * @uses Image_Tag::get_width()
+	 * @uses $this->is_valid()
+	 * @uses $this->get_setting()
 	 * @uses $this->get_versions()
 	 * @return int
 	 */
 	function get_width() {
+		if ( !empty( parent::get_width() ) )
+			return parent::get_width();
+
+		if ( !$this->is_valid() ) {
+			$image_sizes = $this->get_setting( 'image-sizes' );
+			$image_size = array_pop( $image_sizes );
+			$sizes = wp_get_registered_image_subsizes();
+
+			if ( isset( $sizes[$image_size] ) )
+				return ( int ) $sizes[$image_size]['width'];
+		}
+
 		return ( int ) $this->get_versions()['__largest']->width;
 	}
 
 	/**
 	 * Get height of largest image version.
 	 *
+	 * @uses Image_Tag::get_height()
+	 * @uses $this->is_valid()
+	 * @uses $this->get_setting()
 	 * @uses $this->get_versions()
 	 * @return int
 	 */
 	function get_height() {
+		if ( !empty( parent::get_height() ) )
+			return parent::get_height();
+
+		if ( !$this->is_valid() ) {
+			$image_sizes = $this->get_setting( 'image-sizes' );
+			$image_size = array_pop( $image_sizes );
+			$sizes = wp_get_registered_image_subsizes();
+
+			if ( isset( $sizes[$image_size] ) )
+				return ( int ) $sizes[$image_size]['height'];
+		}
+
 		return ( int ) $this->get_versions()['__largest']->height;
 	}
 

@@ -168,7 +168,7 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @group placeholder
+	 * @group _placeholder
 	 * @group picsum
 	 */
 	function test_picsum() {
@@ -181,8 +181,24 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @group placeholder
+	 * @group _placeholder
 	 * @group picsum
+	 */
+	function test_picsum_from_invalid() {
+		$image_sizes = array( 'medium', 'large' );
+		$img = Image_Tag::create( 0, array(), array( 'image-sizes' => $image_sizes ) );
+		$picsum = $img->picsum();
+
+		$this->assertInstanceOf( 'Image_Tag_Picsum', $picsum );
+		$this->assertEquals( 1024, $picsum->get_attribute( 'width' ) );
+		$this->assertEquals( 1024, $picsum->get_attribute( 'height' ) );
+		$this->assertNotEmpty( $picsum->get_attribute( 'src' ) );
+		$this->assertEmpty( $picsum['srcset'] );
+	}
+
+	/**
+	 * @group _placeholder
+	 * @group placeholder
 	 */
 	function test_placeholder() {
 		$image_sizes = array( 'medium', 'large' );
@@ -193,12 +209,44 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 		$this->assertEquals( count( $image_sizes ), count( $placeholder['srcset'] ) );
 	}
 
+	/**
+	 * @group _placeholder
+	 * @group placeholder
+	 */
+	function test_placeholder_from_invalid() {
+		$image_sizes = array( 'medium', 'large' );
+		$img = Image_Tag::create( 0, array(), array( 'image-sizes' => $image_sizes ) );
+		$placeholder = $img->placeholder();
+
+		$this->assertInstanceOf( 'Image_Tag_Placeholder', $placeholder );
+		$this->assertEquals( 1024, $placeholder->get_attribute( 'width' ) );
+		$this->assertEquals( 1024, $placeholder->get_attribute( 'height' ) );
+		$this->assertNotEmpty( $placeholder->get_attribute( 'src' ) );
+		$this->assertEmpty( $placeholder['srcset'] );
+	}
+
+	/**
+	 * @group _placeholder
+	 * @group joeschmoe
+	 */
 	function test_joeschmoe() {
 		$img = Image_Tag::create( static::$attachment_id, array(), array( 'image-sizes' => array( 'medium', 'large' ) ) );
 		$joeschmoe = $img->joeschmoe();
 
 		$this->assertInstanceOf( 'Image_Tag_JoeSchmoe', $joeschmoe );
 		$this->assertEmpty( $joeschmoe->get_attribute( 'srcset' ) );
+	}
+
+	/**
+	 * @group _placeholder
+	 * @group joeschmoe
+	 */
+	function test_joeschmoe_from_invalid() {
+		$img = Image_Tag::create( 0, array(), array( 'image-sizes' => array( 'medium', 'large' ) ) );
+		$joeschmoe = $img->joeschmoe();
+
+		$this->assertInstanceOf( 'Image_Tag_JoeSchmoe', $joeschmoe );
+		$this->assertNotEmpty( $joeschmoe->get_attribute( 'src' ) );
 	}
 
 	function test_colors() {
@@ -289,7 +337,7 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 
 		$this->assertTrue( $img->is_valid() );
 
-		$img = Image_Tag::create( 1 );
+		$img = Image_Tag::create( 0 );
 
 		$this->assertFalse( $img->is_valid() );
 	}
