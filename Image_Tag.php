@@ -744,15 +744,21 @@ class Image_Tag implements ArrayAccess {
 	 *
 	 * @param $offset
 	 * @param $value
+	 * @uses $this->set_attribute()
 	 */
-	function offsetSet( $offset, $value ) {}
+	function offsetSet( $offset, $value ) {
+		$this->set_attribute( $offset, $value );
+	}
 
 	/**
 	 * ArrayAccess: unset
 	 *
 	 * @param $offset
+	 * @uses $this->set_attribute()
 	 */
-	function offsetUnset( $offset ) {}
+	function offsetUnset( $offset ) {
+		$this->set_attribute( $offset, null );
+	}
 
 }
 

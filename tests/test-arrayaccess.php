@@ -15,4 +15,19 @@ class Image_Tag_ArrayAccess_Test extends WP_UnitTestCase {
 		$this->assertFalse( isset( $image_tag['ids'] ) );
 	}
 
+	function test_set() {
+		$img = new Image_Tag( array( 'id' => __FUNCTION__ ) );
+		$img['id'] = uniqid();
+
+		$this->assertNotEquals( __FUNCTION__, $img['id'] );
+	}
+
+	function test_unset() {
+		$img = new Image_Tag( array( 'id' => __FUNCTION__ ) );
+		unset( $img['id'] );
+
+		$this->assertNotEquals( __FUNCTION__, $img['id'] );
+		$this->assertEmpty( $img['id'] );
+	}
+
 }
