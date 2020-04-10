@@ -8,6 +8,9 @@ class Image_Tag_Base_Test extends WP_UnitTestCase {
 		$this->assertEquals( $src, $img->get_attribute( 'src' ) );
 	}
 
+	/**
+	 * @group http
+	 */
 	function test_http_cache() {
 		$src = 'https://picsum.photos/400/300';
 		$img = Image_Tag::create( $src );
