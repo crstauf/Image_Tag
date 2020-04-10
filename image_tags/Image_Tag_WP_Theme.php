@@ -28,12 +28,12 @@ class Image_Tag_WP_Theme extends Image_Tag_WP {
 	function __construct( string $source, array $attributes = array(), array $settings = array() ) {
 		$this->path = locate_template( $source );
 
+		parent::__construct( $attributes, $settings );
+
 		if ( !$this->is_valid() ) {
-			trigger_error( sprintf( 'Unable to find <code>%s</code> in theme.', $this->path ), E_USER_WARNING );
+			trigger_error( sprintf( 'Unable to find <code>%s</code> in theme.', $source ), E_USER_WARNING );
 			return;
 		}
-
-		parent::__construct( $attributes, $settings );
 
 		$this->set_source( $source );
 		$this->set_orientation();
