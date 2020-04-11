@@ -93,7 +93,8 @@ class Image_Tag_Picsum extends Image_Tag {
 		if ( !empty( $this->get_setting( 'grayscale' ) ) )
 			$src = add_query_arg( 'grayscale', 1, $src );
 
-		return $src;
+		# If there's a trailing slash, an extra redirect is made.
+		return untrailingslashit( $src );
 	}
 
 	/**
@@ -254,7 +255,7 @@ class Image_Tag_Picsum extends Image_Tag {
 	 * @param array $settings
 	 * @return $this
 	 */
-	function picsum( array $attributes = array(), array $settings = array() ) {
+	function picsum( $attributes = array(), array $settings = array() ) {
 		return $this;
 	}
 

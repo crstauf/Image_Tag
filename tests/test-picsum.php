@@ -11,7 +11,12 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 		$img = Image_Tag::create( 'picsum' );
 
 		$this->assertEquals( 'https://picsum.photos/', Image_Tag_Picsum::BASE_URL );
-		$this->assertEquals( Image_Tag_Picsum::BASE_URL, $img->get_attribute( 'src' ) );
+		$this->assertEquals( untrailingslashit( Image_Tag_Picsum::BASE_URL ), $img->get_attribute( 'src' ) );
+	}
+
+	function test_src_attribute() {
+		$img = Image_Tag::create( 'picsum' );
+		$this->assertEquals( untrailingslashit( Image_Tag_Picsum::BASE_URL ), $img->get_attribute( 'src' ) );
 	}
 
 	function test_blur_setting() {
@@ -56,7 +61,7 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 		$seed = urlencode( sanitize_title_with_dashes( $seed ) );
 
 		$this->assertEquals( $seed, $img->get_setting( 'seed' ) );
-		$this->assertContains( 'seed/' . $seed . '/', $img->get_attribute( 'src' ) );
+		$this->assertContains( 'seed/' . $seed, $img->get_attribute( 'src' ) );
 	}
 
 	/**
@@ -82,7 +87,7 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 
 		$this->assertEquals( $width, $img->get_setting(   'width' ) );
 		$this->assertEquals( $width, $img->get_attribute( 'width' ) );
-		$this->assertContains( '/' . $width . '/', $img->get_attribute( 'src' ) );
+		$this->assertContains( '/' . $width, $img->get_attribute( 'src' ) );
 
 		$img = Image_Tag::create( 'picsum', array(
 			'width' => $width,
@@ -90,7 +95,7 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 
 		$this->assertEquals( $width, $img->get_setting(   'width' ) );
 		$this->assertEquals( $width, $img->get_attribute( 'width' ) );
-		$this->assertContains( '/' . $width . '/', $img->get_attribute( 'src' ) );
+		$this->assertContains( '/' . $width, $img->get_attribute( 'src' ) );
 
 		$img = Image_Tag::create( 'picsum', array(
 			'width' => $width,
@@ -100,7 +105,7 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 
 		$this->assertEquals( $width,     $img->get_attribute( 'width' ) );
 		$this->assertEquals( $width * 2, $img->get_setting(   'width' ) );
-		$this->assertContains( '/' . ( $width * 2 ) . '/', $img->get_attribute( 'src' ) );
+		$this->assertContains( '/' . ( $width * 2 ), $img->get_attribute( 'src' ) );
 		$this->assertContains( 'width="' . $width . '"', $img->__toString() );
 
 		$img = Image_Tag::create( 'picsum' );
@@ -134,7 +139,7 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 		$this->assertEquals(  $width, $img->get_attribute(  'width' ) );
 		$this->assertEquals( $height, $img->get_setting(   'height' ) );
 		$this->assertEquals( $height, $img->get_attribute( 'height' ) );
-		$this->assertContains( '/' . $width . '/' . $height . '/', $img->get_attribute( 'src' ) );
+		$this->assertContains( '/' . $width . '/' . $height, $img->get_attribute( 'src' ) );
 
 		$img = Image_Tag::create( 'picsum', array(
 			 'width' => $width,
@@ -145,7 +150,7 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 		$this->assertEquals(  $width, $img->get_attribute(  'width' ) );
 		$this->assertEquals( $height, $img->get_setting(   'height' ) );
 		$this->assertEquals( $height, $img->get_attribute( 'height' ) );
-		$this->assertContains( '/' . $width . '/' . $height . '/', $img->get_attribute( 'src' ) );
+		$this->assertContains( '/' . $width . '/' . $height, $img->get_attribute( 'src' ) );
 
 		$img = Image_Tag::create( 'picsum', array(
 			 'width' => $width,
@@ -159,7 +164,7 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 		$this->assertEquals( 2 * $height, $img->get_setting(   'height' ) );
 		$this->assertEquals(  $width, $img->get_attribute(  'width' ) );
 		$this->assertEquals( $height, $img->get_attribute( 'height' ) );
-		$this->assertContains( '/' . ( 2 * $width ) . '/' . ( 2 * $height ) . '/', $img->get_attribute( 'src' ) );
+		$this->assertContains( '/' . ( 2 * $width ) . '/' . ( 2 * $height ), $img->get_attribute( 'src' ) );
 		$this->assertContains( 'width="' . $width . '" height="' . $height . '"', $img->__toString() );
 	}
 
@@ -206,7 +211,7 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 	 * @group http
 	 */
 	function test_random_http() {
-		$img = Image_Tag::create( 'picsum', array(), array(
+		$img = Image_Tag::create( 'picsum', null, array(
 			'random' => true,
 			'width' => 200,
 		) );
@@ -241,7 +246,7 @@ class Image_Tag_Picsum_Test extends WP_UnitTestCase {
 		) );
 
 		$this->assertEquals( $image_id, $img->get_setting( 'image_id' ) );
-		$this->assertContains( '/id/' . $image_id . '/', $img->get_attribute( 'src' ) );
+		$this->assertContains( '/id/' . $image_id, $img->get_attribute( 'src' ) );
 	}
 
 	/**

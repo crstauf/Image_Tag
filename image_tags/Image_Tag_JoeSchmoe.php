@@ -88,7 +88,7 @@ class Image_Tag_JoeSchmoe extends Image_Tag {
 	 * @param array $settings
 	 * @return $this
 	 */
-	function joeschmoe( array $attributes = array(), array $settings = array() ) {
+	function joeschmoe( $attributes = array(), array $settings = array() ) {
 		return $this;
 	}
 

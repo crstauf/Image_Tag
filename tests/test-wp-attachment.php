@@ -172,7 +172,7 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 	 * @group picsum
 	 */
 	function test_picsum() {
-		$image_sizes = array( 'medium', 'large' );
+		$image_sizes = array( 'medium', 'large', 'full' );
 		$img = Image_Tag::create( static::$attachment_id, array(), array( 'image-sizes' => $image_sizes ) );
 		$picsum = $img->picsum();
 
@@ -183,9 +183,10 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 	/**
 	 * @group _placeholder
 	 * @group picsum
+	 * @group http
 	 */
 	function test_picsum_from_invalid() {
-		$image_sizes = array( 'medium', 'large' );
+		$image_sizes = array( 'medium', 'large', 'full' );
 		$img = Image_Tag::create( 0, array(), array( 'image-sizes' => $image_sizes ) );
 		$picsum = $img->picsum();
 
@@ -201,6 +202,20 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 		) );
 		$this->assertEquals( 160, $picsum->get_attribute( 'width' ) );
 		$this->assertEquals(  90, $picsum->get_attribute( 'height' ) );
+
+		$this->assertEquals( 'image/jpeg', wp_remote_retrieve_header( $picsum->http(), 'content-type' ) );
+
+		$img = Image_Tag::create( 0, null, array(
+			'image-sizes' => array( 'full' ),
+			'width' => 1600,
+			'height' => 900,
+		) );
+		$this->assertEquals( 1600, $img->get_setting(  'width' ) );
+		$this->assertEquals(  900, $img->get_setting( 'height' ) );
+
+		$picsum = $img->picsum();
+		$this->assertEquals( 1600, $picsum->get_setting(  'width' ) );
+		$this->assertEquals(  900, $picsum->get_setting( 'height' ) );
 	}
 
 	/**
@@ -208,7 +223,7 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 	 * @group placeholder
 	 */
 	function test_placeholder() {
-		$image_sizes = array( 'medium', 'large' );
+		$image_sizes = array( 'medium', 'large', 'full' );
 		$img = Image_Tag::create( static::$attachment_id, array(), array( 'image-sizes' => $image_sizes ) );
 		$placeholder = $img->placeholder();
 
@@ -219,17 +234,32 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 	/**
 	 * @group _placeholder
 	 * @group placeholder
+	 * @group http
 	 */
 	function test_placeholder_from_invalid() {
-		$image_sizes = array( 'medium', 'large' );
+		$image_sizes = array( 'medium', 'large', 'full' );
 		$img = Image_Tag::create( 0, array(), array( 'image-sizes' => $image_sizes ) );
 		$placeholder = $img->placeholder();
 
 		$this->assertInstanceOf( 'Image_Tag_Placeholder', $placeholder );
-		$this->assertEquals( 1024, $placeholder->get_attribute( 'width' ) );
+		$this->assertEquals( 1024, $placeholder->get_attribute(  'width' ) );
 		$this->assertEquals( 1024, $placeholder->get_attribute( 'height' ) );
 		$this->assertNotEmpty( $placeholder->get_attribute( 'src' ) );
 		$this->assertEmpty( $placeholder['srcset'] );
+
+		$this->assertEquals( 'image/png', wp_remote_retrieve_header( $placeholder->http(), 'content-type' ) );
+
+		$img = Image_Tag::create( 0, null, array(
+			'image-sizes' => array( 'full' ),
+			'width' => 1600,
+			'height' => 900,
+		) );
+		$this->assertEquals( 1600, $img->get_setting(  'width' ) );
+		$this->assertEquals(  900, $img->get_setting( 'height' ) );
+
+		$placeholder = $img->picsum();
+		$this->assertEquals( 1600, $placeholder->get_setting(  'width' ) );
+		$this->assertEquals(  900, $placeholder->get_setting( 'height' ) );
 	}
 
 	/**
@@ -237,7 +267,7 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 	 * @group joeschmoe
 	 */
 	function test_joeschmoe() {
-		$img = Image_Tag::create( static::$attachment_id, array(), array( 'image-sizes' => array( 'medium', 'large' ) ) );
+		$img = Image_Tag::create( static::$attachment_id, array(), array( 'image-sizes' => array( 'medium', 'large', 'full' ) ) );
 		$joeschmoe = $img->joeschmoe();
 
 		$this->assertInstanceOf( 'Image_Tag_JoeSchmoe', $joeschmoe );
@@ -247,13 +277,15 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 	/**
 	 * @group _placeholder
 	 * @group joeschmoe
+	 * @group http
 	 */
 	function test_joeschmoe_from_invalid() {
-		$img = Image_Tag::create( 0, array(), array( 'image-sizes' => array( 'medium', 'large' ) ) );
+		$img = Image_Tag::create( 0, array(), array( 'image-sizes' => array( 'medium', 'large', 'full' ) ) );
 		$joeschmoe = $img->joeschmoe();
 
 		$this->assertInstanceOf( 'Image_Tag_JoeSchmoe', $joeschmoe );
 		$this->assertNotEmpty( $joeschmoe->get_attribute( 'src' ) );
+		$this->assertEquals( 'image/svg+xml; charset=utf-8', wp_remote_retrieve_header( $joeschmoe->http(), 'content-type' ) );
 	}
 
 	function test_colors() {

@@ -93,7 +93,8 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 	 */
 	function is_valid() {
 		return (
-			'attachment' === get_post_type( $this->attachment_id )
+			!empty( $this->attachment_id )
+			&& 'attachment' === get_post_type( $this->attachment_id )
 			&& wp_attachment_is_image( $this->attachment_id )
 		);
 	}
@@ -180,24 +181,28 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 	 *
 	 * @uses Image_Tag::get_width()
 	 * @uses $this->is_valid()
-	 * @uses $this->get_setting()
 	 * @uses $this->get_versions()
+	 * @uses $this->get_setting()
 	 * @return int
 	 */
 	function get_width() {
 		if ( !empty( parent::get_width() ) )
 			return parent::get_width();
 
-		if ( !$this->is_valid() ) {
-			$image_sizes = $this->get_setting( 'image-sizes' );
+		if ( $this->is_valid() )
+			return ( int ) $this->get_versions()['__largest']->width;
+
+		$image_sizes = $this->get_setting( 'image-sizes' );
+		$sizes = wp_get_registered_image_subsizes();
+
+		while ( !empty( $image_sizes ) ) {
 			$image_size = array_pop( $image_sizes );
-			$sizes = wp_get_registered_image_subsizes();
 
 			if ( isset( $sizes[$image_size] ) )
 				return ( int ) $sizes[$image_size]['width'];
 		}
 
-		return ( int ) $this->get_versions()['__largest']->width;
+		return 0;
 	}
 
 	/**
@@ -205,24 +210,28 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 	 *
 	 * @uses Image_Tag::get_height()
 	 * @uses $this->is_valid()
-	 * @uses $this->get_setting()
 	 * @uses $this->get_versions()
+	 * @uses $this->get_setting()
 	 * @return int
 	 */
 	function get_height() {
 		if ( !empty( parent::get_height() ) )
 			return parent::get_height();
 
-		if ( !$this->is_valid() ) {
-			$image_sizes = $this->get_setting( 'image-sizes' );
+		if ( $this->is_valid() )
+			return ( int ) $this->get_versions()['__largest']->height;
+
+		$image_sizes = $this->get_setting( 'image-sizes' );
+		$sizes = wp_get_registered_image_subsizes();
+
+		while ( !empty( $image_sizes ) ) {
 			$image_size = array_pop( $image_sizes );
-			$sizes = wp_get_registered_image_subsizes();
 
 			if ( isset( $sizes[$image_size] ) )
 				return ( int ) $sizes[$image_size]['height'];
 		}
 
-		return ( int ) $this->get_versions()['__largest']->height;
+		return 0;
 	}
 
 	/**
@@ -252,6 +261,9 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 	function get_versions() {
 		if ( !empty( array_filter( $this->versions ) ) )
 			return $this->versions;
+
+		if ( !$this->is_valid() )
+			return array();
 
 		$image_sizes = $this->get_setting( 'image-sizes' );
 		$largest  = null;
@@ -383,7 +395,7 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 	 * @uses Image_Tag_Picsum->add_srcset()
 	 * @return Image_Tag_Picsum
 	 */
-	function picsum( array $attributes = array(), array $settings = array() ) {
+	function picsum( $attributes = array(), array $settings = array() ) {
 		$picsum = parent::picsum( $attributes, $settings );
 
 		if (
@@ -421,7 +433,7 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 	 * @uses Image_Tag_Placeholder->add_srcset()
 	 * @return Image_Tag_Placeholder
 	 */
-	function placeholder( array $attributes = array(), array $settings = array() ) {
+	function placeholder( $attributes = array(), array $settings = array() ) {
 		$placeholder = parent::placeholder( $attributes, $settings );
 
 		if (
@@ -466,7 +478,8 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 	 *
 	 * @todo check if LQIP file already exists
 	 */
-	function lqip( array $attributes = array(), array $settings = array() ) {
+	function lqip( $attributes = array(), array $settings = array() ) {
+		$attributes = ( array ) $attributes;
 		$_attributes = $this->attributes;
 
 		unset(

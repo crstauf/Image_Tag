@@ -183,7 +183,7 @@ class Image_Tag_Placeholder extends Image_Tag {
 	 * @param array $settings
 	 * @return $this
 	 */
-	function placeholder( array $attributes = array(), array $settings = array() ) {
+	function placeholder( $attributes = array(), array $settings = array() ) {
 		return $this;
 	}
 

@@ -53,7 +53,8 @@ class Image_Tag implements ArrayAccess {
  	 * @param array $settings
  	 * @return Image_Tag
 	 */
-	static function create( $source, array $attributes = array(), array $settings = array() ) {
+	static function create( $source, $attributes = array(), array $settings = array() ) {
+		$attributes = ( array ) $attributes;
 
 		# If integer, create WordPress attachment image.
 		if ( is_int( $source ) )
@@ -580,8 +581,9 @@ class Image_Tag implements ArrayAccess {
 	 * @uses Image_Tag::create()
 	 * @return Image_Tag_Picsum
 	 */
-	function picsum( array $attributes = array(), array $settings = array() ) {
-		$attributes = wp_parse_args( $attributes, $this->attributes );
+	function picsum( $attributes = array(), array $settings = array() ) {
+		$attributes = wp_parse_args( ( array ) $attributes, $this->attributes );
+		$settings = wp_parse_args( $settings, $this->settings );
 		$settings = wp_parse_args( $settings, array(
 			 'width' => $this->get_width(),
 			'height' => $this->get_height(),
@@ -600,8 +602,9 @@ class Image_Tag implements ArrayAccess {
 	 * @uses Image_Tag::create()
 	 * @return Image_Tag_Placeholder
 	 */
-	function placeholder( array $attributes = array(), array $settings = array() ) {
-		$attributes = wp_parse_args( $attributes, $this->attributes );
+	function placeholder( $attributes = array(), array $settings = array() ) {
+		$attributes = wp_parse_args( ( array ) $attributes, $this->attributes );
+		$settings = wp_parse_args( $settings, $this->settings );
 		$settings = wp_parse_args( $settings, array(
 			 'width' => $this->get_width(),
 			'height' => $this->get_height(),
@@ -618,14 +621,20 @@ class Image_Tag implements ArrayAccess {
 	 * @uses Image_Tag::create()
 	 * @return Image_Tag_JoeSchmoe
 	 */
-	function joeschmoe( array $attributes = array(), array $settings = array() ) {
+	function joeschmoe( $attributes = array(), array $settings = array() ) {
+		$settings = wp_parse_args( $settings, $this->settings );
+		$settings = wp_parse_args( $settings, array(
+			 'width' => $this->get_width(),
+			'height' => $this->get_height(),
+		) );
+
 		$_attributes = $this->attributes;
 
 		unset(
 			$_attributes['srcset']
 		);
 
-		$attributes = wp_parse_args( $attributes, $_attributes );
+		$attributes = wp_parse_args( ( array ) $attributes, $_attributes );
 
 		return Image_Tag::create( 'joeschmoe', $attributes, $settings );
 	}

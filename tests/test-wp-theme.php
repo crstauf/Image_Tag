@@ -36,6 +36,7 @@ class Image_Tag_WP_Theme_Test extends WP_UnitTestCase {
 	/**
 	 * @group _placeholder
 	 * @group picsum
+	 * @group http
 	 */
 	function test_picsum_from_invalid() {
 		$img = Image_Tag::create( 'image-does-not-exist.jpg' );
@@ -47,6 +48,20 @@ class Image_Tag_WP_Theme_Test extends WP_UnitTestCase {
 		) );
 		$this->assertEquals( 160, $picsum->get_attribute( 'width' ) );
 		$this->assertEquals(  90, $picsum->get_attribute( 'height' ) );
+
+		$this->assertEquals( 'image/jpeg', wp_remote_retrieve_header( $picsum->http(), 'content-type' ) );
+
+		$img = Image_Tag::create( 0, null, array(
+			'image-sizes' => array( 'full' ),
+			'width' => 1600,
+			'height' => 900,
+		) );
+		$this->assertEquals( 1600, $img->get_setting(  'width' ) );
+		$this->assertEquals(  900, $img->get_setting( 'height' ) );
+
+		$picsum = $img->picsum();
+		$this->assertEquals( 1600, $picsum->get_setting(  'width' ) );
+		$this->assertEquals(  900, $picsum->get_setting( 'height' ) );
 	}
 
 	/**
@@ -61,6 +76,7 @@ class Image_Tag_WP_Theme_Test extends WP_UnitTestCase {
 	/**
 	 * @group _placeholder
 	 * @group placeholder
+	 * @group http
 	 */
 	function test_placeholder_from_invalid() {
 		$img = Image_Tag::create( 'image-does-not-exist.jpg' );
@@ -72,6 +88,20 @@ class Image_Tag_WP_Theme_Test extends WP_UnitTestCase {
 		) );
 		$this->assertEquals( 160, $placeholder->get_attribute( 'width' ) );
 		$this->assertEquals(  90, $placeholder->get_attribute( 'height' ) );
+
+		$this->assertEquals( 'image/png', wp_remote_retrieve_header( $placeholder->http(), 'content-type' ) );
+
+		$img = Image_Tag::create( 0, null, array(
+			'image-sizes' => array( 'full' ),
+			'width' => 1600,
+			'height' => 900,
+		) );
+		$this->assertEquals( 1600, $img->get_setting(  'width' ) );
+		$this->assertEquals(  900, $img->get_setting( 'height' ) );
+
+		$placeholder = $img->placeholder();
+		$this->assertEquals( 1600, $placeholder->get_setting(  'width' ) );
+		$this->assertEquals(  900, $placeholder->get_setting( 'height' ) );
 	}
 
 	/**
@@ -86,10 +116,13 @@ class Image_Tag_WP_Theme_Test extends WP_UnitTestCase {
 	/**
 	 * @group _placeholder
 	 * @group joeschmoe
+	 * @group http
 	 */
 	function test_joeschmoe_from_invalid() {
 		$img = Image_Tag::create( 'image-does-not-exist.jpg' );
+
 		$this->assertInstanceOf( 'Image_Tag_JoeSchmoe', $img->joeschmoe() );
+		$this->assertEquals( 'image/svg+xml; charset=utf-8', wp_remote_retrieve_header( $img->joeschmoe()->http(), 'content-type' ) );
 	}
 
 	function test_colors() {
