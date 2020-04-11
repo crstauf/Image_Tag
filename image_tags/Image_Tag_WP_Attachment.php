@@ -192,6 +192,9 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 		if ( $this->is_valid() )
 			return ( int ) $this->get_versions()['__largest']->width;
 
+		if ( !function_exists( 'wp_get_registered_image_subsizes' ) )
+			return 0;
+
 		$image_sizes = $this->get_setting( 'image-sizes' );
 		$sizes = wp_get_registered_image_subsizes();
 
@@ -220,6 +223,9 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 
 		if ( $this->is_valid() )
 			return ( int ) $this->get_versions()['__largest']->height;
+
+		if ( !function_exists( 'wp_get_registered_image_subsizes' ) )
+			return 0;
 
 		$image_sizes = $this->get_setting( 'image-sizes' );
 		$sizes = wp_get_registered_image_subsizes();
