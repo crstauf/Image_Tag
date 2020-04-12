@@ -263,6 +263,8 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 	 * @uses $this->get_setting()
 	 * @uses $this->get_version()
 	 * @return array
+	 *
+	 * @todo add test for empty version info
 	 */
 	function get_versions() {
 		if ( !empty( array_filter( $this->versions ) ) )
@@ -275,8 +277,14 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 		$largest  = null;
 		$smallest = null;
 
-		foreach ( $image_sizes as $image_size ) {
+		foreach ( $image_sizes as $i => $image_size ) {
 			$version = $this->get_version( $image_size );
+
+			if ( empty( ( array ) $version ) ) {
+				unset( $image_sizes[$i] );
+				$this->set_setting( 'image-sizes', $image_sizes );
+				continue;
+			}
 
 			# Determine if largest.
 			if (
