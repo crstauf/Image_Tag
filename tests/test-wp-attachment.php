@@ -381,4 +381,57 @@ class Image_Tag_WP_Attachment_Test extends WP_UnitTestCase {
 		$this->assertFalse( $img->is_valid() );
 	}
 
+	/**
+	 * @group _placeholder
+	 * @group unsplash
+	 */
+	function test_unsplash() {
+		$image_sizes = array( 'medium', 'medium_large', 'large', 'full' );
+
+		$img = Image_Tag::create( static::$attachment_id, null, array(
+			'image-sizes' => $image_sizes,
+		) );
+		$unsplash = $img->unsplash();
+
+		$this->assertInstanceOf( Image_Tag_Unsplash::class, $unsplash );
+		$this->assertEquals( count( $image_sizes ), count( $unsplash['srcset'] ) );
+	}
+
+	/**
+	 * @group _placeholder
+	 * @group unsplash
+	 */
+	function test_unsplash_from_invalid() {
+		$image_sizes = array( 'medium', 'large', 'full' );
+		$img = Image_Tag::create( 0, array(), array( 'image-sizes' => $image_sizes ) );
+		$unsplash = $img->unsplash();
+
+		$this->assertInstanceOf( 'Image_Tag_unsplash', $unsplash );
+		$this->assertEquals( 1024, $unsplash->get_attribute( 'width' ) );
+		$this->assertEquals( 1024, $unsplash->get_attribute( 'height' ) );
+		$this->assertNotEmpty( $unsplash->get_attribute( 'src' ) );
+		$this->assertEmpty( $unsplash['srcset'] );
+
+		$unsplash = $img->unsplash( array(
+			'width' => 160,
+			'height' => 90,
+		) );
+		$this->assertEquals( 160, $unsplash->get_attribute( 'width' ) );
+		$this->assertEquals(  90, $unsplash->get_attribute( 'height' ) );
+
+		$this->assertEquals( 'image/jpeg', wp_remote_retrieve_header( $unsplash->http(), 'content-type' ) );
+
+		$img = Image_Tag::create( 0, null, array(
+			'image-sizes' => array( 'full' ),
+			'width' => 1600,
+			'height' => 900,
+		) );
+		$this->assertEquals( 1600, $img->get_setting(  'width' ) );
+		$this->assertEquals(  900, $img->get_setting( 'height' ) );
+
+		$unsplash = $img->unsplash();
+		$this->assertEquals( 1600, $unsplash->get_setting(  'width' ) );
+		$this->assertEquals(  900, $unsplash->get_setting( 'height' ) );
+	}
+
 }

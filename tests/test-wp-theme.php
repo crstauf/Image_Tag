@@ -28,6 +28,10 @@ class Image_Tag_WP_Theme_Test extends WP_UnitTestCase {
 		$this->assertEquals( 0.75, $img->get_ratio() );
 	}
 
+	/**
+	 * @group _placeholder
+	 * @group picsum
+	 */
 	function test_picsum() {
 		$img = Image_Tag::create( static::SRC );
 		$this->assertInstanceOf( 'Image_Tag_Picsum', $img->picsum() );
@@ -174,6 +178,46 @@ class Image_Tag_WP_Theme_Test extends WP_UnitTestCase {
 	function test_invalid() {
 		$img = Image_Tag::create( 'does-not-exist.jpg' );
 		$this->assertFalse( $img->is_valid() );
+	}
+
+	/**
+	 * @group _placeholder
+	 * @group unsplash
+	 */
+	function test_unsplash() {
+		$img = Image_Tag::create( static::SRC );
+		$this->assertInstanceOf( 'Image_Tag_Unsplash', $img->unsplash() );
+	}
+
+	/**
+	 * @group _placeholder
+	 * @group unsplash
+	 * @group http
+	 */
+	function test_unsplash_from_invalid() {
+		$img = Image_Tag::create( 'image-does-not-exist.jpg' );
+		$this->assertInstanceOf( 'Image_Tag_Unsplash', $img->unsplash() );
+
+		$unsplash = $img->unsplash( array(
+			'width' => 160,
+			'height' => 90,
+		) );
+		$this->assertEquals( 160, $unsplash->get_attribute( 'width' ) );
+		$this->assertEquals(  90, $unsplash->get_attribute( 'height' ) );
+
+		$this->assertEquals( 'image/jpeg', wp_remote_retrieve_header( $unsplash->http(), 'content-type' ) );
+
+		$img = Image_Tag::create( 0, null, array(
+			'image-sizes' => array( 'full' ),
+			'width' => 1600,
+			'height' => 900,
+		) );
+		$this->assertEquals( 1600, $img->get_setting(  'width' ) );
+		$this->assertEquals(  900, $img->get_setting( 'height' ) );
+
+		$unsplash = $img->unsplash();
+		$this->assertEquals( 1600, $unsplash->get_setting(  'width' ) );
+		$this->assertEquals(  900, $unsplash->get_setting( 'height' ) );
 	}
 
 }

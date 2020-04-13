@@ -72,6 +72,10 @@ class Image_Tag implements ArrayAccess {
 		if ( 'joeschmoe' === $source )
 			return new Image_Tag_JoeSchmoe( $attributes, $settings );
 
+		# If source is "unsplash", create Unsplash image.
+		if ( 'unsplash' === $source )
+			return new Image_Tag_Unsplash( $attributes, $settings );
+
 		# If URL, create external image.
 		if ( ( bool ) wp_http_validate_url( $source ) ) {
 			$attributes['src'] = $source;
@@ -640,6 +644,25 @@ class Image_Tag implements ArrayAccess {
 	}
 
 	/**
+	 * Transpose attributes and settings into Unsplash image.
+	 *
+	 * @param array $attributes
+	 * @param array $settings
+	 * @uses Image_Tag::create()
+	 * @return Image_Tag_Unsplash
+	 */
+	function unsplash( $attributes = array(), array $settings = array() ) {
+		$attributes = wp_parse_args( ( array ) $attributes, $this->attributes );
+		$settings = wp_parse_args( $settings, $this->settings );
+		$settings = wp_parse_args( $settings, array(
+			 'width' => $this->get_width(),
+			'height' => $this->get_height(),
+		) );
+
+		return Image_Tag::create( 'unsplash', $attributes, $settings );
+	}
+
+	/**
 	 * Create noscript version of image tag.
 	 *
 	 * @param array $attributes
@@ -777,6 +800,7 @@ require_once 'image_tags/Image_Tag_WP_Theme.php';
 require_once 'image_tags/Image_Tag_Picsum.php';
 require_once 'image_tags/Image_Tag_Placeholder.php';
 require_once 'image_tags/Image_Tag_JoeSchmoe.php';
+require_once 'image_tags/Image_Tag_Unsplash.php';
 
 
 

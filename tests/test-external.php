@@ -18,6 +18,10 @@ class Image_Tag_Base_Test extends WP_UnitTestCase {
 		$this->assertEquals( $img->http(), $img->http() );
 	}
 
+	/**
+	 * @group _placeholder
+	 * @group picsum
+	 */
 	function test_picsum() {
 		$src = 'https://picsum.photos/400/300';
 		$img = Image_Tag::create( $src );
@@ -25,11 +29,37 @@ class Image_Tag_Base_Test extends WP_UnitTestCase {
 		$this->assertInstanceOf( 'Image_Tag_Picsum', $img->picsum() );
 	}
 
+	/**
+	 * @group _placeholder
+	 * @group placeholder
+	 */
 	function test_placeholder() {
 		$src = 'https://picsum.photos/400/300';
 		$img = Image_Tag::create( $src );
 
 		$this->assertInstanceOf( 'Image_Tag_Placeholder', $img->placeholder() );
+	}
+
+	/**
+	 * @group _placeholder
+	 * @group joeschmoe
+	 */
+	function test_joeschmoe() {
+		$src = 'https://picsum.photos/400/300';
+		$img = Image_Tag::create( $src );
+
+		$this->assertInstanceOf( 'Image_Tag_JoeSchmoe', $img->joeschmoe() );
+	}
+
+	/**
+	 * @group _placeholder
+	 * @group unsplash
+	 */
+	function test_unsplash() {
+		$src = 'https://picsum.photos/400/300';
+		$img = Image_Tag::create( $src );
+
+		$this->assertInstanceOf( 'Image_Tag_Unsplash', $img->unsplash() );
 	}
 
 	function test_lazyload() {

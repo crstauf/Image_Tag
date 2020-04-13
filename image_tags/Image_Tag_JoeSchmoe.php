@@ -26,13 +26,6 @@ class Image_Tag_JoeSchmoe extends Image_Tag {
 	);
 
 	/**
-	 * Construct.
-	 */
-	function __construct( array $attributes = array(), array $settings = array() ) {
-		parent::__construct( $attributes, $settings );
-	}
-
-	/**
 	 * Get "gender" setting.
 	 *
 	 * @uses $this->_get_setting()

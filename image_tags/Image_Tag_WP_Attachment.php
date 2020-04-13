@@ -607,6 +607,44 @@ class Image_Tag_WP_Attachment extends Image_Tag_WP {
 		return $base64;
 	}
 
+	/**
+	 * Transpose WP attachment image to Unsplash image.
+	 *
+	 * @param array $attributes
+	 * @param array $settings
+	 * @uses Image_Tag->unsplash()
+	 * @uses Image_Tag_Unsplash->get_attribute()
+	 * @uses Image_Tag_Unspalsh->set_attribute()
+	 * @uses $this->get_versions()
+	 * @uses Image_Tag::create()
+	 * @uses Image_Tag_Unsplash->add_srcset()
+	 * @return Image_Tag_Unsplash
+	 */
+	function unsplash( $attributes = array(), array $settings = array() ) {
+		$unsplash = parent::unsplash( $attributes, $settings );
+
+		if (
+			empty( $attributes['srcset'] )
+			&& !empty( $unsplash->get_attribute( 'srcset' ) )
+		) {
+			$unsplash->set_attribute( 'srcset', array() );
+
+			foreach ( $this->get_setting( 'image-sizes' ) as $image_size ) {
+				$version = $this->get_version( $image_size );
+
+				$tmp = Image_Tag::create( 'unsplash', array(), array(
+					 'width' => $version->width,
+					'height' => $version->height,
+					'random' => true,
+				) );
+
+				$unsplash->add_srcset( $tmp->get_attribute( 'src' ) . ' ' . $version->width . 'w' );
+			}
+		}
+
+		return $unsplash;
+	}
+
 }
 
 ?>
