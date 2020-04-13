@@ -802,6 +802,4 @@ require_once 'image_tags/Image_Tag_Placeholder.php';
 require_once 'image_tags/Image_Tag_JoeSchmoe.php';
 require_once 'image_tags/Image_Tag_Unsplash.php';
 
-
-
 ?>
