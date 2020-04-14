@@ -43,9 +43,11 @@ class Image_Tag implements ArrayAccess {
 	);
 
 	/**
-	 * @var array $settings Settings of img tag.
+	 * @var array $settings Settings for object.
 	 */
-	protected $settings = array();
+	protected $settings = array(
+		'sizes' => array(),
+	);
 
 	/**
 	 * @param $source
@@ -92,13 +94,12 @@ class Image_Tag implements ArrayAccess {
 	/**
 	 * Construct.
 	 *
-	 * @param $source
-	 * @param array $attributes
+	 * @param null|array $attributes
 	 * @param array $settings
 	 * @uses $this->set_attributes()
 	 * @uses $this->set_settings()
 	 */
-	function __construct( array $attributes = array(), array $settings = array() ) {
+	function __construct( $attributes = array(), array $settings = array() ) {
 		$this->set_attributes( $attributes );
 		$this->set_settings( $settings );
 	}
@@ -107,11 +108,83 @@ class Image_Tag implements ArrayAccess {
 	 * Getter.
 	 *
 	 * @param string $key
+	 * @uses $this->_get_attribute()
 	 * @return mixed
 	 */
 	function __get( $key ) {
-		return $this->attributes[$key];
+		return $this->_get_attribute( $key );
 	}
+
+	/**
+	 * To string.
+	 *
+	 * @uses $this->is_valid()
+	 * @uses $this->check_valid()
+	 * @return null|string
+	 */
+	function __toString() {
+		if ( !$this->is_valid() ) {
+			foreach ( $this->check_valid()->get_error_messages() as $error )
+				trigger_error( $error, E_USER_WARNING );
+	
+			return null;
+		}
+
+		return '<img />';
+	}
+
+	/**
+	 * Check properties are sufficient to create tag.
+	 *
+	 * @uses $this->check_valid()
+	 * @return bool
+	 */
+	function is_valid() {
+		return true === $this->check_valid();
+	}
+
+	/**
+	 * @return true|WP_Error
+	 */
+	protected function check_valid() {
+		$errors = new WP_Error;
+
+		if ( empty( $this->get_attribute( 'src' ) ) )
+			$errors->add( 'required_attribute', 'Image requires <code>src</code> attribute.' );
+
+		if ( $errors->has_errors() )
+			return $errors;
+
+		return true;
+	}
+
+	function set_attributes( array $attributes ) {}
+	function set_attribute( string $key, $value ) {}
+	protected function _set_attribute( string $key, $value ) {}
+
+	function get_attributes() {}
+	function get_attribute( string $key ) {}
+	protected function _get_attribute( string $key ) {}
+
+	function set_settings( array $settings ) {}
+	function set_setting( string $key, $value ) {}
+	protected function _set_setting( string $key, $value ) {}
+
+	function get_settings() {}
+	function get_setting( string $key ) {}
+	protected function _get_setting( string $key ) {}
+
+	function add_class( $classes ) {}
+	function add_style( string $style ) {}
+	function add_sizes_item( $media_condition, string $width ) {}
+	function add_srcset_item( string $width, string $url ) {}
+
+	function set_sizes_item( $media_condition, string $width ) {}
+	function set_srcset_item( string $width, string $url ) {}
+
+	function remove_classes( $classes ) {}
+	function remove_sizes_item( $media_conditions ) {}
+	function remove_srcset_item( $widths ) {}
 
 	/**
 	 * ArrayAccess: exists
@@ -120,10 +193,7 @@ class Image_Tag implements ArrayAccess {
 	 * @return bool
 	 */
 	function offsetExists( $offset ) {
-		return (
-			   isset( $this->attributes[$offset] )
-			|| isset( $this->settings[$offset] )
-		);
+		return isset( $this->attributes[$offset] );
 	}
 
 	/**
@@ -135,9 +205,6 @@ class Image_Tag implements ArrayAccess {
 	function offsetGet( $offset ) {
 		if ( isset( $this->attributes[$offset] ) )
 			return $this->attributes[$offset];
-
-		if ( isset( $this->settings[$offset] ) )
-			return $this->settings[$offset];
 
 		return null;
 	}
