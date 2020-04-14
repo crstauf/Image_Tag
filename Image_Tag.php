@@ -52,6 +52,14 @@ class Image_Tag implements ArrayAccess {
 	);
 
 	/**
+	 * @var array $supports Capabilities that the Image_Tag supports.
+	 */
+	protected $supports = array(
+		'lazyload',
+		'noscript',
+	);
+
+	/**
 	 * Create Image Tag object.
 	 *
 	 * @uses Image_Tag_WP_Attachment::__construct()
@@ -157,7 +165,7 @@ class Image_Tag implements ArrayAccess {
 		$string .= apply_filters( 'image_tag/output/string', implode( ' ', $array ), $this );
 		$string .= $this->get_setting( 'after_output' );
 
-		return apply_filters( 'image_tag/output', $string );
+		return apply_filters( 'image_tag/output', $string, $this );
 	}
 
 	/**
@@ -187,6 +195,9 @@ class Image_Tag implements ArrayAccess {
 
 		return true;
 	}
+
+	function get_type() {}
+	function is_type() {}
 
 
 	/*
@@ -538,9 +549,9 @@ class Image_Tag implements ArrayAccess {
 	*/
 
 	function add_class( $classes ) {}
-	function add_style( string $style ) {}
 	function add_sizes_item( $media_condition, string $width ) {}
 	function add_srcset_item( string $width, string $url ) {}
+	function add_style( string $style ) {}
 
 
 	/*
@@ -570,6 +581,25 @@ class Image_Tag implements ArrayAccess {
 	function remove_classes( $classes ) {}
 	function remove_sizes_item( $media_conditions ) {}
 	function remove_srcset_item( $widths ) {}
+
+	function get_width() {}
+	function get_height() {}
+	function get_ratio() {}
+	function get_orientation() {}
+
+	function http() {}
+	function lazyload( $attributes = array(), array $settings = array() ) {}
+	function noscript( $attributes = array(), array $settings = array() ) {}
+	function lqip( $attributes = array(), array $settings = array() ) {}
+
+	function fallback( $source, $attributes = array(), array $settings = array() ) {}
+	function joeschmoe( $settings = array, array $attributes = $attributes ) {}
+	function picsum( $settings = array, array $attributes = $attributes ) {}
+	function placeholder( $settings = array, array $attributes = $attributes ) {}
+	function unsplash( $settings = array, array $attributes = $attributes ) {}
+
+	function supports( string $capability ) {}
+	function can( string $capability ) {}
 
 
 	/*
