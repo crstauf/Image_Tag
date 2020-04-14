@@ -52,6 +52,15 @@ class Image_Tag implements ArrayAccess {
 	);
 
 	/**
+	 * Create Image Tag object.
+	 *
+	 * @uses Image_Tag_WP_Attachment::__construct()
+	 * @uses Image_Tag_Picsum::__construct()
+	 * @uses Image_Tag_Placeholder::__construct()
+	 * @uses Image_Tag_Unsplash::__construct()
+	 * @uses Image_Tag::__construct()
+	 * @uses Image_Tag_WP_Theme::__construct()
+	 *
 	 * @param $source
 	 * @param null|array $attributes
  	 * @param array $settings
@@ -91,6 +100,7 @@ class Image_Tag implements ArrayAccess {
 			return new Image_Tag_WP_Theme( $source, $attributes, $settings );
 
 		trigger_error( sprintf( 'Unable to determine image type from source: <code>%s</code>.', $source ), E_USER_WARNING );
+		return new static( $attributes, $settings );
 	}
 
 	/**
@@ -210,10 +220,101 @@ class Image_Tag implements ArrayAccess {
 	function set_attribute( string $key, $value ) {
 		$method_name = preg_replace( '/[^A-z0-9_]/', '_', 'set_' . $key . '_attribute' );
 
+		# Allow overriding attribute retrieval by name.
 		if ( is_callable( array( $this, $method_name ) ) )
-			return $this->$method_name();
+			return $this->$method_name( $value );
+
+		# Allow overriding attribute retrieval by variable type.
+		$type = gettype( $value );
+		$method_name = 'set_' . $type . '_attribute';
+
+		if ( is_callable( array( $this, $method_name ) ) )
+			return $this->$method_name( $value );
 
 		return $this->_set_attribute( $key, $value );
+	}
+
+	/**
+	 * Set "class" attribute.
+	 *
+	 * @param array|string $classes
+	 * @uses $this->_set_attribute()
+	 */
+	protected function set_class_attribute( $classes ) {
+		if ( is_string( $classes ) )
+			$classes = explode( ' ', $classes );
+
+		if ( !is_array( $classes ) ) {
+			trigger_error( sprintf( 'Value of type <code>%s</code> is not valid for <code>%s</code> attribute.', gettype( $classes ), 'class' ) );
+			return;
+		}
+
+		$this->_set_attribute( 'class', array_filter( array_map( 'trim', $classes ) ) );
+	}
+
+	/**
+	 * Set "sizes" attribute.
+	 *
+	 * @param array|string $sizes
+	 * @uses $this->_set_attribute()
+	 */
+	protected function set_sizes_attribute( $sizes ) {
+		if ( is_string( $sizes ) )
+			$sizes = explode( ',', $sizes );
+
+		if ( !is_array( $sizes ) ) {
+			trigger_error( sprintf( 'Value of type <code>%s</code> is not valid for <code>%s</code> attribute.', gettype( $sizes ), 'sizes' ) );
+			return;
+		}
+
+		$this->_set_attribute( 'sizes', array_filter( array_map( 'trim', $sizes ) ) );
+	}
+
+	/**
+	 * Set "srcset" attribute.
+	 *
+	 * @param array|string $srcset
+	 * @uses $this->_set_attribute()
+	 */
+	protected function set_srcset_attribute( $srcset ) {
+		if ( is_string( $srcset ) )
+			$srcset = explode( ',', $srcset );
+
+		if ( !is_array( $srcset ) ) {
+			trigger_error( sprintf( 'Value of type <code>%s</code> is not valid for <code>%s</code> attribute.', gettype( $srcset ), 'srcset' ) );
+			return;
+		}
+
+		$this->_set_attribute( 'srcset', array_filter( array_map( 'trim', $srcset ) ) );
+	}
+
+	/**
+	 * Set "style" attribute.
+	 *
+	 * @param array|string $style
+	 * @uses $this->_set_attribute()
+	 */
+	protected function set_style_attribute( $style ) {
+		if ( is_string( $style ) )
+			$style = explode( ';', $style );
+
+		if ( !is_array( $style ) ) {
+			trigger_error( sprintf( 'Value of type <code>%s</code> is not valid for <code>%s</code> attribute.', gettype( $style ), 'style' ) );
+			return;
+		}
+
+		$this->_set_attribute( 'style', array_filter( array_map( 'trim', $style ) ) );
+	}
+
+	/**
+	 * Set attribute of array type.
+	 *
+	 * @param string $key
+	 * @param array $value
+	 * @uses $this->_set_attribute()
+	 */
+	protected function set_array_attribute( string $key, array $value ) {
+		$this->_set_attribute( $key, array_filter( array_map( 'trim', $value ) ) );
 	}
 
 	/**
@@ -240,31 +341,21 @@ class Image_Tag implements ArrayAccess {
 	/**
 	 * Get attributes.
 	 *
+	 * @param bool $raw
+	 * @uses $this->_get_attributes()
 	 * @uses $this->get_attribute()
 	 * @return array
 	 */
-	function get_attributes() {
+	function get_attributes( bool $raw = false ) {
 		$attributes = array();
 
 		foreach ( array_keys( $this->attributes ) as $attribute )
-			$attributes[$attribute] = $this->get_attribute( $attribute );
+			$attributes[$attribute] = $this->get_attribute( $attribute, $raw );
+
+		if ( $raw )
+			return $attributes;
 
 		return array_filter( $attributes );
-	}
-
-	/**
-	 * Get raw attributes.
-	 *
-	 * @uses $this->_get_attribute()
-	 * @return array
-	 */
-	function _get_attributes() {
-		$attributes = array();
-
-		foreach ( array_keys( $this->attributes ) as $attribute )
-			$attributes[$attribute] = $this->_get_attribute( $attribute );
-
-		return $attributes;
 	}
 
 	/**
@@ -274,7 +365,10 @@ class Image_Tag implements ArrayAccess {
 	 * @uses $this->_get_attribute()
 	 * @return mixed
 	 */
-	function get_attribute( string $key ) {
+	function get_attribute( string $key, bool $raw = false ) {
+		if ( $raw )
+			return $this->_get_attribute( $key );
+
 		$method_name = preg_replace( '/[^A-z0-9_]/', '_', 'get_' . $key . '_attribute' );
 
 		# Allow overriding attribute retrieval by name.
@@ -292,6 +386,26 @@ class Image_Tag implements ArrayAccess {
 	}
 
 	/**
+	 * Get "class" attribute.
+	 *
+	 * @uses $this->_get_attribute()
+	 * @return string
+	 */
+	protected function get_class_attribute() {
+		return implode( ' ', array_unique( array_filter( $this->_get_attribute( 'class' ) ) ) );
+	}
+
+	/**
+	 * Get "style" attribute.
+	 *
+	 * @uses $this->_get_attribute()
+	 * @return string
+	 */
+	protected function get_style_attribute() {
+		return implode( '; ', $this->_get_attribute( 'style' ) );
+	}
+
+	/**
 	 * Get array attribute.
 	 *
 	 * @param string $key
@@ -299,7 +413,7 @@ class Image_Tag implements ArrayAccess {
 	 * @return string
 	 */
 	function get_array_attribute( string $key ) {
-		return implode( ', ', $this->_get_attribute( $key ) );
+		return implode( ', ', array_unique( array_filter( $this->_get_attribute( $key ) ) ) );
 	}
 
 	/**
@@ -308,7 +422,7 @@ class Image_Tag implements ArrayAccess {
 	 * @param string $key
 	 * @return mixed
 	 */
-	function _get_attribute( string $key ) {
+	protected function _get_attribute( string $key ) {
 		return $this->attributes[$key];
 	}
 
@@ -485,10 +599,7 @@ class Image_Tag implements ArrayAccess {
 	 * @return mixed
 	 */
 	function offsetGet( $offset ) {
-		if ( isset( $this->attributes[$offset] ) )
-			return $this->attributes[$offset];
-
-		return null;
+		return $this->attributes[$offset];
 	}
 
 	/**
