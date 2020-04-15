@@ -196,13 +196,19 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @uses Image_Tag::is_valid()
 	 * @covers Image_Tag::is_valid()
+	 * @covers Image_Tag::__toString()
+	 * @covers Image_Tag::check_valid()
 	 */
 	function test_valid() {
-		$img = @$this->create( null, array(), null );
-		$this->assertFalse( $img->is_valid() );
-
 		$img = $this->create();
 		$this->assertTrue( $img->is_valid() );
+
+		$img = $this->create();
+		$img->set_attribute( 'src', null );
+		$this->assertFalse( $img->is_valid() );
+
+		$this->expectException( \Exception::class );
+		@$img->__toString();
 	}
 
 
@@ -548,6 +554,34 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 		$img->set_attribute( 'sizes', $sizes );
 		$this->assertEquals( $_sizes, $img->get_attribute( 'sizes', true ) );
 		$this->assertEquals( implode( ', ', array_unique( $_sizes ) ), $img->get_attribute( 'sizes' ) );
+	}
+
+	/*
+	 ######  ######## ########     ######  ######## ######## ######## #### ##    ##  ######    ######
+	##    ## ##          ##       ##    ## ##          ##       ##     ##  ###   ## ##    ##  ##    ##
+	##       ##          ##       ##       ##          ##       ##     ##  ####  ## ##        ##
+	 ######  ######      ##        ######  ######      ##       ##     ##  ## ## ## ##   ####  ######
+	      ## ##          ##             ## ##          ##       ##     ##  ##  #### ##    ##        ##
+	##    ## ##          ##       ##    ## ##          ##       ##     ##  ##   ### ##    ##  ##    ##
+	 ######  ########    ##        ######  ########    ##       ##    #### ##    ##  ######    ######
+	*/
+
+	/**
+	 * Test set settings.
+	 *
+	 * @covers Image_Tag::set_settings()
+	 */
+	function test_set_settings() {
+		$settings = array(
+			'foo' => uniqid( 'foo' ),
+			'bar' => uniqid( 'bar' ),
+		);
+
+		$img = $this->create();
+		$img->set_settings( $settings );
+
+		foreach ( $settings as $setting => $value )
+			$this->assertEquals( $value, $img->get_setting( $setting ) );
 	}
 
 }

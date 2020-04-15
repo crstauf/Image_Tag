@@ -111,6 +111,17 @@ class Image_Tag implements ArrayAccess {
 		return new static( $attributes, $settings );
 	}
 
+
+	/*
+	##     ##    ###     ######   ####  ######
+	###   ###   ## ##   ##    ##   ##  ##    ##
+	#### ####  ##   ##  ##         ##  ##
+	## ### ## ##     ## ##   ####  ##  ##
+	##     ## ######### ##    ##   ##  ##
+	##     ## ##     ## ##    ##   ##  ##    ##
+	##     ## ##     ##  ######   ####  ######
+	*/
+
 	/**
 	 * Construct.
 	 *
@@ -146,8 +157,10 @@ class Image_Tag implements ArrayAccess {
 	 */
 	function __toString() {
 		if ( !$this->is_valid() ) {
-			foreach ( $this->check_valid()->get_error_messages() as $error )
-				trigger_error( $error, E_USER_WARNING );
+			foreach ( $this->check_valid()->get_error_messages() as $error ) {
+				error_log( $error );
+				throw new Exception( $error );
+			}
 
 			return null;
 		}
@@ -167,6 +180,17 @@ class Image_Tag implements ArrayAccess {
 
 		return apply_filters( 'image_tag/output', $string, $this );
 	}
+
+
+	/*
+	##     ##    ###    ##       #### ########     ###    ######## ####  #######  ##    ##
+	##     ##   ## ##   ##        ##  ##     ##   ## ##      ##     ##  ##     ## ###   ##
+	##     ##  ##   ##  ##        ##  ##     ##  ##   ##     ##     ##  ##     ## ####  ##
+	##     ## ##     ## ##        ##  ##     ## ##     ##    ##     ##  ##     ## ## ## ##
+	 ##   ##  ######### ##        ##  ##     ## #########    ##     ##  ##     ## ##  ####
+	  ## ##   ##     ## ##        ##  ##     ## ##     ##    ##     ##  ##     ## ##   ###
+	   ###    ##     ## ######## #### ########  ##     ##    ##    ####  #######  ##    ##
+	*/
 
 	/**
 	 * Check properties are sufficient to create tag.
@@ -515,10 +539,14 @@ class Image_Tag implements ArrayAccess {
 	 * Get setting.
 	 *
 	 * @param string $key
+	 * @param bool $raw
 	 * @uses $this->_get_setting()
 	 * @return mixed
 	 */
-	function get_setting( string $key ) {
+	function get_setting( string $key, bool $raw = false ) {
+		if ( $raw )
+			return $this->_get_setting( $key );
+
 		$method_name = preg_replace( '/[^A-z0-9_]/', '_', 'get_' . $key . '_setting' );
 
 		if ( is_callable( array( $this, $method_name ) ) )
@@ -582,21 +610,130 @@ class Image_Tag implements ArrayAccess {
 	function remove_sizes_item( $media_conditions ) {}
 	function remove_srcset_item( $widths ) {}
 
-	function get_width() {}
-	function get_height() {}
-	function get_ratio() {}
-	function get_orientation() {}
 
-	function http() {}
+	/*
+	########  #### ##     ## ######## ##    ##  ######  ####  #######  ##    ##  ######
+	##     ##  ##  ###   ### ##       ###   ## ##    ##  ##  ##     ## ###   ## ##    ##
+	##     ##  ##  #### #### ##       ####  ## ##        ##  ##     ## ####  ## ##
+	##     ##  ##  ## ### ## ######   ## ## ##  ######   ##  ##     ## ## ## ##  ######
+	##     ##  ##  ##     ## ##       ##  ####       ##  ##  ##     ## ##  ####       ##
+	##     ##  ##  ##     ## ##       ##   ### ##    ##  ##  ##     ## ##   ### ##    ##
+	########  #### ##     ## ######## ##    ##  ######  ####  #######  ##    ##  ######
+	*/
+
+	/**
+	 * Get image's primary width.
+	 *
+	 * @return int
+	 */
+	function get_width() {
+
+	}
+
+	/**
+	 * Get image's primary height.
+	 *
+	 * @return int
+	 */
+	function get_height() {
+
+	}
+
+	/**
+	 * Get image's primary ratio.
+	 *
+	 * @uses $this->get_height()
+	 * @uses $this->get_width()
+	 * @return float
+	 */
+	function get_ratio() {
+		return $this->get_height() / $this->get_width();
+	}
+
+	/**
+	 * Get image's primary orientation.
+	 *
+	 * @return string
+	 */
+	function get_orientation() {
+		$ratio = $this->get_ratio();
+
+		if ( empty( $ratio ) )
+			return 'unknown';
+
+		if ( $ratio > 1 )
+			return 'portrait';
+
+		if ( $ratio < 1 )
+			return 'landscape';
+
+		if ( 1 === $ratio )
+			return 'square';
+
+		return 'unknown';
+	}
+
+
+	/*
+	######## ########    ###    ######## ##     ## ########  ########  ######
+	##       ##         ## ##      ##    ##     ## ##     ## ##       ##    ##
+	##       ##        ##   ##     ##    ##     ## ##     ## ##       ##
+	######   ######   ##     ##    ##    ##     ## ########  ######    ######
+	##       ##       #########    ##    ##     ## ##   ##   ##             ##
+	##       ##       ##     ##    ##    ##     ## ##    ##  ##       ##    ##
+	##       ######## ##     ##    ##     #######  ##     ## ########  ######
+	*/
+
+	/**
+	 * Make HTTP GET request to image's primary URL.
+	 *
+	 * @uses wp_remote_get()
+	 */
+	function http( bool $force = false ) {
+		static $cache = array();
+
+		$src = $this->get_attribute( 'src' );
+
+		if (
+			!$force
+			&& isset( $cache[$src] )
+		)
+			return $cache[$src];
+
+		return wp_remote_get( $src );
+	}
+
 	function lazyload( $attributes = array(), array $settings = array() ) {}
 	function noscript( $attributes = array(), array $settings = array() ) {}
 	function lqip( $attributes = array(), array $settings = array() ) {}
 
+
+	/*
+	########  ##          ###     ######  ######## ##     ##  #######  ##       ########  ######## ########   ######
+	##     ## ##         ## ##   ##    ## ##       ##     ## ##     ## ##       ##     ## ##       ##     ## ##    ##
+	##     ## ##        ##   ##  ##       ##       ##     ## ##     ## ##       ##     ## ##       ##     ## ##
+	########  ##       ##     ## ##       ######   ######### ##     ## ##       ##     ## ######   ########   ######
+	##        ##       ######### ##       ##       ##     ## ##     ## ##       ##     ## ##       ##   ##         ##
+	##        ##       ##     ## ##    ## ##       ##     ## ##     ## ##       ##     ## ##       ##    ##  ##    ##
+	##        ######## ##     ##  ######  ######## ##     ##  #######  ######## ########  ######## ##     ##  ######
+	*/
+
 	function fallback( $source, $attributes = array(), array $settings = array() ) {}
-	function joeschmoe( $settings = array, array $attributes = $attributes ) {}
-	function picsum( $settings = array, array $attributes = $attributes ) {}
-	function placeholder( $settings = array, array $attributes = $attributes ) {}
-	function unsplash( $settings = array, array $attributes = $attributes ) {}
+	function joeschmoe( $settings = array(), array $attributes = array() ) {}
+	function picsum( $settings = array(), array $attributes = array() ) {}
+	function placeholder( $settings = array(), array $attributes = array() ) {}
+	function unsplash( $settings = array(), array $attributes = array() ) {}
+
+
+	/*
+	 ######     ###    ########     ###    ########  #### ##       #### ######## #### ########  ######
+	##    ##   ## ##   ##     ##   ## ##   ##     ##  ##  ##        ##     ##     ##  ##       ##    ##
+	##        ##   ##  ##     ##  ##   ##  ##     ##  ##  ##        ##     ##     ##  ##       ##
+	##       ##     ## ########  ##     ## ########   ##  ##        ##     ##     ##  ######    ######
+	##       ######### ##        ######### ##     ##  ##  ##        ##     ##     ##  ##             ##
+	##    ## ##     ## ##        ##     ## ##     ##  ##  ##        ##     ##     ##  ##       ##    ##
+	 ######  ##     ## ##        ##     ## ########  #### ######## ####    ##    #### ########  ######
+	*/
 
 	function supports( string $capability ) {}
 	function can( string $capability ) {}
