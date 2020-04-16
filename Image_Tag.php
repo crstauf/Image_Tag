@@ -523,14 +523,15 @@ class Image_Tag implements ArrayAccess {
 	/**
 	 * Get settings.
 	 *
+	 * @param bool $raw
 	 * @uses $this->get_setting()
 	 * @return array
 	 */
-	function get_settings() {
+	function get_settings( bool $raw = false ) {
 		$settings = array();
 
 		foreach ( array_keys( $this->settings ) as $setting )
-			$settings[$setting] = $this->get_setting( $setting );
+			$settings[$setting] = $this->get_setting( $setting, $raw );
 
 		return $settings;
 	}
@@ -688,6 +689,7 @@ class Image_Tag implements ArrayAccess {
 	 * Make HTTP GET request to image's primary URL.
 	 *
 	 * @uses wp_remote_get()
+	 * @return array|WP_Error
 	 */
 	function http( bool $force = false ) {
 		static $cache = array();
@@ -703,9 +705,62 @@ class Image_Tag implements ArrayAccess {
 		return wp_remote_get( $src );
 	}
 
-	function lazyload( $attributes = array(), array $settings = array() ) {}
-	function noscript( $attributes = array(), array $settings = array() ) {}
-	function lqip( $attributes = array(), array $settings = array() ) {}
+	function lazyload( $attributes = array(), array $settings = array() ) {
+		if ( !$this->can( __FUNCTION__ ) )
+			return new static;
+
+		$pre = apply_filters( 'image_tag/lazyload/pre', null, $this, $attributes, $settings );
+		if ( !is_null( $pre ) )
+			return $pre;
+
+		$attributes = wp_parse_args( $attributes, $this->get_attributes( true ) );
+		$settings = wp_parse_args( $settings, $this->get_settings( true ) );
+
+		$lazyload = clone $this;
+		$lazyload->set_attributes( $attributes );
+		$lazyload->set_settings( $settings );
+
+		$lazyload->add_class( 'lazyload hide-if-no-js' );
+
+		$lazyload->add_attribute( 'data-src',    $lazyload->get_attribute( 'src' ) );
+		$lazyload->add_attribute( 'data-sizes',  $lazyload->get_attribute( 'sizes' ) );
+		$lazyload->add_attribute( 'data-srcset', $lazyload->get_attribute( 'srcset' ) );
+
+		if ( empty( $lazyload->get_attribute( 'data-sizes' ) ) )
+			$lazyload->set_attribute( 'data-sizes', 'auto' );
+
+		$lazyload->set_setting( 'after_output', $this->noscript( array(
+			'loading' => 'lazy',
+		) );
+
+		return $lazyload;
+	}
+
+	function noscript( $attributes = array(), array $settings = array() ) {
+		if ( !$this->can( __FUNCTION__ ) )
+			return new static;
+
+		$attributes = wp_parse_args( $attributes, $this->get_attributes( true ) );
+		$settings = wp_parse_args( $settings, $this->get_settings( true ) );
+
+		$noscript = clone $this;
+		$noscript->set_attributes( $attributes );
+		$noscript->set_settings( $settings );
+
+		$noscript->add_class( 'nojs' );
+		$noscript->set_setting( 'before_output', '<noscript>' . $this->get_setting( 'before_output' ) );
+		$noscript->set_setting( 'after_output', '</noscript>' . $this->get_setting( 'after_output' ) );
+
+		return $noscript;
+	}
+
+	function lqip( $attributes = array(), array $settings = array() ) {
+		if ( !$this->can( __FUNCTION__ ) )
+			return new static;
+
+		$attributes = wp_parse_args( $attributes, $this->get_attributes( true ) );
+		$settings = wp_parse_args( $settings, $this->get_settings( true ) );
+	}
 
 
 	/*
@@ -718,10 +773,45 @@ class Image_Tag implements ArrayAccess {
 	##        ######## ##     ##  ######  ######## ##     ##  #######  ######## ########  ######## ##     ##  ######
 	*/
 
-	function joeschmoe( $settings = array(), array $attributes = array() ) {}
-	function picsum( $settings = array(), array $attributes = array() ) {}
-	function placeholder( $settings = array(), array $attributes = array() ) {}
-	function unsplash( $settings = array(), array $attributes = array() ) {}
+	function joeschmoe( $settings = array(), array $attributes = array() ) {
+		if ( !$this->supports( __FUNCTION__ ) )
+			return new static;
+
+		$attributes = wp_parse_args( $attributes, $this->get_attributes( true ) );
+		$settings = wp_parse_args( $settings, $this->get_settings( true ) );
+
+		return Image_Tag::create( 'joeschmoe', $attributes, $settings );
+	}
+
+	function picsum( $settings = array(), array $attributes = array() ) {
+		if ( !$this->supports( __FUNCTION__ ) )
+			return new static;
+
+		$attributes = wp_parse_args( $attributes, $this->get_attributes( true ) );
+		$settings = wp_parse_args( $settings, $this->get_settings( true ) );
+
+		return Image_Tag::create( 'picsum', $attributes, $settings );
+	}
+
+	function placeholder( $settings = array(), array $attributes = array() ) {
+		if ( !$this->supports( __FUNCTION__ ) )
+			return new static;
+
+		$attributes = wp_parse_args( $attributes, $this->get_attributes( true ) );
+		$settings = wp_parse_args( $settings, $this->get_settings( true ) );
+
+		return Image_Tag::create( 'placeholder', $attributes, $settings );
+	}
+
+	function unsplash( $settings = array(), array $attributes = array() ) {
+		if ( !$this->supports( __FUNCTION__ ) )
+			return new static;
+
+		$attributes = wp_parse_args( $attributes, $this->get_attributes( true ) );
+		$settings = wp_parse_args( $settings, $this->get_settings( true ) );
+
+		return Image_Tag::create( 'unsplash', $attributes, $settings );
+	}
 
 
 	/*
