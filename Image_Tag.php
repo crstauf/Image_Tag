@@ -718,7 +718,6 @@ class Image_Tag implements ArrayAccess {
 	##        ######## ##     ##  ######  ######## ##     ##  #######  ######## ########  ######## ##     ##  ######
 	*/
 
-	function fallback( $source, $attributes = array(), array $settings = array() ) {}
 	function joeschmoe( $settings = array(), array $attributes = array() ) {}
 	function picsum( $settings = array(), array $attributes = array() ) {}
 	function placeholder( $settings = array(), array $attributes = array() ) {}

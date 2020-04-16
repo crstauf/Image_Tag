@@ -584,4 +584,43 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 			$this->assertEquals( $value, $img->get_setting( $setting ) );
 	}
 
+	function test_set_setting() {}
+	function test_get_settings() {}
+	function test_get_setting() {}
+
+	function test_add_class() {}
+	function test_add_sizes_item() {}
+	function test_add_srcset_item() {}
+	function test_add_style() {}
+
+	function test_set_sizes_item() {}
+	function test_set_srcset_item() {}
+
+	function test_remove_classes() {}
+	function test_remove_sizes_item() {}
+	function test_remove_srcset_item() {}
+
+	function test_get_width() {}
+	function test_get_height() {}
+	function test_get_ratio() {}
+	function test_get_orientation() {}
+
+	function test_http() {}
+	function test_lazyload() {}
+	function test_noscript() {}
+	function test_lqip() {}
+
+	function test_joeschmoe() {}
+	function test_picsum() {}
+	function test_placeholder() {}
+	function test_unsplash() {}
+
+	function test_supports() {}
+	function test_can() {}
+
+	function test_arrayaccess_exists() {}
+	function test_arrayaccess_get() {}
+	function test_arrayaccess_set() {}
+	function test_arrayaccess_unset() {}
+
 }
