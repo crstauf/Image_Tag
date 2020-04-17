@@ -42,7 +42,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 * Test base64 encoded blank image.
 	 */
 	function test_blank() {
-		$this->assertEquals( 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', constant( $this->class_name() . '::BLANK' ) );
+		$this->assertSame( 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', constant( $this->class_name() . '::BLANK' ) );
 	}
 
 	/**
@@ -138,13 +138,13 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 		$img = $this->construct( $attributes, $settings );
 
 		foreach ( $attributes as $attribute => $value ) {
-			$this->assertEquals( $value, $img[$attribute], sprintf( 'Failed asserting that attribute "%s" matches expected "%s".', $attribute, $value ) );
-			$this->assertEquals( $value, $img->$attribute, sprintf( 'Failed asserting that attribute "%s" matches expected "%s".', $attribute, $value ) );
-			$this->assertEquals( $value, $img->get_attribute( $attribute ), sprintf( 'Failed asserting that attribute "%s" matches expected "%s".', $attribute, $value ) );
+			$this->assertSame( $value, $img[$attribute], sprintf( 'Failed asserting that attribute "%s" matches expected "%s".', $attribute, $value ) );
+			$this->assertSame( $value, $img->$attribute, sprintf( 'Failed asserting that attribute "%s" matches expected "%s".', $attribute, $value ) );
+			$this->assertSame( $value, $img->get_attribute( $attribute ), sprintf( 'Failed asserting that attribute "%s" matches expected "%s".', $attribute, $value ) );
 		}
 
 		foreach ( $settings as $setting => $value )
-			$this->assertEquals( $value, $img->get_setting( $setting ), sprintf( 'Failed asserting that setting "%s" matches expected "%s".', $setting, $value ) );
+			$this->assertSame( $value, $img->get_setting( $setting ), sprintf( 'Failed asserting that setting "%s" matches expected "%s".', $setting, $value ) );
 
 	}
 
@@ -251,9 +251,9 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 		$img->set_attributes( $attributes );
 
 		foreach ( $img->get_attributes( true ) as $attribute => $value ) {
-			$this->assertEquals( $value, $img[$attribute], sprintf( 'Failed asserting that "%s" attribute matches expected value.', $attribute ) );
-			$this->assertEquals( $value, $img->$attribute, sprintf( 'Failed asserting that "%s" attribute matches expected value.', $attribute ) );
-			$this->assertEquals( $value, $img->get_attribute( $attribute, true ), sprintf( 'Failed asserting that "%s" attribute matches expected value.', $attribute ) );
+			$this->assertSame( $value, $img[$attribute], sprintf( 'Failed asserting that "%s" attribute matches expected value.', $attribute ) );
+			$this->assertSame( $value, $img->$attribute, sprintf( 'Failed asserting that "%s" attribute matches expected value.', $attribute ) );
+			$this->assertSame( $value, $img->get_attribute( $attribute, true ), sprintf( 'Failed asserting that "%s" attribute matches expected value.', $attribute ) );
 		}
 	}
 
@@ -273,7 +273,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 		$this->assertEmpty( $img->get_attribute( 'id' ) );
 
 		$img->set_attribute( 'id' , __FUNCTION__ );
-		$this->assertEquals( __FUNCTION__, $img->get_attribute( 'id' ) );
+		$this->assertSame( __FUNCTION__, $img->get_attribute( 'id' ) );
 	}
 
 	/**
@@ -293,12 +293,12 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 		$class = ' foo  bar ';
 		$_class = array_filter( array_map( 'trim', explode( ' ', $class ) ) );
 		$img->set_attribute( 'class', $class );
-		$this->assertEquals( $_class, $img->get_attribute( 'class', true ) );
+		$this->assertSame( $_class, $img->get_attribute( 'class', true ) );
 
 		$class = array( 'foo ', 'bar' );
 		$_class = array_filter( array_map( 'trim', $class ) );
 		$img->set_attribute( 'class', $class );
-		$this->assertEquals( $_class, $img->get_attribute( 'class', true ) );
+		$this->assertSame( $_class, $img->get_attribute( 'class', true ) );
 	}
 
 	/**
@@ -318,12 +318,12 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 		$sizes = ' 50w , 100w ';
 		$_sizes = array_filter( array_map( 'trim', explode( ',', $sizes ) ) );
 		$img->set_attribute( 'sizes', $sizes );
-		$this->assertEquals( $_sizes, $img->get_attribute( 'sizes', true ) );
+		$this->assertSame( $_sizes, $img->get_attribute( 'sizes', true ) );
 
 		$sizes = array( ' 50w', '100w ' );
 		$_sizes = array_filter( array_map( 'trim', $sizes ) );
 		$img->set_attribute( 'sizes', $sizes );
-		$this->assertEquals( $_sizes, $img->get_attribute( 'sizes', true ) );
+		$this->assertSame( $_sizes, $img->get_attribute( 'sizes', true ) );
 	}
 
 	/**
@@ -343,12 +343,12 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 		$srcset = ' https://source.unsplash.com/random/500x500 50w,  https://source.unsplash.com/random/1000x1000 100w ';
 		$_srcset = array_filter( array_map( 'trim', explode( ',', $srcset ) ) );
 		$img->set_attribute( 'srcset', $srcset );
-		$this->assertEquals( $_srcset, $img->get_attribute( 'srcset', true ) );
+		$this->assertSame( $_srcset, $img->get_attribute( 'srcset', true ) );
 
 		$srcset = array( ' https://source.unsplash.com/random/500x500 50w ', 'https://source.unsplash.com/random/1000x1000  100w' );
 		$_srcset = array_filter( array_map( 'trim', $srcset ) );
 		$img->set_attribute( 'srcset', $srcset );
-		$this->assertEquals( $_srcset, $img->get_attribute( 'srcset', true ) );
+		$this->assertSame( $_srcset, $img->get_attribute( 'srcset', true ) );
 	}
 
 	/**
@@ -368,22 +368,22 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 		$style = ' color: #000;  display: none ';
 		$_style = array_filter( array_map( 'trim', explode( ';', $style ) ) );
 		$img->set_attribute( 'style', $style );
-		$this->assertEquals( $_style, $img->get_attribute( 'style', true ) );
+		$this->assertSame( $_style, $img->get_attribute( 'style', true ) );
 
 		$style = 'color: #000; display: none;';
 		$_style = array_filter( array_map( 'trim', explode( ';', $style ) ) );
 		$img->set_attribute( 'style', $style );
-		$this->assertEquals( $_style, $img->get_attribute( 'style', true ) );
+		$this->assertSame( $_style, $img->get_attribute( 'style', true ) );
 
 		$style = array( 'color: #000', 'display: none' );
 		$_style = array_filter( array_map( 'trim', $style ) );
 		$img->set_attribute( 'style', $style );
-		$this->assertEquals( $_style, $img->get_attribute( 'style', true ) );
+		$this->assertSame( $_style, $img->get_attribute( 'style', true ) );
 
 		$style = array( 'color: #000;', 'display: none;' );
 		$_style = array_filter( array_map( 'trim', $style ) );
 		$img->set_attribute( 'style', $style );
-		$this->assertEquals( $_style, $img->get_attribute( 'style', true ) );
+		$this->assertSame( $_style, $img->get_attribute( 'style', true ) );
 	}
 
 
@@ -420,7 +420,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 		$expected_attributes = $attributes;
 		$expected_attributes['class'] = implode( ' ', $attributes['class'] );
 
-		$this->assertEquals( $expected_attributes, $img->get_attributes() );
+		$this->assertSame( $expected_attributes, $img->get_attributes() );
 
 		# Test raw attributes.
 		$expected_attributes['class'] = explode( ' ', $expected_attributes['class'] );
@@ -435,7 +435,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 			'sizes' => array(),
 			'srcset' => array(),
 		) );
-		$this->assertEquals( $expected_attributes, $img->get_attributes( true ) );
+		$this->assertSame( $expected_attributes, $img->get_attributes( true ) );
 	}
 
 	/**
@@ -458,11 +458,11 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 		$img = $this->create( $attributes );
 
 		foreach ( $attributes as $attribute => $value )
-			$this->assertEquals( $value, $img->get_attribute( $attribute, true ) );
+			$this->assertSame( $value, $img->get_attribute( $attribute, true ) );
 
 		$attributes['class'] = implode( ' ', $attributes['class'] );
 		foreach ( $attributes as $attribute => $value )
-			$this->assertEquals( $value, $img->get_attribute( $attribute ) );
+			$this->assertSame( $value, $img->get_attribute( $attribute ) );
 	}
 
 	/**
@@ -481,14 +481,14 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 		$classes = array( 'foo', ' bar', 'zulu ', ' foo ' );
 		$_classes = array_filter( array_map( 'trim', $classes ) );
 		$img->set_attribute( 'class', $classes );
-		$this->assertEquals( $_classes, $img->get_attribute( 'class', true ) );
-		$this->assertEquals( implode( ' ', array_unique( $_classes ) ), $img->get_attribute( 'class' ) );
+		$this->assertSame( $_classes, $img->get_attribute( 'class', true ) );
+		$this->assertSame( implode( ' ', array_unique( $_classes ) ), $img->get_attribute( 'class' ) );
 
 		$classes = 'foo  bar  zulu foo ';
 		$_classes = array_filter( array_map( 'trim', explode( ' ', trim( $classes ) ) ) );
 		$img->set_attribute( 'class', $classes );
-		$this->assertEquals( $_classes, $img->get_attribute( 'class', true ) );
-		$this->assertEquals( implode( ' ', array_unique( $_classes ) ), $img->get_attribute( 'class' ) );
+		$this->assertSame( $_classes, $img->get_attribute( 'class', true ) );
+		$this->assertSame( implode( ' ', array_unique( $_classes ) ), $img->get_attribute( 'class' ) );
 	}
 
 	/**
@@ -507,26 +507,26 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 		$style = ' color: #000;  display: none ';
 		$_style = array_filter( array_map( 'trim', explode( ';', $style ) ) );
 		$img->set_attribute( 'style', $style );
-		$this->assertEquals( $_style, $img->get_attribute( 'style', true ) );
-		$this->assertEquals( implode( '; ', array_unique( $_style ) ), $img->get_attribute( 'style' ) );
+		$this->assertSame( $_style, $img->get_attribute( 'style', true ) );
+		$this->assertSame( implode( '; ', array_unique( $_style ) ), $img->get_attribute( 'style' ) );
 
 		$style = 'color: #000; display: none;';
 		$_style = array_filter( array_map( 'trim', explode( ';', $style ) ) );
 		$img->set_attribute( 'style', $style );
-		$this->assertEquals( $_style, $img->get_attribute( 'style', true ) );
-		$this->assertEquals( implode( '; ', array_unique( $_style ) ), $img->get_attribute( 'style' ) );
+		$this->assertSame( $_style, $img->get_attribute( 'style', true ) );
+		$this->assertSame( implode( '; ', array_unique( $_style ) ), $img->get_attribute( 'style' ) );
 
 		$style = array( ' color: #000', 'display: none ' );
 		$_style = array_filter( array_map( 'trim', $style ) );
 		$img->set_attribute( 'style', $style );
-		$this->assertEquals( $_style, $img->get_attribute( 'style', true ) );
-		$this->assertEquals( implode( '; ', array_unique( $_style ) ), $img->get_attribute( 'style' ) );
+		$this->assertSame( $_style, $img->get_attribute( 'style', true ) );
+		$this->assertSame( implode( '; ', array_unique( $_style ) ), $img->get_attribute( 'style' ) );
 
 		$style = array( 'color: #000;', 'display: none;' );
 		$_style = array_filter( array_map( 'trim', $style ) );
 		$img->set_attribute( 'style', $style );
-		$this->assertEquals( $_style, $img->get_attribute( 'style', true ) );
-		$this->assertEquals( implode( '; ', array_unique( $_style ) ), $img->get_attribute( 'style' ) );
+		$this->assertSame( $_style, $img->get_attribute( 'style', true ) );
+		$this->assertSame( implode( '; ', array_unique( $_style ) ), $img->get_attribute( 'style' ) );
 	}
 
 	/**
@@ -546,14 +546,14 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 		$sizes = array( '50w', ' 100w ', '100w' );
 		$_sizes = array_filter( array_map( 'trim', $sizes ) );
 		$img->set_attribute( 'sizes', $sizes );
-		$this->assertEquals( $_sizes, $img->get_attribute( 'sizes', true ) );
-		$this->assertEquals( implode( ', ', array_unique( $_sizes ) ), $img->get_attribute( 'sizes' ) );
+		$this->assertSame( $_sizes, $img->get_attribute( 'sizes', true ) );
+		$this->assertSame( implode( ', ', array_unique( $_sizes ) ), $img->get_attribute( 'sizes' ) );
 
 		$sizes = '50w , 100w ';
 		$_sizes = array_filter( array_map( 'trim', explode( ',', trim( $sizes ) ) ) );
 		$img->set_attribute( 'sizes', $sizes );
-		$this->assertEquals( $_sizes, $img->get_attribute( 'sizes', true ) );
-		$this->assertEquals( implode( ', ', array_unique( $_sizes ) ), $img->get_attribute( 'sizes' ) );
+		$this->assertSame( $_sizes, $img->get_attribute( 'sizes', true ) );
+		$this->assertSame( implode( ', ', array_unique( $_sizes ) ), $img->get_attribute( 'sizes' ) );
 	}
 
 	/*
@@ -581,20 +581,92 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 		$img->set_settings( $settings );
 
 		foreach ( $settings as $setting => $value )
-			$this->assertEquals( $value, $img->get_setting( $setting ) );
+			$this->assertSame( $value, $img->get_setting( $setting ) );
 	}
 
-	function test_set_setting() {}
-	function test_get_settings() {}
-	function test_get_setting() {}
+	/**
+	 * Test set setting.
+	 *
+	 * @covers Image_Tag::set_setting()
+	 */
+	function test_set_setting() {
+		$img = $this->create();
 
-	function test_add_class() {}
-	function test_add_sizes_item() {}
-	function test_add_srcset_item() {}
-	function test_add_style() {}
+		$img->set_setting( 'foo', 'foobar' );
+		$this->assertSame( 'foobar', $img->get_setting( 'foo' ) );
 
-	function test_set_sizes_item() {}
-	function test_set_srcset_item() {}
+		$img->set_setting( 'array', array( 'foobar' ) );
+		$this->assertSame( array( 'foobar' ), $img->get_setting( 'array' ) );
+	}
+
+	/**
+	 * Test get settings.
+	 *
+	 * @covers Image_Tag::get_settings()
+	 */
+	function test_get_settings() {
+		$settings = array(
+			'before_output' => null,
+			'after_output' => null,
+			'sizes' => array(),
+			'foo' => 'foobar',
+			'array' => array( 'foobar' ),
+			'int' => mt_rand( 1, 999 ),
+		);
+
+		$img = $this->create( null, $settings );
+
+		$this->assertSame( $settings, $img->get_settings() );
+
+		$settings['int'] = ( string ) $settings['int'];
+		$this->assertNotSame( $settings, $img->get_settings() );
+	}
+
+	/**
+	 * Test get setting.
+	 *
+	 * @covers Image_Tag::get_setting()
+	 */
+	function test_get_setting() {
+		$settings = array(
+			'foo' => 'foobar',
+			'array' => array( 'foobar' ),
+			'int' => mt_rand( 1, 999 ),
+		);
+
+		$img = $this->create( null, $settings );
+
+		foreach ( $settings as $setting => $value ) {
+			$this->assertSame( $value, $img->get_setting( $setting ) );
+			$this->assertNotEquals( $setting, $img->get_setting( $setting ) );
+		}
+	}
+
+	/**
+	 * Test adding to attribute.
+	 *
+	 * @covers Image_Tag::add_to_attribute()
+	 */
+	function test_add_to_attribute() {
+
+	}
+
+	/**
+	 * Test adding class.
+	 *
+	 * @covers Image_Tag::add_class()
+	 */
+	function test_add_to_class_attribute() {
+		$img = $this->create();
+
+		$this->assertEmpty( $img->get_attribute( 'class' ) );
+		$this->assertEmpty( $img->get_attribute( 'class', true ) );
+
+		$classes = array( 'foo', 'bar' );
+		$img->add_to_attribute( 'class', $classes );
+		$this->assertSame( $classes, $img->get_attribute( 'class', true ) );
+		$this->assertSame( implode( ' ', $classes ), $img->get_attribute( 'class' ) );
+	}
 
 	function test_remove_classes() {}
 	function test_remove_sizes_item() {}

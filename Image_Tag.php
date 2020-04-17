@@ -279,6 +279,9 @@ class Image_Tag implements ArrayAccess {
 		if ( is_string( $classes ) )
 			$classes = explode( ' ', $classes );
 
+		else if ( is_null( $classes ) )
+			$classes = array();
+
 		if ( !is_array( $classes ) ) {
 			trigger_error( sprintf( 'Value of type <code>%s</code> is not valid for <code>%s</code> attribute.', gettype( $classes ), 'class' ) );
 			return;
@@ -577,39 +580,67 @@ class Image_Tag implements ArrayAccess {
 	##     ## ########  ########     ##     ## ######## ######## ##        ######## ##     ##  ######
 	*/
 
-	function add_class( $classes ) {}
-	function add_sizes_item( $media_condition, string $width ) {}
-	function add_srcset_item( string $width, string $url ) {}
-	function add_style( string $style ) {}
+	/**
+	 * Add value to an attribute.
+	 *
+	 * @param string $attribute
+	 * @param mixed $value
+	 * @uses $this->_get_attribute()
+	 * @uses $this->set_attribute()
+	 *
+	 * @todo add test
+	 */
+	function add_to_attribute( string $attribute, $value ) {
+		static $allowed_attributes = null;
 
+		$method_name = preg_replace( '/[^A-z0-9_]/', '_', 'add_to_' . $attribute . '_attribute' );
 
-	/*
-	 ######  ######## ########    ##     ## ######## ##       ########  ######## ########   ######
-	##    ## ##          ##       ##     ## ##       ##       ##     ## ##       ##     ## ##    ##
-	##       ##          ##       ##     ## ##       ##       ##     ## ##       ##     ## ##
-	 ######  ######      ##       ######### ######   ##       ########  ######   ########   ######
-	      ## ##          ##       ##     ## ##       ##       ##        ##       ##   ##         ##
-	##    ## ##          ##       ##     ## ##       ##       ##        ##       ##    ##  ##    ##
-	 ######  ########    ##       ##     ## ######## ######## ##        ######## ##     ##  ######
-	*/
+		if ( is_callable( array( $this, $method_name ) ) ) {
+			$this->$method_name( $value );
+			return;
+		}
 
-	function set_sizes_item( $media_condition, string $width ) {}
-	function set_srcset_item( string $width, string $url ) {}
+		if ( is_null( $allowed_attributes ) )
+			$allowed_attributes = apply_filters( 'image_tag/add_to_attribute/allowed', array(
+				'class',
+				'sizes',
+				'srcset',
+				'style',
+			) );
 
+		if (
+			   !is_array( $value )
+			|| !in_array( $attribute, $allowed_attributes )
+		) {
+			trigger_error( 'Arrays can be added only to <code>class</code>, <code>sizes</code>, <code>srcset</code>, and <code>style</code> attributes.', E_USER_NOTICE );
+			return;
+		}
 
-	/*
-	########  ######## ##     ##  #######  ##     ## ########    ##     ## ######## ##       ########  ######## ########   ######
-	##     ## ##       ###   ### ##     ## ##     ## ##          ##     ## ##       ##       ##     ## ##       ##     ## ##    ##
-	##     ## ##       #### #### ##     ## ##     ## ##          ##     ## ##       ##       ##     ## ##       ##     ## ##
-	########  ######   ## ### ## ##     ## ##     ## ######      ######### ######   ##       ########  ######   ########   ######
-	##   ##   ##       ##     ## ##     ##  ##   ##  ##          ##     ## ##       ##       ##        ##       ##   ##         ##
-	##    ##  ##       ##     ## ##     ##   ## ##   ##          ##     ## ##       ##       ##        ##       ##    ##  ##    ##
-	##     ## ######## ##     ##  #######     ###    ########    ##     ## ######## ######## ##        ######## ##     ##  ######
-	*/
+		$new_value = $this->_get_attribute( $attribute );
+		$new_value[] = trim( $value );
 
-	function remove_classes( $classes ) {}
-	function remove_sizes_item( $media_conditions ) {}
-	function remove_srcset_item( $widths ) {}
+		$this->set_attribute( $attribute, $value );
+	}
+
+	/**
+	 * Add class(es).
+	 *
+	 * @param string|array
+	 * @uses $this->_get_attribute()
+	 * @uses $this->set_attribute()
+	 */
+	function add_to_class_attribute( $classes ) {
+		if ( is_string( $classes ) )
+			$classes = array_filter( array_map( 'trim', explode( ' ', $classes ) ) );
+
+		if ( !is_array( $classes ) ) {
+			trigger_error( sprintf( 'Value of type <code>%s</code> is not valid for <code>class</code> attribute.', gettype( $classes ) ), E_USER_NOTICE );
+			return;
+		}
+
+		$classes = array_merge( ( array ) $this->_get_attribute( 'class' ), $classes );
+		$this->set_attribute( 'class', $classes );
+	}
 
 
 	/*
@@ -738,7 +769,7 @@ class Image_Tag implements ArrayAccess {
 
 		$lazyload->set_setting( 'after_output', $this->noscript( array(
 			'loading' => 'lazy',
-		) );
+		) ) );
 
 		return $lazyload;
 	}
@@ -839,7 +870,7 @@ class Image_Tag implements ArrayAccess {
 		if ( !$this->supports( $capability ) )
 			return false;
 
-		$pre = apply_filters( 'image_tag/can/pre', null, $capability, $this ) );
+		$pre = apply_filters( 'image_tag/can/pre', null, $capability, $this );
 		if ( !is_null( $pre ) )
 			return ( bool ) $pre;
 
