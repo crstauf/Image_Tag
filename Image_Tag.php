@@ -705,6 +705,13 @@ class Image_Tag implements ArrayAccess {
 		return wp_remote_get( $src );
 	}
 
+	/**
+	 * Adjust to lazyload the image.
+	 *
+	 * @param array $attributes
+	 * @param array $settings
+	 * @return static
+	 */
 	function lazyload( $attributes = array(), array $settings = array() ) {
 		if ( !$this->can( __FUNCTION__ ) )
 			return new static;
@@ -713,7 +720,7 @@ class Image_Tag implements ArrayAccess {
 		if ( !is_null( $pre ) )
 			return $pre;
 
-		$attributes = wp_parse_args( $attributes, $this->get_attributes( true ) );
+		$attributes = wp_parse_args( ( array ) $attributes, $this->get_attributes( true ) );
 		$settings = wp_parse_args( $settings, $this->get_settings( true ) );
 
 		$lazyload = clone $this;
@@ -736,11 +743,18 @@ class Image_Tag implements ArrayAccess {
 		return $lazyload;
 	}
 
+	/**
+	 * Adjust to a noscript image.
+	 *
+	 * @param array $attributes
+	 * @param array $settings
+	 * @return static
+	 */
 	function noscript( $attributes = array(), array $settings = array() ) {
 		if ( !$this->can( __FUNCTION__ ) )
 			return new static;
 
-		$attributes = wp_parse_args( $attributes, $this->get_attributes( true ) );
+		$attributes = wp_parse_args( ( array ) $attributes, $this->get_attributes( true ) );
 		$settings = wp_parse_args( $settings, $this->get_settings( true ) );
 
 		$noscript = clone $this;
@@ -754,11 +768,18 @@ class Image_Tag implements ArrayAccess {
 		return $noscript;
 	}
 
+	/**
+	 * Adjust to or create a low-quality image placeholder.
+	 *
+	 * @param array $attributes
+	 * @param array $settings
+	 * @return static
+	 */
 	function lqip( $attributes = array(), array $settings = array() ) {
 		if ( !$this->can( __FUNCTION__ ) )
 			return new static;
 
-		$attributes = wp_parse_args( $attributes, $this->get_attributes( true ) );
+		$attributes = wp_parse_args( ( array ) $attributes, $this->get_attributes( true ) );
 		$settings = wp_parse_args( $settings, $this->get_settings( true ) );
 	}
 
@@ -773,44 +794,29 @@ class Image_Tag implements ArrayAccess {
 	##        ######## ##     ##  ######  ######## ##     ##  #######  ######## ########  ######## ##     ##  ######
 	*/
 
-	function joeschmoe( $settings = array(), array $attributes = array() ) {
-		if ( !$this->supports( __FUNCTION__ ) )
+	/**
+	 * Duplicate into specified image type.
+	 *
+	 * @param string $type
+	 * @param array $settings
+	 * @param array $attributes
+	 * @uses $this->supports()
+	 * @uses $this->get_attributes()
+	 * @uses $this->get_settings()
+	 * @uses Image_Tag::create()
+	 * @return Image_Tag
+	 */
+	function into( string $type, $settings = array(), array $attributes = array() ) {
+		if ( !$this->supports( $type ) )
 			return new static;
 
 		$attributes = wp_parse_args( $attributes, $this->get_attributes( true ) );
-		$settings = wp_parse_args( $settings, $this->get_settings( true ) );
+		$settings = wp_parse_args( ( array ) $settings, $this->get_settings( true ) );
 
-		return Image_Tag::create( 'joeschmoe', $attributes, $settings );
-	}
+		if ( is_callable( array( $this, 'into_' . $type ) ) )
+			return call_user_func( array( $this, 'into_' . $type ), $settings, $attributes );
 
-	function picsum( $settings = array(), array $attributes = array() ) {
-		if ( !$this->supports( __FUNCTION__ ) )
-			return new static;
-
-		$attributes = wp_parse_args( $attributes, $this->get_attributes( true ) );
-		$settings = wp_parse_args( $settings, $this->get_settings( true ) );
-
-		return Image_Tag::create( 'picsum', $attributes, $settings );
-	}
-
-	function placeholder( $settings = array(), array $attributes = array() ) {
-		if ( !$this->supports( __FUNCTION__ ) )
-			return new static;
-
-		$attributes = wp_parse_args( $attributes, $this->get_attributes( true ) );
-		$settings = wp_parse_args( $settings, $this->get_settings( true ) );
-
-		return Image_Tag::create( 'placeholder', $attributes, $settings );
-	}
-
-	function unsplash( $settings = array(), array $attributes = array() ) {
-		if ( !$this->supports( __FUNCTION__ ) )
-			return new static;
-
-		$attributes = wp_parse_args( $attributes, $this->get_attributes( true ) );
-		$settings = wp_parse_args( $settings, $this->get_settings( true ) );
-
-		return Image_Tag::create( 'unsplash', $attributes, $settings );
+		return Image_Tag::create( $type, $attributes, $settings );
 	}
 
 
@@ -824,8 +830,16 @@ class Image_Tag implements ArrayAccess {
 	 ######  ##     ## ##        ##     ## ########  #### ######## ####    ##    #### ########  ######
 	*/
 
-	function supports( string $capability ) {}
-	function can( string $capability ) {}
+	function supports( string $capability ) {
+		return in_array( $capability, $this->supports );
+	}
+
+	function can( string $capability ) {
+		if ( !$this->supports( $capability ) )
+			return false;
+
+		return true;
+	}
 
 
 	/*

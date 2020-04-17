@@ -610,10 +610,11 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	function test_noscript() {}
 	function test_lqip() {}
 
-	function test_joeschmoe() {}
-	function test_picsum() {}
-	function test_placeholder() {}
-	function test_unsplash() {}
+	function test_into() {}
+	function test_into_joeschmoe() {}
+	function test_into_picsum() {}
+	function test_into_placeholder() {}
+	function test_into_unsplash() {}
 
 	function test_supports() {}
 	function test_can() {}
