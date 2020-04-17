@@ -831,12 +831,17 @@ class Image_Tag implements ArrayAccess {
 	*/
 
 	function supports( string $capability ) {
-		return in_array( $capability, $this->supports );
+		$supported = in_array( $capability, $this->supports );
+		return apply_filters( 'image_tag/supported', $supported, $capability, $this );
 	}
 
 	function can( string $capability ) {
 		if ( !$this->supports( $capability ) )
 			return false;
+
+		$pre = apply_filters( 'image_tag/can/pre', null, $capability, $this ) );
+		if ( !is_null( $pre ) )
+			return ( bool ) $pre;
 
 		return true;
 	}
