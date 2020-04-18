@@ -220,8 +220,102 @@ class Image_Tag implements ArrayAccess {
 		return true;
 	}
 
-	function get_type() {}
-	function is_type() {}
+	/**
+	 * Get image type.
+	 *
+	 * @return string
+	 *
+	 * @todo add test
+	 */
+	function get_type() {
+		switch ( get_class( $this ) ) {
+		
+			case 'Image_Tag':
+				return 'external';
+			
+			case 'Image_Tag_WP_Attachment':
+				return 'attachment';
+			
+			case 'Image_Tag_WP_Theme':
+				return 'theme';
+			
+			case 'Image_Tag_JoeSchmoe':
+				return 'joeschmoe';
+			
+			case 'Image_Tag_Picsum':
+				return 'picsum';
+			
+			case 'Image_Tag_Placeholder':
+				return 'placeholder';
+			
+			case 'Image_Tag_Unsplash':
+				return 'unsplash';
+		}
+
+		return null;
+	}
+
+	/**
+	 * Check if image is specified type(s).
+	 *
+	 * @param string|array $types
+	 * @uses $this->is_type()
+	 * @return bool
+	 *
+	 * @todo add test
+	 */
+	function is_type( $types ) {
+		$types = ( array ) $types;
+
+		foreach ( $types as $type )
+			switch ( strtolower( $type ) ) {
+
+				case 'remote':
+				case 'external':
+					return (
+						Image_Tag::class === get_class( $this )
+						|| $this->is_type( '__placeholder' )
+					);
+
+				case 'sample':
+				case 'example':
+				case '__placeholder':
+					return (
+						   $this->is_type( 'joeschmoe' )
+						|| $this->is_type( 'picsum' )
+						|| $this->is_type( 'placeholder' )
+						|| $this->is_type( 'unsplash' )
+					);
+
+				case 'upload':
+				case 'attachment':
+					return is_a( $this, 'Image_Tag_WP_Attachment' );
+
+				case 'theme':
+					return is_a( $this, 'Image_Tag_WP_Theme' );
+
+				case 'wp':
+				case 'local':
+				case 'internal':
+				case 'wordpress':
+					return is_a( $this, 'Image_Tag_WP' );
+
+				case 'picsum':
+					return is_a( $this, 'Image_Tag_Picsum' );
+
+				case 'joeschmoe':
+					return is_a( $this, 'Image_Tag_JoeSchmoe' );
+
+				case 'placeholder':
+					return is_a( $this, 'Image_Tag_Placeholder' );
+
+				case 'unsplash':
+					return is_a( $this, 'Image_Tag_Unsplash' );
+
+			}
+
+		return false;
+	}
 
 
 	/*
@@ -594,7 +688,6 @@ class Image_Tag implements ArrayAccess {
 		static $allowed_attributes = null;
 
 		$method_name = preg_replace( '/[^A-z0-9_]/', '_', 'add_to_' . $attribute . '_attribute' );
-
 		if ( is_callable( array( $this, $method_name ) ) ) {
 			$this->$method_name( $value );
 			return;
@@ -792,7 +885,7 @@ class Image_Tag implements ArrayAccess {
 		$noscript->set_attributes( $attributes );
 		$noscript->set_settings( $settings );
 
-		$noscript->add_class( 'nojs' );
+		$noscript->add_class( 'no-js' );
 		$noscript->set_setting( 'before_output', '<noscript>' . $this->get_setting( 'before_output' ) );
 		$noscript->set_setting( 'after_output', '</noscript>' . $this->get_setting( 'after_output' ) );
 
@@ -805,6 +898,8 @@ class Image_Tag implements ArrayAccess {
 	 * @param array $attributes
 	 * @param array $settings
 	 * @return static
+	 *
+	 * @todo figure out
 	 */
 	function lqip( $attributes = array(), array $settings = array() ) {
 		if ( !$this->can( __FUNCTION__ ) )
@@ -861,11 +956,24 @@ class Image_Tag implements ArrayAccess {
 	 ######  ##     ## ##        ##     ## ########  #### ######## ####    ##    #### ########  ######
 	*/
 
+	/**
+	 * Check if capability is supported.
+	 *
+	 * @param string $capability
+	 * @return bool
+	 */
 	function supports( string $capability ) {
-		$supported = in_array( $capability, $this->supports );
-		return apply_filters( 'image_tag/supported', $supported, $capability, $this );
+		$supports = in_array( $capability, $this->supports );
+		return ( bool ) apply_filters( 'image_tag/supports', $supports, $capability, $this );
 	}
 
+	/**
+	 * Check if capability can be performed.
+	 *
+	 * @param string $capability
+	 * @uses $this->supports()
+	 * @return bool
+	 */
 	function can( string $capability ) {
 		if ( !$this->supports( $capability ) )
 			return false;
@@ -874,7 +982,13 @@ class Image_Tag implements ArrayAccess {
 		if ( !is_null( $pre ) )
 			return ( bool ) $pre;
 
-		return true;
+		$can = true;
+		
+		$method_name = preg_replace( '/[^A-z0-9_]/', '_', 'can_' . $capability );
+		if ( is_callable( array( $this, $method_name ) ) )
+			$can = ( bool ) $this->$method_name( $value );
+
+		return ( bool ) apply_filters( 'image_tag/can', $can, $capability, $this );
 	}
 
 
