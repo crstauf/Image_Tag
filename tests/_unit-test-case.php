@@ -700,6 +700,8 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	function test_lazyload() {}
 	function test_noscript() {}
 	function test_lqip() {}
+	function test_common_colors() {}
+	function test_mode_color() {}
 
 	function test_into() {}
 	function test_into_joeschmoe() {}

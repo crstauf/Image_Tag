@@ -1004,8 +1004,7 @@ class Image_Tag implements ArrayAccess {
 	 * @return bool
 	 */
 	function supports( string $capability ) {
-		$supports = in_array( $capability, $this->supports );
-		return ( bool ) apply_filters( 'image_tag/supports', $supports, $capability, $this );
+		return in_array( $capability, $this->supports );
 	}
 
 	/**
