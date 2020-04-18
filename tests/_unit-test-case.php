@@ -381,7 +381,10 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 		$this->assertSame( $_style, $img->get_attribute( 'style', true ) );
 
 		$style = array( 'color: #000;', 'display: none;' );
-		$_style = array_filter( array_map( 'trim', $style ) );
+		array_walk( $style, function( &$item, $key ) {
+			$item = trim( $item, " ;\t\n\r\0\x0B" );
+		} );
+		$_style = array_filter( $style );
 		$img->set_attribute( 'style', $style );
 		$this->assertSame( $_style, $img->get_attribute( 'style', true ) );
 	}
@@ -523,7 +526,10 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 		$this->assertSame( implode( '; ', array_unique( $_style ) ), $img->get_attribute( 'style' ) );
 
 		$style = array( 'color: #000;', 'display: none;' );
-		$_style = array_filter( array_map( 'trim', $style ) );
+		array_walk( $style, function( &$item, $key ) {
+			$item = trim( $item, " ;\t\n\r\0\x0B" );
+		} );
+		$_style = array_filter( $style );
 		$img->set_attribute( 'style', $style );
 		$this->assertSame( $_style, $img->get_attribute( 'style', true ) );
 		$this->assertSame( implode( '; ', array_unique( $_style ) ), $img->get_attribute( 'style' ) );
@@ -646,15 +652,28 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 * Test adding to attribute.
 	 *
 	 * @covers Image_Tag::add_to_attribute()
+	 * @covers Image_Tag::trim()
 	 */
 	function test_add_to_attribute() {
+		$img = $this->create();
 
+		$this->assertEmpty( $img->get_attribute( 'style' ) );
+		$this->assertEmpty( $img->get_attribute( 'style', true ) );
+
+		$style = 'color: #FFF;';
+		$img->add_to_attribute( 'style', $style );
+		$this->assertSame( array( 'color: #FFF' ), $img->get_attribute( 'style', true ) );
+		$this->assertSame( 'color: #FFF', $img->get_attribute( 'style' ) );
+
+		$style = array( 'color: #FFF;' );
+		$this->expectException( \TypeError::class );
+		$img->add_to_attribute( 'style', $style );
 	}
 
 	/**
 	 * Test adding class.
 	 *
-	 * @covers Image_Tag::add_class()
+	 * @covers Image_Tag::add_to_class_attribute()
 	 */
 	function test_add_to_class_attribute() {
 		$img = $this->create();
@@ -662,15 +681,15 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 		$this->assertEmpty( $img->get_attribute( 'class' ) );
 		$this->assertEmpty( $img->get_attribute( 'class', true ) );
 
-		$classes = array( 'foo', 'bar' );
+		$classes = 'foo bar';
 		$img->add_to_attribute( 'class', $classes );
-		$this->assertSame( $classes, $img->get_attribute( 'class', true ) );
-		$this->assertSame( implode( ' ', $classes ), $img->get_attribute( 'class' ) );
-	}
+		$this->assertSame( array( 'foo', 'bar' ), $img->get_attribute( 'class', true ) );
+		$this->assertSame( $classes, $img->get_attribute( 'class' ) );
 
-	function test_remove_classes() {}
-	function test_remove_sizes_item() {}
-	function test_remove_srcset_item() {}
+		$classes = array( 'foo', 'bar' );
+		$this->expectException( \TypeError::class );
+		$img->add_to_attribute( 'class', $classes );
+	}
 
 	function test_get_width() {}
 	function test_get_height() {}

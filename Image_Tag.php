@@ -111,6 +111,29 @@ class Image_Tag implements ArrayAccess {
 		return new static( $attributes, $settings );
 	}
 
+	/**
+	 * Trim expected separators.
+	 *
+	 * @param array|string &$value
+	 * @return array|string
+	 */
+	protected static function trim( &$value ) {
+		if ( is_string( $value ) )
+			return trim( $value, ",; \t\n\r\0\x0B" );
+
+		if ( !is_array( $value ) )
+			return $value;
+
+		array_walk( $value, function( &$item, $key ) {
+			if ( is_string( $item ) )
+				$item = trim( $item, ",; \t\n\r\0\x0B" );
+			else if ( is_array( $item ) )
+				$item = Image_Tag::trim( $item );
+		} );
+
+		return $value;
+	}
+
 
 	/*
 	##     ##    ###     ######   ####  ######
@@ -229,25 +252,25 @@ class Image_Tag implements ArrayAccess {
 	 */
 	function get_type() {
 		switch ( get_class( $this ) ) {
-		
+
 			case 'Image_Tag':
 				return 'external';
-			
+
 			case 'Image_Tag_WP_Attachment':
 				return 'attachment';
-			
+
 			case 'Image_Tag_WP_Theme':
 				return 'theme';
-			
+
 			case 'Image_Tag_JoeSchmoe':
 				return 'joeschmoe';
-			
+
 			case 'Image_Tag_Picsum':
 				return 'picsum';
-			
+
 			case 'Image_Tag_Placeholder':
 				return 'placeholder';
-			
+
 			case 'Image_Tag_Unsplash':
 				return 'unsplash';
 		}
@@ -381,7 +404,7 @@ class Image_Tag implements ArrayAccess {
 			return;
 		}
 
-		$this->_set_attribute( 'class', array_filter( array_map( 'trim', $classes ) ) );
+		$this->_set_attribute( 'class', array_filter( Image_Tag::trim( $classes ) ) );
 	}
 
 	/**
@@ -399,7 +422,7 @@ class Image_Tag implements ArrayAccess {
 			return;
 		}
 
-		$this->_set_attribute( 'sizes', array_filter( array_map( 'trim', $sizes ) ) );
+		$this->_set_attribute( 'sizes', array_filter( Image_Tag::trim( $sizes ) ) );
 	}
 
 	/**
@@ -417,7 +440,7 @@ class Image_Tag implements ArrayAccess {
 			return;
 		}
 
-		$this->_set_attribute( 'srcset', array_filter( array_map( 'trim', $srcset ) ) );
+		$this->_set_attribute( 'srcset', array_filter( Image_Tag::trim( $srcset ) ) );
 	}
 
 	/**
@@ -435,7 +458,7 @@ class Image_Tag implements ArrayAccess {
 			return;
 		}
 
-		$this->_set_attribute( 'style', array_filter( array_map( 'trim', $style ) ) );
+		$this->_set_attribute( 'style', array_filter( Image_Tag::trim( $style ) ) );
 	}
 
 	/**
@@ -446,7 +469,7 @@ class Image_Tag implements ArrayAccess {
 	 * @uses $this->_set_attribute()
 	 */
 	protected function set_array_attribute( string $key, array $value ) {
-		$this->_set_attribute( $key, array_filter( array_map( 'trim', $value ) ) );
+		$this->_set_attribute( $key, array_filter( Image_Tag::trim( $value ) ) );
 	}
 
 	/**
@@ -678,13 +701,13 @@ class Image_Tag implements ArrayAccess {
 	 * Add value to an attribute.
 	 *
 	 * @param string $attribute
-	 * @param mixed $value
+	 * @param string $value
 	 * @uses $this->_get_attribute()
 	 * @uses $this->set_attribute()
 	 *
 	 * @todo add test
 	 */
-	function add_to_attribute( string $attribute, $value ) {
+	function add_to_attribute( string $attribute, string $value ) {
 		static $allowed_attributes = null;
 
 		$method_name = preg_replace( '/[^A-z0-9_]/', '_', 'add_to_' . $attribute . '_attribute' );
@@ -701,18 +724,16 @@ class Image_Tag implements ArrayAccess {
 				'style',
 			) );
 
-		if (
-			   !is_array( $value )
-			|| !in_array( $attribute, $allowed_attributes )
-		) {
-			trigger_error( 'Arrays can be added only to <code>class</code>, <code>sizes</code>, <code>srcset</code>, and <code>style</code> attributes.', E_USER_NOTICE );
+		if ( !in_array( $attribute, $allowed_attributes ) ) {
+			trigger_error( sprintf( 'Arrays can be added only to the following attributes: <code>%s</code>.', implode( '</code>, <code>', $allowed_attributes ) ), E_USER_NOTICE );
 			return;
 		}
 
 		$new_value = $this->_get_attribute( $attribute );
-		$new_value[] = trim( $value );
+		$new_value[] = $value;
 
-		$this->set_attribute( $attribute, $value );
+		$this->set_attribute( $attribute, $new_value );
+		return $this;
 	}
 
 	/**
@@ -983,7 +1004,7 @@ class Image_Tag implements ArrayAccess {
 			return ( bool ) $pre;
 
 		$can = true;
-		
+
 		$method_name = preg_replace( '/[^A-z0-9_]/', '_', 'can_' . $capability );
 		if ( is_callable( array( $this, $method_name ) ) )
 			$can = ( bool ) $this->$method_name( $value );
