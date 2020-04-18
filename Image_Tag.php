@@ -930,6 +930,26 @@ class Image_Tag implements ArrayAccess {
 		$settings = wp_parse_args( $settings, $this->get_settings( true ) );
 	}
 
+	/**
+	 * Get image's common colors.
+	 *
+	 * @param int $count
+	 * @return array
+	 *
+	 * @todo define
+	 */
+	function common_colors( int $count = 1 ) {}
+
+	/**
+	 * Get image's mode color.
+	 *
+	 * @uses $this->common_colors()
+	 * @return string
+	 */
+	function mode_color() {
+		return array_pop( $this->common_colors( 1 ) );
+	}
+
 
 	/*
 	########  ##          ###     ######  ######## ##     ##  #######  ##       ########  ######## ########   ######
@@ -954,7 +974,7 @@ class Image_Tag implements ArrayAccess {
 	 * @return Image_Tag
 	 */
 	function into( string $type, $settings = array(), array $attributes = array() ) {
-		if ( !$this->supports( $type ) )
+		if ( !$this->can( $type ) )
 			return new static;
 
 		$attributes = wp_parse_args( $attributes, $this->get_attributes( true ) );
@@ -1007,7 +1027,7 @@ class Image_Tag implements ArrayAccess {
 
 		$method_name = preg_replace( '/[^A-z0-9_]/', '_', 'can_' . $capability );
 		if ( is_callable( array( $this, $method_name ) ) )
-			$can = ( bool ) $this->$method_name( $value );
+			$can = ( bool ) $this->$method_name();
 
 		return ( bool ) apply_filters( 'image_tag/can', $can, $capability, $this );
 	}
