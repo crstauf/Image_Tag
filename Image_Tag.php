@@ -934,11 +934,29 @@ class Image_Tag implements ArrayAccess {
 	 * Get image's common colors.
 	 *
 	 * @param int $count
+	 * @uses $this-find_common_colors()
 	 * @return array
 	 *
 	 * @todo define
 	 */
-	function common_colors( int $count = 1 ) {}
+	function common_colors( int $count = 1 ) {
+		if ( 
+			!$this->can( 'common-colors' ) 
+			|| !is_callable( array( $this, 'find_common_colors' ) )
+		)
+			return array();
+
+		return $this->find_common_colors( $count );
+	}
+
+	/**
+	 * Find common colors.
+	 *
+	 * @return array
+	 *
+	 * @todo define
+	 */
+	protected function find_common_colors( int $count = 1 ) {}
 
 	/**
 	 * Get image's mode color.
