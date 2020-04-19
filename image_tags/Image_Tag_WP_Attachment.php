@@ -39,7 +39,7 @@ class Image_Tag_WP_Attachment extends _Image_Tag_WP {
 		);
 
 		foreach ( ( array ) $compare_types as $type )
-			if ( in_array( $type, $actual_types ) )
+			if ( in_array( strtolower( $type ), $actual_types ) )
 				return true;
 
 		return false;

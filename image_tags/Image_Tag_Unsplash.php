@@ -36,11 +36,12 @@ class Image_Tag_Unsplash extends _Image_Tag_Placeholder {
 		$actual_types = array(
 			$this->get_type(),
 			'source-unsplash',
+			'Unsplash Source',
 			'source.unsplash.com',
 		);
 
 		foreach ( ( array ) $compare_types as $type )
-			if ( in_array( $type, $actual_types ) )
+			if ( in_array( strtolower( $type ), $actual_types ) )
 				return true;
 
 		return false;

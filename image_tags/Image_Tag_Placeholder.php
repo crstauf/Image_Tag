@@ -36,12 +36,12 @@ class Image_Tag_Placeholder extends _Image_Tag_Placeholder {
 		$actual_types = array(
 			'placeholdit',
 			'placehold.it',
-			$this->get_type(),
 			'placeholder.com',
+			$this->get_type(),
 		);
 
 		foreach ( ( array ) $compare_types as $type )
-			if ( in_array( $type, $actual_types ) )
+			if ( in_array( strtolower( $type ), $actual_types ) )
 				return true;
 
 		return false;

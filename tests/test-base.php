@@ -2,7 +2,7 @@
 
 require_once '_unit-test-case.php';
 
-class Image_Tag_External_Test extends Image_Tag_UnitTestCase {
+class Image_Tag_Base_Test extends Image_Tag_UnitTestCase {
 
 	const SOURCE = 'https://source.unsplash.com/random';
 

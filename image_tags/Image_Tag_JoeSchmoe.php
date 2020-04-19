@@ -37,11 +37,12 @@ class Image_Tag_JoeSchmoe extends _Image_Tag_Placeholder {
 			'avatar',
 			'person',
 			'profile',
+			'joe schmoe',
 			$this->get_type(),
 		);
 
 		foreach ( ( array ) $compare_types as $type )
-			if ( in_array( $type, $actual_types ) )
+			if ( in_array( strtolower( $type ), $actual_types ) )
 				return true;
 
 		return false;
