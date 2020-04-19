@@ -19,6 +19,33 @@ class Image_Tag_Picsum extends _Image_Tag_Placeholder {
 	 */
 	const BASE_URL = 'https://picsum.photos/';
 
+	/**
+	 * @todo add test
+	 */
+	function get_type() {
+		return 'picsum';
+	}
+
+	/**
+	 * @todo add test
+	 */
+	function is_type( $compare_types ) {
+		if ( parent::is_type( $compare_types ) )
+			return true;
+
+		$actual_types = array(
+			'lorem-picsum',
+			'photos.picsum',
+			$this->get_type(),
+		);
+
+		foreach ( ( array ) $compare_types as $type )
+			if ( in_array( $type, $actual_types ) )
+				return true;
+
+		return false;
+	}
+
 }
 
 ?>

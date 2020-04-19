@@ -1,21 +1,14 @@
 <?php
 /**
- * Image tag generator.
- *
- * Plugin name: Image Tag Generator
- * Plugin URI: https://github.com/crstauf/image_tag
- * Description: WordPress drop-in to generate <code>img</code> tags.
- * Author: Caleb Stauffer
- * Author URI: https://develop.calebstauffer.com
- * Version: 2.0
+ * Abstract class for Image Tags.
  */
 
 defined( 'ABSPATH' ) || die();
 
 /**
- * Class: Image_Tag
+ * Abstract class: Image_Tag
  */
-class Image_Tag implements ArrayAccess {
+abstract class _Image_Tag implements ArrayAccess {
 
 	/**
 	 * @var string Base64 encoded transparent gif.
@@ -58,81 +51,6 @@ class Image_Tag implements ArrayAccess {
 		'lazyload',
 		'noscript',
 	);
-
-	/**
-	 * Create Image Tag object.
-	 *
-	 * @uses Image_Tag_WP_Attachment::__construct()
-	 * @uses Image_Tag_Picsum::__construct()
-	 * @uses Image_Tag_Placeholder::__construct()
-	 * @uses Image_Tag_Unsplash::__construct()
-	 * @uses Image_Tag::__construct()
-	 * @uses Image_Tag_WP_Theme::__construct()
-	 *
-	 * @param $source
-	 * @param null|array $attributes
- 	 * @param array $settings
- 	 * @return Image_Tag
-	 */
-	static function create( $source, $attributes = array(), array $settings = array() ) {
-		$attributes = ( array ) $attributes;
-
-		# If integer, create WordPress attachment image.
-		if ( is_int( $source ) )
-			return new Image_Tag_WP_Attachment( $source, $attributes, $settings );
-
-		# If source is "picsum", create picsum.photos image.
-		if ( 'picsum' === $source )
-			return new Image_Tag_Picsum( $attributes, $settings );
-
-		# If source is "placeholder", create Placeholder image.
-		if ( 'placeholder' === $source )
-			return new Image_Tag_Placeholder( $attributes, $settings );
-
-		# If source is "joeschmoe", create JoeSchmoe image.
-		if ( 'joeschmoe' === $source )
-			return new Image_Tag_JoeSchmoe( $attributes, $settings );
-
-		# If source is "unsplash", create Unsplash image.
-		if ( 'unsplash' === $source )
-			return new Image_Tag_Unsplash( $attributes, $settings );
-
-		# If URL, create external image.
-		if ( ( bool ) wp_http_validate_url( $source ) ) {
-			$attributes['src'] = $source;
-			return new Image_Tag( $attributes, $settings );
-		}
-
-		# If string, create WordPress theme image.
-		if ( is_string( $source ) )
-			return new Image_Tag_WP_Theme( $source, $attributes, $settings );
-
-		trigger_error( sprintf( 'Unable to determine image type from source: <code>%s</code>.', $source ), E_USER_WARNING );
-		return new static( $attributes, $settings );
-	}
-
-	/**
-	 * Trim expected separators.
-	 *
-	 * @param array|string &$value
-	 * @return array|string
-	 */
-	protected static function trim( &$value ) {
-		if ( is_string( $value ) )
-			return trim( $value, ",; \t\n\r\0\x0B" );
-
-		if ( !is_array( $value ) )
-			return $value;
-
-		array_walk( $value, function( &$item, $key ) {
-			if ( is_string( $item ) )
-				$item = trim( $item, ",; \t\n\r\0\x0B" );
-			else if ( is_array( $item ) )
-				$item = Image_Tag::trim( $item );
-		} );
-
-		return $value;
-	}
 
 
 	/*
@@ -250,33 +168,7 @@ class Image_Tag implements ArrayAccess {
 	 *
 	 * @todo add test
 	 */
-	function get_type() {
-		switch ( get_class( $this ) ) {
-
-			case 'Image_Tag':
-				return 'external';
-
-			case 'Image_Tag_WP_Attachment':
-				return 'attachment';
-
-			case 'Image_Tag_WP_Theme':
-				return 'theme';
-
-			case 'Image_Tag_JoeSchmoe':
-				return 'joeschmoe';
-
-			case 'Image_Tag_Picsum':
-				return 'picsum';
-
-			case 'Image_Tag_Placeholder':
-				return 'placeholder';
-
-			case 'Image_Tag_Unsplash':
-				return 'unsplash';
-		}
-
-		return null;
-	}
+	abstract function get_type();
 
 	/**
 	 * Check if image is specified type(s).
@@ -287,58 +179,7 @@ class Image_Tag implements ArrayAccess {
 	 *
 	 * @todo add test
 	 */
-	function is_type( $types ) {
-		$types = ( array ) $types;
-
-		foreach ( $types as $type )
-			switch ( strtolower( $type ) ) {
-
-				case 'remote':
-				case 'external':
-					return (
-						Image_Tag::class === get_class( $this )
-						|| $this->is_type( '__placeholder' )
-					);
-
-				case 'sample':
-				case 'example':
-				case '__placeholder':
-					return (
-						   $this->is_type( 'joeschmoe' )
-						|| $this->is_type( 'picsum' )
-						|| $this->is_type( 'placeholder' )
-						|| $this->is_type( 'unsplash' )
-					);
-
-				case 'upload':
-				case 'attachment':
-					return is_a( $this, 'Image_Tag_WP_Attachment' );
-
-				case 'theme':
-					return is_a( $this, 'Image_Tag_WP_Theme' );
-
-				case 'wp':
-				case 'local':
-				case 'internal':
-				case 'wordpress':
-					return is_a( $this, 'Image_Tag_WP' );
-
-				case 'picsum':
-					return is_a( $this, 'Image_Tag_Picsum' );
-
-				case 'joeschmoe':
-					return is_a( $this, 'Image_Tag_JoeSchmoe' );
-
-				case 'placeholder':
-					return is_a( $this, 'Image_Tag_Placeholder' );
-
-				case 'unsplash':
-					return is_a( $this, 'Image_Tag_Unsplash' );
-
-			}
-
-		return false;
-	}
+	abstract function is_type( $types );
 
 
 	/*
@@ -940,8 +781,8 @@ class Image_Tag implements ArrayAccess {
 	 * @todo define
 	 */
 	function common_colors( int $count = 1 ) {
-		if ( 
-			!$this->can( 'common-colors' ) 
+		if (
+			!$this->can( 'common-colors' )
 			|| !is_callable( array( $this, 'find_common_colors' ) )
 		)
 			return array();
@@ -1102,12 +943,5 @@ class Image_Tag implements ArrayAccess {
 	}
 
 }
-
-require_once 'image_tags/Image_Tag_JoeSchmoe.php';
-require_once 'image_tags/Image_Tag_Picsum.php';
-require_once 'image_tags/Image_Tag_Placeholder.php';
-require_once 'image_tags/Image_Tag_WP_Attachment.php';
-require_once 'image_tags/Image_Tag_WP_Theme.php';
-require_once 'image_tags/Image_Tag_Unsplash.php';
 
 ?>
