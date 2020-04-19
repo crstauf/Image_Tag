@@ -84,7 +84,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 			$this->assertEmpty(   $img->$attribute, sprintf( 'Failed asserting that "%s" attribute is empty.', $attribute ) );
 		}
 
-		$this->assertEmpty( $img->get_attributes() );
+		$this->assertEmpty( array_filter( $img->get_attributes( true ) ) );
 	}
 
 	/**
@@ -610,23 +610,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @covers Image_Tag::get_settings()
 	 */
-	function test_get_settings() {
-		$settings = array(
-			'before_output' => null,
-			'after_output' => null,
-			'sizes' => array(),
-			'foo' => 'foobar',
-			'array' => array( 'foobar' ),
-			'int' => mt_rand( 1, 999 ),
-		);
-
-		$img = $this->create( null, $settings );
-
-		$this->assertSame( $settings, $img->get_settings() );
-
-		$settings['int'] = ( string ) $settings['int'];
-		$this->assertNotSame( $settings, $img->get_settings() );
-	}
+	abstract function test_get_settings();
 
 	/**
 	 * Test get setting.
@@ -691,10 +675,80 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 		$img->add_to_attribute( 'class', $classes );
 	}
 
-	function test_get_width() {}
-	function test_get_height() {}
-	function test_get_ratio() {}
+
+	/*
+	########  #### ##     ## ######## ##    ##  ######  ####  #######  ##    ##  ######
+	##     ##  ##  ###   ### ##       ###   ## ##    ##  ##  ##     ## ###   ## ##    ##
+	##     ##  ##  #### #### ##       ####  ## ##        ##  ##     ## ####  ## ##
+	##     ##  ##  ## ### ## ######   ## ## ##  ######   ##  ##     ## ## ## ##  ######
+	##     ##  ##  ##     ## ##       ##  ####       ##  ##  ##     ## ##  ####       ##
+	##     ##  ##  ##     ## ##       ##   ### ##    ##  ##  ##     ## ##   ### ##    ##
+	########  #### ##     ## ######## ##    ##  ######  ####  #######  ##    ##  ######
+	*/
+
+	/**
+	 * Test getting width.
+	 */
+	function test_get_width() {
+		$img = $this->create();
+		$this->assertSame( 0, $img->get_width() );
+
+		$img->set_attribute( 'width', '400' );
+		$this->assertSame( 400, $img->get_width() );
+
+		$img->set_attribute( 'width', 1600 );
+		$this->assertSame( 1600, $img->get_width() );
+	}
+
+	/**
+	 * Test getting height.
+	 */
+	function test_get_height() {
+		$img = $this->create();
+		$this->assertSame( 0, $img->get_height() );
+
+		$img->set_attribute( 'width', '300' );
+		$this->assertSame( 300, $img->get_height() );
+
+		$img->set_attribute( 'width', 900 );
+		$this->assertSame( 900, $img->get_height() );
+	}
+
+	/**
+	 * Test calculating ratio.
+	 *
+	 * @uses _Image_Tag::get_width()
+	 * @uses _Image_Tag::get_height()
+	 */
+	function test_get_ratio() {
+		$dimensions = array(
+			500 => 500,
+			400 => 300,
+			1600 => 900,
+			2400 => 1350,
+		);
+
+		foreach ( $dimensions as $width => $height ) {
+			$img = $this->create( array(
+				'width' => $width,
+				'height' => $height,
+			) );
+			$this->assertSame( $height / $width, $img->get_ratio() );
+		}
+	}
+
 	function test_get_orientation() {}
+
+
+	/*
+	######## ########    ###    ######## ##     ## ########  ########  ######
+	##       ##         ## ##      ##    ##     ## ##     ## ##       ##    ##
+	##       ##        ##   ##     ##    ##     ## ##     ## ##       ##
+	######   ######   ##     ##    ##    ##     ## ########  ######    ######
+	##       ##       #########    ##    ##     ## ##   ##   ##             ##
+	##       ##       ##     ##    ##    ##     ## ##    ##  ##       ##    ##
+	##       ######## ##     ##    ##     #######  ##     ## ########  ######
+	*/
 
 	function test_http() {}
 	function test_lazyload() {}
@@ -703,14 +757,47 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	function test_common_colors() {}
 	function test_mode_color() {}
 
+
+	/*
+	########  ##          ###     ######  ######## ##     ##  #######  ##       ########  ######## ########   ######
+	##     ## ##         ## ##   ##    ## ##       ##     ## ##     ## ##       ##     ## ##       ##     ## ##    ##
+	##     ## ##        ##   ##  ##       ##       ##     ## ##     ## ##       ##     ## ##       ##     ## ##
+	########  ##       ##     ## ##       ######   ######### ##     ## ##       ##     ## ######   ########   ######
+	##        ##       ######### ##       ##       ##     ## ##     ## ##       ##     ## ##       ##   ##         ##
+	##        ##       ##     ## ##    ## ##       ##     ## ##     ## ##       ##     ## ##       ##    ##  ##    ##
+	##        ######## ##     ##  ######  ######## ##     ##  #######  ######## ########  ######## ##     ##  ######
+	*/
+
 	function test_into() {}
 	function test_into_joeschmoe() {}
 	function test_into_picsum() {}
 	function test_into_placeholder() {}
 	function test_into_unsplash() {}
 
+
+	/*
+	 ######     ###    ########     ###    ########  #### ##       #### ######## #### ########  ######
+	##    ##   ## ##   ##     ##   ## ##   ##     ##  ##  ##        ##     ##     ##  ##       ##    ##
+	##        ##   ##  ##     ##  ##   ##  ##     ##  ##  ##        ##     ##     ##  ##       ##
+	##       ##     ## ########  ##     ## ########   ##  ##        ##     ##     ##  ######    ######
+	##       ######### ##        ######### ##     ##  ##  ##        ##     ##     ##  ##             ##
+	##    ## ##     ## ##        ##     ## ##     ##  ##  ##        ##     ##     ##  ##       ##    ##
+	 ######  ##     ## ##        ##     ## ########  #### ######## ####    ##    #### ########  ######
+	*/
+
 	function test_supports() {}
 	function test_can() {}
+
+
+	/*
+	   ###    ########  ########     ###    ##    ##    ###     ######   ######  ########  ######   ######
+	  ## ##   ##     ## ##     ##   ## ##    ##  ##    ## ##   ##    ## ##    ## ##       ##    ## ##    ##
+	 ##   ##  ##     ## ##     ##  ##   ##    ####    ##   ##  ##       ##       ##       ##       ##
+	##     ## ########  ########  ##     ##    ##    ##     ## ##       ##       ######    ######   ######
+	######### ##   ##   ##   ##   #########    ##    ######### ##       ##       ##             ##       ##
+	##     ## ##    ##  ##    ##  ##     ##    ##    ##     ## ##    ## ##    ## ##       ##    ## ##    ##
+	##     ## ##     ## ##     ## ##     ##    ##    ##     ##  ######   ######  ########  ######   ######
+	*/
 
 	function test_arrayaccess_exists() {}
 	function test_arrayaccess_get() {}

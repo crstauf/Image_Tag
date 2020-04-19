@@ -8,8 +8,12 @@ class Image_Tag_Picsum_Test extends Image_Tag_UnitTestCase {
 		return 'Image_Tag_Picsum';
 	}
 
-	protected function create() {
-	
+	protected function create( $attributes = array(), $settings = array(), $source = null ) {
+
+	}
+
+	function test_toString() {
+
 	}
 
 	function test_base_url() {
@@ -21,7 +25,7 @@ class Image_Tag_Picsum_Test extends Image_Tag_UnitTestCase {
 		$img = $this->create( $type, array() );
 
 		$this->assertSame( $type, $img->get_type() );
-		
+
 		$types = array(
 			'remote',
 			'external',
@@ -35,6 +39,13 @@ class Image_Tag_Picsum_Test extends Image_Tag_UnitTestCase {
 		foreach ( $types as $type )
 			$this->assertTrue( $img->is_type( $type ) );
 	}
+
+	/**
+	 * Test get settings.
+	 *
+	 * @covers Image_Tag_Picsum::get_settings()
+	 */
+	function test_get_settings() {}
 
 }
 

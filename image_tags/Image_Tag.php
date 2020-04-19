@@ -25,8 +25,9 @@ class Image_Tag extends _Image_Tag {
  	 * @param array $settings
  	 * @return Image_Tag
 	 */
-	static function create( $source, $attributes = array(), array $settings = array() ) {
+	static function create( $source, $attributes = array(), $settings = array() ) {
 		$attributes = ( array ) $attributes;
+		$settings = ( array ) $settings;
 
 		# If integer, create WordPress attachment image.
 		if ( is_int( $source ) )

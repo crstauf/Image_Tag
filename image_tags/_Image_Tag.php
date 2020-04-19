@@ -38,7 +38,12 @@ abstract class _Image_Tag implements ArrayAccess {
 	/**
 	 * @var array $settings Settings for object.
 	 */
-	protected $settings = array(
+	protected $settings = array();
+
+	/**
+	 * @var array $default_settings Default settings for object.
+	 */
+	protected $default_settings = array(
 		'before_output' => null,
 		'after_output' => null,
 		'sizes' => array(),
@@ -72,6 +77,8 @@ abstract class _Image_Tag implements ArrayAccess {
 	 * @uses $this->set_settings()
 	 */
 	function __construct( array $attributes, array $settings = array() ) {
+		$settings = wp_parse_args( $settings, $this->default_settings );
+
 		$this->set_attributes( $attributes );
 		$this->set_settings( $settings );
 	}
@@ -611,19 +618,21 @@ abstract class _Image_Tag implements ArrayAccess {
 	/**
 	 * Get image's primary width.
 	 *
+	 * @uses $this->get_attribute()
 	 * @return int
 	 */
 	function get_width() {
-
+		return ( int ) $this->get_attribute( 'width ');
 	}
 
 	/**
 	 * Get image's primary height.
 	 *
+	 * @uses $this->get_attribute()
 	 * @return int
 	 */
 	function get_height() {
-
+		return ( int ) $this->get_attribute( 'height' );
 	}
 
 	/**
