@@ -688,6 +688,8 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 
 	/**
 	 * Test getting width.
+	 *
+	 * @covers _Image_Tag::get_width()
 	 */
 	function test_get_width() {
 		$img = $this->create();
@@ -702,6 +704,8 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 
 	/**
 	 * Test getting height.
+	 *
+	 * @covers _Image_Tag::get_height()
 	 */
 	function test_get_height() {
 		$img = $this->create();
@@ -737,7 +741,24 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 		}
 	}
 
-	function test_get_orientation() {}
+	/**
+	 * Test orientation.
+	 */
+	function test_get_orientation() {
+		$tests = array(
+			'square' => array( 1600, 1600 ),
+			'portrait' => array( 900, 1600 ),
+			'landscape' => array( 1600, 900 ),
+		);
+
+		$img = $this->create();
+
+		foreach ( $tests as $orientation => $dimensions ) {
+			$img->set_attribute(  'width', $dimensions[0] );
+			$img->set_attribute( 'height', $dimensions[1] );
+			$this->assertSame( $orientation, $img->get_orientation() );
+		}
+	}
 
 
 	/*
