@@ -2,6 +2,11 @@
 
 require_once '_unit-test-case.php';
 
+/**
+ * @group base
+ * @group external
+ * @covers Image_Tag
+ */
 class Image_Tag_Base_Test extends Image_Tag_UnitTestCase {
 
 	const SOURCE = 'https://source.unsplash.com/random';
@@ -22,6 +27,52 @@ class Image_Tag_Base_Test extends Image_Tag_UnitTestCase {
 		$this->assertEquals( '<img src="' . esc_attr( esc_url( static::SOURCE ) ) . '" />', $img->__toString() );
 	}
 
+	/**
+	 * Test type.
+	 *
+	 * @uses Image_Tag::get_type()
+	 * @uses Image_Tag::is_type()
+	 * @covers Image_Tag::get_type()
+	 * @covers Image_Tag::is_type()
+	 */
+	function test_type() {
+		$type = 'base';
+		$img = $this->create();
+
+		$this->assertSame( $type, $img->get_type() );
+
+		$types = array(
+			'remote',
+			'external',
+			$type,
+		);
+
+		$this->assertTrue( $img->is_type( $types ) );
+
+		foreach ( $types as $type )
+			$this->assertTrue( $img->is_type( $type ) );
+
+		$falseTypes = array(
+			'local',
+			'theme',
+			'internal',
+			'wordpress',
+			'attachment',
+		);
+
+		$this->assertFalse( $img->is_type( $falseTypes ) );
+
+		foreach ( $falseTypes as $type )
+			$this->assertFalse( $img->is_type( $type ) );
+	}
+
+	/**
+	 * Test default attributes.
+	 *
+	 * @uses Image_Tag::get_attributes()
+	 *
+	 * @group attributes
+	 */
 	function test_default_attributes() {
 		parent::test_default_attributes();
 
@@ -32,6 +83,10 @@ class Image_Tag_Base_Test extends Image_Tag_UnitTestCase {
 	/**
 	 * Test get settings.
 	 *
+	 * @uses Image_Tag::get_settings()
+	 *
+	 * @group settings
+	 * @group get-settings
 	 * @covers Image_Tag::get_settings()
 	 */
 	function test_get_settings() {
@@ -53,3 +108,5 @@ class Image_Tag_Base_Test extends Image_Tag_UnitTestCase {
 	}
 
 }
+
+?>

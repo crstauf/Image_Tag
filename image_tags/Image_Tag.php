@@ -87,21 +87,25 @@ class Image_Tag extends _Image_Tag {
 	}
 
 	/**
-	 * @todo add test
+	 * Get image type.
+	 *
+	 * @return string
 	 */
 	function get_type() {
-		return 'external';
+		return 'base';
 	}
 
 	/**
-	 * @todo add test
+	 * Check type.
+	 *
+	 * @param string[]|string $compare_types
+	 * @uses $this->get_type()
+	 * @return bool
 	 */
 	function is_type( $compare_types ) {
-		if ( parent::is_type( $compare_types ) )
-			return true;
-
 		$actual_types = array(
 			'remote',
+			'external',
 			$this->get_type(),
 		);
 

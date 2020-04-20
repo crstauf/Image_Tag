@@ -57,6 +57,11 @@ abstract class _Image_Tag implements ArrayAccess {
 		'noscript',
 	);
 
+	/**
+	 * @var array Extra data.
+	 */
+	protected $extra = array();
+
 
 	/*
 	##     ##    ###     ######   ####  ######
@@ -181,7 +186,6 @@ abstract class _Image_Tag implements ArrayAccess {
 	 * Check if image is specified type(s).
 	 *
 	 * @param string|array $types
-	 * @uses $this->is_type()
 	 * @return bool
 	 *
 	 * @todo add test
@@ -208,6 +212,21 @@ abstract class _Image_Tag implements ArrayAccess {
 	function set_attributes( array $attributes ) {
 		foreach ( $attributes as $attribute => $value )
 			$this->set_attribute( $attribute, $value );
+	}
+
+	/**
+	 * Add attribute.
+	 *
+	 * Set attribute only if not already set.
+	 *
+	 * @uses $this->get_attribute()
+	 * @uses $this->set_attribute()
+	 */
+	function add_attribute( string $key, $value ) {
+		if ( !empty( $this->get_attribute( $key ) ) )
+			return;
+
+		$this->set_attribute( $key, $value );
 	}
 
 	/**
@@ -244,7 +263,7 @@ abstract class _Image_Tag implements ArrayAccess {
 		if ( is_string( $classes ) )
 			$classes = explode( ' ', $classes );
 
-		else if ( is_null( $classes ) )
+		if ( empty( $classes ) )
 			$classes = array();
 
 		if ( !is_array( $classes ) ) {
@@ -265,6 +284,9 @@ abstract class _Image_Tag implements ArrayAccess {
 		if ( is_string( $sizes ) )
 			$sizes = explode( ',', $sizes );
 
+		else if ( empty( $sizes ) )
+			$sizes = array();
+
 		if ( !is_array( $sizes ) ) {
 			trigger_error( sprintf( 'Value of type <code>%s</code> is not valid for <code>%s</code> attribute.', gettype( $sizes ), 'sizes' ) );
 			return;
@@ -283,6 +305,9 @@ abstract class _Image_Tag implements ArrayAccess {
 		if ( is_string( $srcset ) )
 			$srcset = explode( ',', $srcset );
 
+		if ( empty( $srcset ) )
+			$srcset = array();
+
 		if ( !is_array( $srcset ) ) {
 			trigger_error( sprintf( 'Value of type <code>%s</code> is not valid for <code>%s</code> attribute.', gettype( $srcset ), 'srcset' ) );
 			return;
@@ -300,6 +325,9 @@ abstract class _Image_Tag implements ArrayAccess {
 	protected function set_style_attribute( $style ) {
 		if ( is_string( $style ) )
 			$style = explode( ';', $style );
+
+		if ( empty( $style ) )
+			$style = array();
 
 		if ( !is_array( $style ) ) {
 			trigger_error( sprintf( 'Value of type <code>%s</code> is not valid for <code>%s</code> attribute.', gettype( $style ), 'style' ) );
@@ -426,6 +454,9 @@ abstract class _Image_Tag implements ArrayAccess {
 	 * @return mixed
 	 */
 	protected function _get_attribute( string $key ) {
+		if ( !isset( $this->attributes[$key] ) )
+			return null;
+
 		return $this->attributes[$key];
 	}
 
@@ -572,12 +603,15 @@ abstract class _Image_Tag implements ArrayAccess {
 				'style',
 			) );
 
-		if ( !in_array( $attribute, $allowed_attributes ) ) {
-			trigger_error( sprintf( 'Arrays can be added only to the following attributes: <code>%s</code>.', implode( '</code>, <code>', $allowed_attributes ) ), E_USER_NOTICE );
+		if (
+			   !is_string( $value )
+			|| !in_array( $attribute, $allowed_attributes )
+		) {
+			trigger_error( sprintf( 'Values can be added only to the following attributes: <code>%s</code>.', implode( '</code>, <code>', $allowed_attributes ) ), E_USER_NOTICE );
 			return;
 		}
 
-		$new_value = $this->_get_attribute( $attribute );
+		$new_value = ( array ) $this->_get_attribute( $attribute );
 		$new_value[] = $value;
 
 		$this->set_attribute( $attribute, $new_value );
@@ -591,9 +625,9 @@ abstract class _Image_Tag implements ArrayAccess {
 	 * @uses $this->_get_attribute()
 	 * @uses $this->set_attribute()
 	 */
-	function add_to_class_attribute( $classes ) {
+	protected function add_to_class_attribute( string $classes ) {
 		if ( is_string( $classes ) )
-			$classes = array_filter( array_map( 'trim', explode( ' ', $classes ) ) );
+			$classes = array_filter( array_map( 'Image_Tag::trim', explode( ' ', $classes ) ) );
 
 		if ( !is_array( $classes ) ) {
 			trigger_error( sprintf( 'Value of type <code>%s</code> is not valid for <code>class</code> attribute.', gettype( $classes ) ), E_USER_NOTICE );
@@ -622,7 +656,7 @@ abstract class _Image_Tag implements ArrayAccess {
 	 * @return int
 	 */
 	function get_width() {
-		return ( int ) $this->get_attribute( 'width ');
+		return ( int ) $this->get_attribute( 'width' );
 	}
 
 	/**
@@ -643,6 +677,12 @@ abstract class _Image_Tag implements ArrayAccess {
 	 * @return float
 	 */
 	function get_ratio() {
+		if (
+			empty( $this->get_height() )
+			|| empty( $this->get_width() )
+		)
+			return 0;
+
 		return $this->get_height() / $this->get_width();
 	}
 
@@ -687,17 +727,22 @@ abstract class _Image_Tag implements ArrayAccess {
 	 * @return array|WP_Error
 	 */
 	function http( bool $force = false ) {
-		static $cache = array();
-
 		$src = $this->get_attribute( 'src' );
 
 		if (
 			!$force
-			&& isset( $cache[$src] )
+			&& isset( $this->extra[__FUNCTION__] )
 		)
-			return $cache[$src];
+			return $this->extra[__FUNCTION__];
 
-		return wp_remote_get( $src );
+		$response = wp_remote_get( $src );
+
+		if ( is_wp_error( $response ) )
+			return $response;
+
+		$this->extra[__FUNCTION__] = $response;
+
+		return $response;
 	}
 
 	/**
@@ -722,18 +767,22 @@ abstract class _Image_Tag implements ArrayAccess {
 		$lazyload->set_attributes( $attributes );
 		$lazyload->set_settings( $settings );
 
-		$lazyload->add_class( 'lazyload hide-if-no-js' );
-
 		$lazyload->add_attribute( 'data-src',    $lazyload->get_attribute( 'src' ) );
 		$lazyload->add_attribute( 'data-sizes',  $lazyload->get_attribute( 'sizes' ) );
 		$lazyload->add_attribute( 'data-srcset', $lazyload->get_attribute( 'srcset' ) );
 
-		if ( empty( $lazyload->get_attribute( 'data-sizes' ) ) )
+		$lazyload->set_attribute( 'src', static::BLANK );
+		$lazyload->add_to_attribute( 'class', 'lazyload hide-if-no-js' );
+
+		if (
+			    empty( $lazyload->get_attribute( 'data-sizes' ) )
+			&& !empty( $lazyload->get_attribute( 'data-srcset' ) )
+		)
 			$lazyload->set_attribute( 'data-sizes', 'auto' );
 
 		$lazyload->set_setting( 'after_output', $this->noscript( array(
 			'loading' => 'lazy',
-		) ) );
+		) )->__toString() );
 
 		return $lazyload;
 	}
@@ -756,7 +805,7 @@ abstract class _Image_Tag implements ArrayAccess {
 		$noscript->set_attributes( $attributes );
 		$noscript->set_settings( $settings );
 
-		$noscript->add_class( 'no-js' );
+		$noscript->add_to_attribute( 'class', 'no-js' );
 		$noscript->set_setting( 'before_output', '<noscript>' . $this->get_setting( 'before_output' ) );
 		$noscript->set_setting( 'after_output', '</noscript>' . $this->get_setting( 'after_output' ) );
 

@@ -28,6 +28,8 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_UnitTestCase {
 	 *
 	 * @uses Image_Tag_UnitTestCase::test_default_settings()
 	 * @uses Image_Tag::get_setting()
+	 *
+	 * @group settings
 	 */
 	function test_default_settings() {
 		parent::test_default_settings();
@@ -40,7 +42,9 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_UnitTestCase {
 	/**
 	 * Test to string.
 	 *
+	 * @uses Image_Tag_JoeSchmoe::__toString()
 	 * @uses Image_Tag::set_setting()
+	 *
 	 * @covers Image_Tag_JoeSchmoe::__tostring()
 	 */
 	function test_toString() {
@@ -65,6 +69,8 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_UnitTestCase {
 	 *
 	 * @uses Image_Tag_JoeSchmoe::get_type()
 	 * @uses Image_Tag_JoeSchmoe::is_type()
+	 *
+	 * @group type
 	 * @covers Image_Tag_JoeSchmoe::get_type()
 	 * @covers Image_Tag_JoeSchmoe::is_type()
 	 */
@@ -85,8 +91,23 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_UnitTestCase {
 			$type,
 		);
 
+		$this->assertTrue( $img->is_type( $types ) );
+
 		foreach ( $types as $type )
 			$this->assertTrue( $img->is_type( $type ) );
+
+		$falseTypes = array(
+			'local',
+			'theme',
+			'internal',
+			'wordpress',
+			'attachment',
+		);
+
+		$this->assertFalse( $img->is_type( $falseTypes ) );
+
+		foreach ( $falseTypes as $type )
+			$this->assertFalse( $img->is_type( $type ) );
 	}
 
 	/**
