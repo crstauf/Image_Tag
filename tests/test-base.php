@@ -107,6 +107,49 @@ class Image_Tag_Base_Test extends Image_Tag_UnitTestCase {
 		$this->assertNotSame( $settings, $img->get_settings() );
 	}
 
+	/**
+	 * Test low-quality image placeholder.
+	 *
+	 * @uses Image_Tag::lqip()
+	 *
+	 * @group features
+	 * @group feature-lqip
+	 * @covers Image_Tag::lqip()
+	 */
+	function test_lqip() {
+		$img = $this->create();
+		$this->assertInstanceOf( $this->class_name(), $img->lqip() );
+	}
+
+	/**
+	 * Test common colors.
+	 *
+	 * @uses Image_Tag::common_colors()
+	 *
+	 * @group features
+	 * @group feature-colors
+	 * @covers Image_Tag::common_colors()
+	 */
+	function test_common_colors() {
+		$img = $this->create();
+		$this->assertIsArray( $img->common_colors() );
+		$this->assertEmpty( $img->common_colors() );
+	}
+
+	/**
+	 * Test mode color.
+	 *
+	 * @uses Image_Tag::mode_color()
+	 *
+	 * @group features
+	 * @group feature-colors
+	 * @covers Image_Tag::mode_color()
+	 */
+	function test_mode_color() {
+		$img = $this->create();
+		$this->assertEmpty( $img->mode_color() );
+	}
+
 }
 
 ?>

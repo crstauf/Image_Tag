@@ -55,6 +55,10 @@ abstract class _Image_Tag implements ArrayAccess {
 	protected $supports = array(
 		'lazyload',
 		'noscript',
+		'joeschmoe',
+		'picsum',
+		'placeholder',
+		'unsplash',
 	);
 
 	/**
@@ -822,8 +826,12 @@ abstract class _Image_Tag implements ArrayAccess {
 	 * @todo figure out
 	 */
 	function lqip( $attributes = array(), array $settings = array() ) {
+		$attributes = wp_parse_args( $attributes, array(
+			'class' => 'lqip',
+		) );
+
 		if ( !$this->can( __FUNCTION__ ) )
-			return new static;
+			return new static( $attributes, $settings );
 
 		$attributes = wp_parse_args( ( array ) $attributes, $this->get_attributes( true ) );
 		$settings = wp_parse_args( $settings, $this->get_settings( true ) );
@@ -864,7 +872,8 @@ abstract class _Image_Tag implements ArrayAccess {
 	 * @return string
 	 */
 	function mode_color() {
-		return array_pop( $this->common_colors( 1 ) );
+		$common_colors = $this->common_colors( 1 );
+		return array_pop( $common_colors );
 	}
 
 
@@ -892,7 +901,7 @@ abstract class _Image_Tag implements ArrayAccess {
 	 */
 	function into( string $type, $settings = array(), array $attributes = array() ) {
 		if ( !$this->can( $type ) )
-			return new static;
+			return new static( $attributes, $settings );
 
 		$attributes = wp_parse_args( $attributes, $this->get_attributes( true ) );
 		$settings = wp_parse_args( ( array ) $settings, $this->get_settings( true ) );

@@ -920,7 +920,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 * @group feature-lqip
 	 * @covers Image_Tag::lqip()
 	 */
-	function test_lqip() {}
+	abstract function test_lqip();
 
 	/**
 	 * Test common colors.
@@ -931,7 +931,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 * @group feature-colors
 	 * @covers Image_Tag::common_colors()
 	 */
-	function test_common_colors() {}
+	abstract function test_common_colors();
 
 	/**
 	 * Test mode color.
@@ -942,7 +942,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 * @group feature-colors
 	 * @covers Image_Tag::mode_color()
 	 */
-	function test_mode_color() {}
+	abstract function test_mode_color();
 
 
 	/*
@@ -956,58 +956,72 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	*/
 
 	/**
-	 * Test changing into.
-	 *
-	 * @uses Image_Tag::into()
-	 *
-	 * @group into
-	 * @covers Image_Tag::into()
-	 */
-	function test_into() {}
-
-	/**
 	 * Test changing into JoeSchmoe.
 	 *
 	 * @uses Image_Tag::into()
+	 * @return Image_Tag_JoeSchmoe
 	 *
 	 * @group into
 	 * @group joeschmoe
 	 * @covers Image_Tag::into()
 	 */
-	function test_into_joeschmoe() {}
+	function test_into_joeschmoe() {
+		$img = $this->create();
+		$this->assertInstanceOf( 'Image_Tag_JoeSchmoe', $img->into( 'joeschmoe' ) );
+
+		return $img;
+	}
 
 	/**
 	 * Test changing into Picsum.
 	 *
 	 * @uses Image_Tag::into()
+	 * @return Image_Tag_Picsum
 	 *
 	 * @group into
 	 * @group picsum
 	 * @covers Image_Tag::into()
 	 */
-	function test_into_picsum() {}
+	function test_into_picsum() {
+		$img = $this->create();
+		$this->assertInstanceOf( 'Image_Tag_Picsum', $img->into( 'picsum' ) );
+
+		return $img;
+	}
 
 	/**
 	 * Test changing into Placeholder.
 	 *
 	 * @uses Image_Tag::into()
+	 * @return Image_Tag_Placeholder
 	 *
 	 * @group into
 	 * @group placeholder
 	 * @covers Image_Tag::into()
 	 */
-	function test_into_placeholder() {}
+	function test_into_placeholder() {
+		$img = $this->create();
+		$this->assertInstanceOf( 'Image_Tag_Placeholder', $img->into( 'placeholder' ) );
+
+		return $img;
+	}
 
 	/**
 	 * Test changing into Unsplash.
 	 *
 	 * @uses Image_Tag::into()
+	 * @return Image_Tag_Unsplash
 	 *
 	 * @group into
 	 * @group unsplash
 	 * @covers Image_Tag::into()
 	 */
-	function test_into_unsplash() {}
+	function test_into_unsplash() {
+		$img = $this->create();
+		$this->assertInstanceOf( 'Image_Tag_Unsplash', $img->into( 'unsplash' ) );
+
+		return $img;
+	}
 
 
 	/*
@@ -1020,8 +1034,27 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 ######  ##     ## ##        ##     ## ########  #### ######## ####    ##    #### ########  ######
 	*/
 
-	function test_supports() {}
-	function test_can() {}
+	/**
+	 * Test supported capabilities.
+	 *
+	 * @covers Image_Tag::supports()
+	 */
+	function test_supports() {
+		$img = $this->create();
+		$this->assertTrue( $img->supports( 'noscript' ) );
+		$this->assertFalse( $img->supports( 'nothing' ) );
+	}
+
+	/**
+	 * Test accessible capabilities.
+	 *
+	 * @covers Image_Tag::can()
+	 */
+	function test_can() {
+		$img = $this->create();
+		$this->assertTrue( $img->can( 'noscript' ) );
+		$this->assertFalse( $img->can( 'nothing' ) );
+	}
 
 
 	/*
@@ -1034,9 +1067,67 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	##     ## ##     ## ##     ## ##     ##    ##    ##     ##  ######   ######  ########  ######   ######
 	*/
 
-	function test_arrayaccess_exists() {}
-	function test_arrayaccess_get() {}
-	function test_arrayaccess_set() {}
-	function test_arrayaccess_unset() {}
+	/**
+	 * Test key exists.
+	 *
+	 * @covers Image_Tag::offsetExists()
+	 */
+	function test_arrayaccess_exists() {
+		$img = $this->create( array(
+			'id' => __FUNCTION__,
+		) );
+
+		$this->assertTrue( isset( $img['id'] ) );
+		$this->assertFalse( isset( $img['alt'] ) );
+	}
+
+	/**
+	 * Test getting key.
+	 *
+	 * @covers Image_Tag::offsetGet()
+	 */
+	function test_arrayaccess_get() {
+		$img = $this->create( array(
+			'id' => __FUNCTION__,
+			'class' => 'string of classes',
+		) );
+
+		$this->assertSame( __FUNCTION__, $img['id'] );
+		$this->assertSame( array( 'string', 'of', 'classes' ), $img['class'] );
+	}
+
+	/**
+	 * Test setting key.
+	 *
+	 * @covers Image_Tag::offsetSet()
+	 */
+	function test_arrayaccess_set() {
+		$img = $this->create();
+
+		$this->assertNull( $img['id'] );
+
+		$img['id'] = __FUNCTION__;
+		$this->assertSame( __FUNCTION__, $img['id'] );
+
+		$img['class'] = 'string of classes';
+		$this->assertSame( array( 'string', 'of', 'classes' ), $img['class'] );
+	}
+
+	/**
+	 * Test unsetting key.
+	 *
+	 * @covers Image_Tag::offsetUnset()
+	 */
+	function test_arrayaccess_unset() {
+		$img = $this->create();
+
+		$this->assertNull( $img['id'] );
+
+		$img['id'] = __FUNCTION__;
+		$this->assertSame( __FUNCTION__, $img['id'] );
+
+		unset( $img['id'] );
+		$this->assertNull( $img['id'] );
+	}
 
 }

@@ -104,6 +104,7 @@ class Image_Tag extends _Image_Tag {
 	 */
 	function is_type( $compare_types ) {
 		$actual_types = array(
+			'base',
 			'remote',
 			'external',
 			$this->get_type(),
