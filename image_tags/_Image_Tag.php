@@ -682,7 +682,7 @@ abstract class _Image_Tag implements ArrayAccess {
 	 */
 	function get_ratio() {
 		if (
-			empty( $this->get_height() )
+			   empty( $this->get_height() )
 			|| empty( $this->get_width() )
 		)
 			return 0;
@@ -758,7 +758,7 @@ abstract class _Image_Tag implements ArrayAccess {
 	 */
 	function lazyload( $attributes = array(), array $settings = array() ) {
 		if ( !$this->can( __FUNCTION__ ) )
-			return new static;
+			return new static( $attributes, $settings );
 
 		$pre = apply_filters( 'image_tag/lazyload/pre', null, $this, $attributes, $settings );
 		if ( !is_null( $pre ) )
@@ -800,7 +800,7 @@ abstract class _Image_Tag implements ArrayAccess {
 	 */
 	function noscript( $attributes = array(), array $settings = array() ) {
 		if ( !$this->can( __FUNCTION__ ) )
-			return new static;
+			return new static( $attributes, $settings );
 
 		$attributes = wp_parse_args( ( array ) $attributes, $this->get_attributes( true ) );
 		$settings = wp_parse_args( $settings, $this->get_settings( true ) );

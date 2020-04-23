@@ -19,6 +19,9 @@ class Image_Tag_Base_Test extends Image_Tag_UnitTestCase {
 		return Image_Tag::create( $source, $attributes, $settings );
 	}
 
+	/**
+	 * @covers Image_Tag::__toString()
+	 */
 	function test_toString() {
 		$img = $this->construct( array( 'src' => static::SOURCE ) );
 		$this->assertEquals( '<img src="' . esc_attr( esc_url( static::SOURCE ) ) . '" />', $img->__toString() );

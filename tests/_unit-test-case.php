@@ -128,7 +128,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 * @uses Image_Tag::get_setting()
 	 *
 	 * @group magic
-	 * @covers Image_Tag::__construct()
+	 * @covers _Image_Tag::__construct()
 	 */
 	function test_construct() {
 		$attributes = array(
@@ -162,7 +162,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 * @uses Image_Tag::__get()
 	 *
 	 * @group magic
-	 * @covers Image_Tag::__get()
+	 * @covers _Image_Tag::__get()
 	 */
 	function test_get() {
 		$assertNull = array(
@@ -196,16 +196,24 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group magic
 	 * @group output
-	 * @covers Image_Tag::__toString()
+	 * @covers _Image_Tag::__toString()
 	 */
-	abstract function test_toString();
+	function test_toString() {
+		$img = $this->create();
+		$string = $img->__toString();
+
+		$this->assertContains( '<img ', $string );
+		$this->assertContains( ' src="', $string );
+		$this->assertContains( $img->get_attribute( 'src' ), $string );
+		$this->assertContains( '/>', $string );
+	}
 
 	/**
 	 * Test type.
 	 *
 	 * @group type
-	 * @covers Image_Tag::is_type()
-	 * @covers Image_Tag::get_type()
+	 * @covers _Image_Tag::is_type()
+	 * @covers _Image_Tag::get_type()
 	 */
 	abstract function test_type();
 
@@ -215,9 +223,9 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 * @uses Image_Tag::is_valid()
 	 *
 	 * @group valid
-	 * @covers Image_Tag::is_valid()
-	 * @covers Image_Tag::__toString()
-	 * @covers Image_Tag::check_valid()
+	 * @covers _Image_Tag::is_valid()
+	 * @covers _Image_Tag::__toString()
+	 * @covers _Image_Tag::check_valid()
 	 */
 	function test_valid() {
 		$img = $this->create();
@@ -247,7 +255,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group attributes
 	 * @group set-attributes
-	 * @covers Image_Tag::set_attributes()
+	 * @covers _Image_Tag::set_attributes()
 	 */
 	function test_set_attributes() {
 		$attributes = wp_parse_args( array(
@@ -278,6 +286,25 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Test adding attribute.
+	 *
+	 * @covers _Image_Tag::add_attribute()
+	 */
+	function test_add_attribute() {
+		$img = $this->create();
+
+		$this->assertNull( $img->get_attribute( 'id' ) );
+
+		$img->add_attribute( 'id', __FUNCTION__ );
+		$this->assertSame( __FUNCTION__, $img['id'] );
+
+		$uniqid = uniqid( __FUNCTION__ );
+		$img->add_attribute( 'id', $uniqid );
+		$this->assertNotEquals( $uniqid, $img['id'] );
+		$this->assertSame( __FUNCTION__, $img['id'] );
+	}
+
+	/**
 	* Test set attribute.
 	*
 	* @uses Image_Tag::set_attribute()
@@ -285,7 +312,8 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	*
 	* @group attributes
 	* @group set-attributes
-	* @covers Image_Tag::set_attribute()
+	* @covers _Image_Tag::set_attribute()
+	* @covers _Image_Tag::_set_attribute()
 	*/
 	function test_set_attribute() {
 		$img = $this->create();
@@ -303,7 +331,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group attributes
 	 * @group set-attributes
-	 * @covers Image_Tag::set_class_attribute()
+	 * @covers _Image_Tag::set_class_attribute()
 	 */
 	function test_set_class_attribute() {
 		$img = $this->create();
@@ -319,6 +347,9 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 		$_class = array_filter( array_map( 'trim', $class ) );
 		$img->set_attribute( 'class', $class );
 		$this->assertSame( $_class, $img->get_attribute( 'class', true ) );
+
+		$img->set_attribute( 'class', null );
+		$this->assertSame( array(), $img->get_attribute( 'class', true ) );
 	}
 
 	/**
@@ -328,7 +359,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group attributes
 	 * @group set-attributes
-	 * @covers Image_Tag::set_sizes_attribute()
+	 * @covers _Image_Tag::set_sizes_attribute()
 	 */
 	function test_set_sizes_attribute() {
 		$img = $this->create();
@@ -344,6 +375,9 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 		$_sizes = array_filter( array_map( 'trim', $sizes ) );
 		$img->set_attribute( 'sizes', $sizes );
 		$this->assertSame( $_sizes, $img->get_attribute( 'sizes', true ) );
+
+		$img->set_attribute( 'sizes', null );
+		$this->assertSame( array(), $img->get_attribute( 'sizes', true ) );
 	}
 
 	/**
@@ -353,7 +387,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group attributes
 	 * @group set-attributes
-	 * @covers Image_Tag::set_srcset_attribute()
+	 * @covers _Image_Tag::set_srcset_attribute()
 	 */
 	function test_set_srcset_attribute() {
 		$img = $this->create();
@@ -369,6 +403,9 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 		$_srcset = array_filter( array_map( 'trim', $srcset ) );
 		$img->set_attribute( 'srcset', $srcset );
 		$this->assertSame( $_srcset, $img->get_attribute( 'srcset', true ) );
+
+		$img->set_attribute( 'srcset', null );
+		$this->assertSame( array(), $img->get_attribute( 'srcset', true ) );
 	}
 
 	/**
@@ -378,7 +415,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group attributes
 	 * @group set-attributes
-	 * @covers Image_Tag::set_style_attribute()
+	 * @covers _Image_Tag::set_style_attribute()
 	 */
 	function test_set_style_attribute() {
 		$img = $this->create();
@@ -407,6 +444,9 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 		$_style = array_filter( $style );
 		$img->set_attribute( 'style', $style );
 		$this->assertSame( $_style, $img->get_attribute( 'style', true ) );
+
+		$img->set_attribute( 'style', null );
+		$this->assertSame( array(), $img->get_attribute( 'style', true ) );
 	}
 
 
@@ -428,7 +468,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group attributes
 	 * @group get-attributes
-	 * @covers Image_Tag::get_attributes()
+	 * @covers _Image_Tag::get_attributes()
 	 */
 	function test_get_attributes() {
 		$attributes = array(
@@ -468,7 +508,8 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group attributes
 	 * @group get-attributes
-	 * @covers Image_Tag::get_attribute()
+	 * @covers _Image_Tag::get_attribute()
+	 * @covers _Image_Tag::_get_attribute()
 	 */
 	function test_get_attribute() {
 		$attributes = array(
@@ -496,7 +537,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group attributes
 	 * @group get-attributes
-	 * @covers Image_Tag::get_class_attribute()
+	 * @covers _Image_Tag::get_class_attribute()
 	 */
 	function test_get_class_attribute() {
 		$img = $this->create();
@@ -522,7 +563,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group attributes
 	 * @group get-attributes
-	 * @covers Image_Tag::get_style_attribute()
+	 * @covers _Image_Tag::get_style_attribute()
 	 */
 	function test_get_style_attribute() {
 		$img = $this->create();
@@ -564,7 +605,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group attributes
 	 * @group get-attributes
-	 * @covers Image_Tag::get_array_attribute()
+	 * @covers _Image_Tag::get_array_attribute()
 	 */
 	function test_get_array_attribute() {
 		$img = $this->create();
@@ -598,7 +639,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group settings
 	 * @group set-settings
-	 * @covers Image_Tag::set_settings()
+	 * @covers _Image_Tag::set_settings()
 	 */
 	function test_set_settings() {
 		$settings = array(
@@ -618,7 +659,8 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group settings
 	 * @group set-settings
-	 * @covers Image_Tag::set_setting()
+	 * @covers _Image_Tag::set_setting()
+	 * @covers _Image_Tag::_set_setting()
 	 */
 	function test_set_setting() {
 		$img = $this->create();
@@ -646,7 +688,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group settings
 	 * @group get-settings
-	 * @covers Image_Tag::get_settings()
+	 * @covers _Image_Tag::get_settings()
 	 */
 	abstract function test_get_settings();
 
@@ -655,7 +697,8 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group settings
 	 * @group get-settings
-	 * @covers Image_Tag::get_setting()
+	 * @covers _Image_Tag::get_setting()
+	 * @covers _Image_Tag::_get_setting()
 	 */
 	function test_get_setting() {
 		$settings = array(
@@ -670,6 +713,8 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 			$this->assertSame( $value, $img->get_setting( $setting ) );
 			$this->assertNotEquals( $setting, $img->get_setting( $setting ) );
 		}
+
+		$this->assertSame( 'foobar', $img->get_setting( 'foo', true ) );
 	}
 
 
@@ -690,7 +735,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group attributes
 	 * @group helpers
-	 * @covers Image_Tag::add_to_attribute()
+	 * @covers _Image_Tag::add_to_attribute()
 	 * @covers Image_Tag::trim()
 	 */
 	function test_add_to_attribute() {
@@ -718,8 +763,8 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group attributes
 	 * @group helpers
-	 * @covers Image_Tag::add_to_attribute()
-	 * @covers Image_Tag::add_to_class_attribute()
+	 * @covers _Image_Tag::add_to_attribute()
+	 * @covers _Image_Tag::add_to_class_attribute()
 	 */
 	function test_add_to_class_attribute() {
 		$img = $this->create();
@@ -754,7 +799,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 * @uses Image_Tag::get_width()
 	 *
 	 * @group dimensions
-	 * @covers Image_Tag::get_width()
+	 * @covers _Image_Tag::get_width()
 	 */
 	function test_get_width() {
 		$img = $this->create();
@@ -773,7 +818,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 * @uses Image_Tag::get_height()
 	 *
 	 * @group dimensions
-	 * @covers Image_Tag::get_height()
+	 * @covers _Image_Tag::get_height()
 	 */
 	function test_get_height() {
 		$img = $this->create();
@@ -793,7 +838,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 * @uses Image_Tag::get_height()
 	 *
 	 * @group dimensions
-	 * @covers Image_Tag::get_ratio()
+	 * @covers _Image_Tag::get_ratio()
 	 */
 	function test_get_ratio() {
 		$dimensions = array(
@@ -819,7 +864,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 * @uses Image_Tag::get_orientation()
 	 *
 	 * @group dimensions
-	 * @covers Image_Tag::get_orientation()
+	 * @covers _Image_Tag::get_orientation()
 	 */
 	function test_get_orientation() {
 		$tests = array(
@@ -856,15 +901,27 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 * @group http
 	 * @group features
 	 * @group feature-http
-	 * @covers Image_Tag::http()
+	 * @covers _Image_Tag::http()
 	 */
 	function test_http() {
 		$img = $this->create();
-		$http = $img->http();
+		$this->assertEquals( 0, did_action( 'http_api_debug' ) );
 
+		$start = microtime( true );
+		$http = $img->http();
+		$time_1 = microtime( true ) - $start;
+
+		$this->assertEquals( 1, did_action( 'http_api_debug' ) );
 		$this->assertFalse( is_wp_error( $http ) );
 		$this->assertNotEmpty( wp_remote_retrieve_body( $http ) );
 		$this->assertContains( 'image/', wp_remote_retrieve_header( $http, 'content-type' ) );
+
+		$start = microtime( true );
+		$this->assertSame( $img->http(), $http );
+		$time_2 = microtime( true ) - $start;
+
+		$this->assertEquals( 1, did_action( 'http_api_debug' ) );
+		$this->assertLessThanOrEqual( $time_1, $time_2 );
 	}
 
 	/**
@@ -875,7 +932,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 * @group http
 	 * @group features
 	 * @group feature-lazylaod
-	 * @covers Image_Tag::lazyload()
+	 * @covers _Image_Tag::lazyload()
 	 */
 	function test_lazyload() {
 		$img = $this->create();
@@ -899,7 +956,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 * @group http
 	 * @group features
 	 * @group feature-noscript
-	 * @covers Image_Tag::noscript()
+	 * @covers _Image_Tag::noscript()
 	 */
 	function test_noscript() {
 		$img = $this->create();
@@ -918,7 +975,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group features
 	 * @group feature-lqip
-	 * @covers Image_Tag::lqip()
+	 * @covers _Image_Tag::lqip()
 	 */
 	abstract function test_lqip();
 
@@ -929,7 +986,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group features
 	 * @group feature-colors
-	 * @covers Image_Tag::common_colors()
+	 * @covers _Image_Tag::common_colors()
 	 */
 	abstract function test_common_colors();
 
@@ -940,7 +997,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group features
 	 * @group feature-colors
-	 * @covers Image_Tag::mode_color()
+	 * @covers _Image_Tag::mode_color()
 	 */
 	abstract function test_mode_color();
 
@@ -963,7 +1020,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group into
 	 * @group joeschmoe
-	 * @covers Image_Tag::into()
+	 * @covers _Image_Tag::into()
 	 */
 	function test_into_joeschmoe() {
 		$img = $this->create();
@@ -980,7 +1037,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group into
 	 * @group picsum
-	 * @covers Image_Tag::into()
+	 * @covers _Image_Tag::into()
 	 */
 	function test_into_picsum() {
 		$img = $this->create();
@@ -997,7 +1054,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group into
 	 * @group placeholder
-	 * @covers Image_Tag::into()
+	 * @covers _Image_Tag::into()
 	 */
 	function test_into_placeholder() {
 		$img = $this->create();
@@ -1014,7 +1071,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @group into
 	 * @group unsplash
-	 * @covers Image_Tag::into()
+	 * @covers _Image_Tag::into()
 	 */
 	function test_into_unsplash() {
 		$img = $this->create();
@@ -1037,7 +1094,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	/**
 	 * Test supported capabilities.
 	 *
-	 * @covers Image_Tag::supports()
+	 * @covers _Image_Tag::supports()
 	 */
 	function test_supports() {
 		$img = $this->create();
@@ -1048,7 +1105,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	/**
 	 * Test accessible capabilities.
 	 *
-	 * @covers Image_Tag::can()
+	 * @covers _Image_Tag::can()
 	 */
 	function test_can() {
 		$img = $this->create();
@@ -1070,7 +1127,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	/**
 	 * Test key exists.
 	 *
-	 * @covers Image_Tag::offsetExists()
+	 * @covers _Image_Tag::offsetExists()
 	 */
 	function test_arrayaccess_exists() {
 		$img = $this->create( array(
@@ -1084,7 +1141,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	/**
 	 * Test getting key.
 	 *
-	 * @covers Image_Tag::offsetGet()
+	 * @covers _Image_Tag::offsetGet()
 	 */
 	function test_arrayaccess_get() {
 		$img = $this->create( array(
@@ -1099,7 +1156,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	/**
 	 * Test setting key.
 	 *
-	 * @covers Image_Tag::offsetSet()
+	 * @covers _Image_Tag::offsetSet()
 	 */
 	function test_arrayaccess_set() {
 		$img = $this->create();
@@ -1116,7 +1173,7 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	/**
 	 * Test unsetting key.
 	 *
-	 * @covers Image_Tag::offsetUnset()
+	 * @covers _Image_Tag::offsetUnset()
 	 */
 	function test_arrayaccess_unset() {
 		$img = $this->create();
@@ -1131,3 +1188,5 @@ abstract class Image_Tag_UnitTestCase extends WP_UnitTestCase {
 	}
 
 }
+
+?>

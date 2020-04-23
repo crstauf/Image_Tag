@@ -22,6 +22,7 @@
 			<file>image_tags/Image_Tag_WP_Attachment.php</file>
 			<file>image_tags/Image_Tag_Theme.php</file>
 			<file>image_tags/Image_Tag_WP.php</file>
+			<file>image_tags/_Image_Tag.php</file>
 			<file>image_tags/Image_Tag.php</file>
 			<file>Image_Tag_Plugin.php</file>
 		</whitelist>
