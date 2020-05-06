@@ -8,6 +8,8 @@
  * Author: Caleb Stauffer
  * Author URI: https://develop.calebstauffer.com
  * Version: 2.0
+ * Requires at least: 5.4
+ * Requires PHP: 7.3
  */
 
 defined( 'ABSPATH' ) || die();
@@ -42,7 +44,9 @@ class Image_Tag_Plugin {
 	 * Construct.
 	 */
 	protected function __construct() {
+
 		add_action( 'template_redirect', array( $this, 'action__template_redirect' ), 100 );
+
 	}
 
 	/**
@@ -60,14 +64,18 @@ class Image_Tag_Plugin {
 	 * Include all the files.
 	 */
 	static function includes() {
-		require_once 'image_tags/_Image_Tag.php';
+
+		# Abstracts.
+		require_once 'image_tags/Image_Tag_Abstract.php';
+		require_once 'image_tags/Image_Tag_Properties_Abstract.php';
+
+		# Properties.
+		require_once 'image_tags/Image_Tag_Attributes.php';
+		require_once 'image_tags/Image_Tag_Settings.php';
+
+		# Types.
 		require_once 'image_tags/Image_Tag.php';
-		require_once 'image_tags/Image_Tag_JoeSchmoe.php';
-		require_once 'image_tags/Image_Tag_Picsum.php';
-		require_once 'image_tags/Image_Tag_Placeholder.php';
-		require_once 'image_tags/Image_Tag_WP_Attachment.php';
-		require_once 'image_tags/Image_Tag_WP_Theme.php';
-		require_once 'image_tags/Image_Tag_Unsplash.php';
+
 	}
 
 }
