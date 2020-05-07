@@ -40,5 +40,16 @@ abstract class Image_Tag_Abstract {
 	function __get( string $key ) {
 		return $this->$key;
 	}
+	
+	abstract function get_type();
+	abstract function is_type();
+	abstract protected function check_valid();
+	
+	function is_valid( $types ) {
+		if ( !$this->is_type( $types ) )
+			return false;
+			
+		return true === $this->check_valid();
+	}
 
 }

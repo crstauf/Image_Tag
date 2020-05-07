@@ -122,17 +122,15 @@ class Image_Tag_Attributes extends Image_Tag_Properties_Abstract {
 
 			# Check for specific method for attribute.
 			$method_name = sprintf( 'get_%s_attribute', $attribute );
-
 			if ( method_exists( $this, $method_name ) ) {
-				$return[$attribute] = call_user_func( array( $this, $method_name ), $context );
+				$return[$attribute] = call_user_func( array( $this, $method_name ) );
 				continue;
 			}
 
 			# Check for specific method for attribute value's type.
 			$method_name = sprintf( 'get_%s_attribute', gettype( $value ) );
-
 			if ( method_exists( $this, $method_name ) ) {
-				$return[$attribute] = call_user_func( array( $this, $method_name ), $context );
+				$return[$attribute] = call_user_func( array( $this, $method_name ), $attribute );
 				continue;
 			}
 
@@ -145,6 +143,27 @@ class Image_Tag_Attributes extends Image_Tag_Properties_Abstract {
 			return array_pop( $return );
 
 		return $return;
+	}
+	
+	/**
+	 * Get "class" attribute, in "view" context.
+	 *
+	 * @uses self::get()
+	 * @return string
+	 */
+	protected function get_class_attribute() {
+		$classes = $this->get( 'class', 'edit' );
+		$classes = array_unique( $classes );
+		return implode( ' ', $classes );
+	}
+	
+	protected function get_style_attribute() {
+		return $this->get_array_attribute( 'style', '; ' );
+	}
+	
+	protected function get_array_attribute( string $attribute, string $glue = ', ' ) {
+		$value = $this->get( $attribute );
+		return implode( $glue, $value );
 	}
 
 }
