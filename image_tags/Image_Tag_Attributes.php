@@ -88,6 +88,35 @@ class Image_Tag_Attributes extends Image_Tag_Properties_Abstract {
 		$this->_set( $attribute, $value );
 	}
 
+	/**
+	 * Set "class" attribute.
+	 *
+	 * @param string|array $value
+	 * @uses Image_Tag::trim()
+	 * @uses self::_set()
+	 */
+	protected function set_class_attribute( $classes ) {
+		if ( is_string( $classes ) )
+			$classes = explode( ' ', trim( $classes ) );
+
+		if ( empty( $classes ) )
+			$classes = array();
+
+		# If no array, bail.
+		if ( !is_array( $classes ) ) {
+			trigger_error( sprintf( 'Value of type <code>%s</code> is not valid for <code>%s</code> attribute.', gettype( $classes ), 'class' ) );
+			return;
+		}
+
+		# Cleanup.
+		$classes = Image_Tag::trim( $classes ); // remove excess characters from items
+		$classes = array_filter( $classes );    // remove empty items
+		$classes = array_values( $classes );    // reset array keys
+
+		# Set.
+		$this->_set( 'class', $classes );
+	}
+
 
 	/*
 	 ######   ######## ########
@@ -111,40 +140,45 @@ class Image_Tag_Attributes extends Image_Tag_Properties_Abstract {
 		# Get filtered attributes.
 		$attributes = parent::get( $filter, $context );
 
-		# If edit context, return raw attributes.
-		if ( 'edit' === $context )
-			return $attributes;
-
 		$return = array();
 
+		# If "edit" context, return raw attributes.
+		if ( 'edit' === $context ) {
+			$return = $attributes;
+
 		# Iterate across filtered attributes.
-		foreach ( $attributes as $attribute => $value ) {
+		} else
+			foreach ( $attributes as $attribute => $value ) {
 
-			# Check for specific method for attribute.
-			$method_name = sprintf( 'get_%s_attribute', $attribute );
-			if ( method_exists( $this, $method_name ) ) {
-				$return[$attribute] = call_user_func( array( $this, $method_name ) );
-				continue;
+				# Check for specific method for attribute.
+				$method_name = sprintf( 'get_%s_attribute', $attribute );
+				if ( method_exists( $this, $method_name ) ) {
+					$return[$attribute] = call_user_func( array( $this, $method_name ) );
+					continue;
+				}
+
+				# Check for specific method for attribute value's type.
+				$method_name = sprintf( 'get_%s_attribute', gettype( $value ) );
+				if ( method_exists( $this, $method_name ) ) {
+					$return[$attribute] = call_user_func( array( $this, $method_name ), $attribute );
+					continue;
+				}
+
+				# Store raw value.
+				$return[$attribute] = $value;
 			}
-
-			# Check for specific method for attribute value's type.
-			$method_name = sprintf( 'get_%s_attribute', gettype( $value ) );
-			if ( method_exists( $this, $method_name ) ) {
-				$return[$attribute] = call_user_func( array( $this, $method_name ), $attribute );
-				continue;
-			}
-
-			# Store raw value.
-			$return[$attribute] = $value;
-		}
 
 		# If only one filter, return as string.
-		if ( 1 !== count( $filter ) )
+		if (
+			!is_array( $filter )
+			|| 1 === count( $filter )
+		) {
 			return array_pop( $return );
+		}
 
 		return $return;
 	}
-	
+
 	/**
 	 * Get "class" attribute, in "view" context.
 	 *
@@ -156,13 +190,13 @@ class Image_Tag_Attributes extends Image_Tag_Properties_Abstract {
 		$classes = array_unique( $classes );
 		return implode( ' ', $classes );
 	}
-	
+
 	protected function get_style_attribute() {
 		return $this->get_array_attribute( 'style', '; ' );
 	}
-	
+
 	protected function get_array_attribute( string $attribute, string $glue = ', ' ) {
-		$value = $this->get( $attribute );
+		$value = $this->get( $attribute, 'edit' );
 		return implode( $glue, $value );
 	}
 

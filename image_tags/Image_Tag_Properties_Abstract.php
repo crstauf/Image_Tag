@@ -57,7 +57,7 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess {
 	 * @return mixed
 	 */
 	function __get( string $property ) {
-		return $this->get( $property );
+		return $this->get( $property, 'edit' );
 	}
 
 	/**
@@ -203,12 +203,16 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess {
 	function get( $filter = array(), string $context = 'view' ) {
 		$filter = ( array ) $filter;
 
-		# If no filter, return all properties.
-		if ( empty( $filter ) )
-			return $this->properties;
+		$properties = $this->properties;
 
-		# Return properties requested.
-		return array_intersect_keys( $this->properties, $filter );
+		# Filter to requested properties.
+		if ( !empty( $filter ) )
+			$properties = array_intersect_key( $properties, array_flip( $filter ) );
+
+		# Return requested properties.
+		return 'view' === $context
+			? array_filter( $properties )
+			: $properties;
 	}
 
 	/**

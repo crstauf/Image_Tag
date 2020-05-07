@@ -43,38 +43,60 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Abstract_Test {
 	*/
 
 	/**
-	 * @covers Image_Tag_Attributes::__construct()
+	 * @covers Image_Tag_Properties_Abstract::__construct()
 	 * @group magic
 	 * @group construct
 	 */
 	function test__construct() {
 		$instance = new Image_Tag_Attributes( array() );
 		$this->assertSame( array(), $instance->get() );
+
+		$attributes = array( 'id' => uniqid( __FUNCTION__ ) );
+		$instance = new Image_Tag_Attributes( $attributes );
+		$this->assertSame( $attributes, $instance->get() );
+
+		$attributes = array( 'alt' => uniqid( __FUNCTION__ ) );
+		$defaults   = array(  'id' => uniqid( __FUNCTION__ ) );
+		$instance   = new Image_Tag_Attributes( $attributes, $defaults );
+		$this->assertSame( wp_parse_args( $attributes, $defaults ), $instance->get() );
 	}
 
 	/**
 	 * @covers Image_Tag_Properties_Abstract::__set()
-	 * @covers Image_Tag_Attributes::__set()
 	 * @group magic
 	 * @group set
-	 *
-	 * @doesNotPerformAssertions
 	 */
-	function test__set() {}
+	function test__set() {
+		$attributes = array(
+			'id' => uniqid( __FUNCTION__ ),
+		);
+
+		$instance = new Image_Tag_Attributes( $attributes );
+		$this->assertSame( $attributes['id'], $instance->get( 'id' ) );
+
+		$instance->id = $attributes['id'] = uniqid( __FUNCTION__ );
+		$this->assertSame( $attributes['id'], $instance->get( 'id' ) );
+	}
 
 	/**
 	 * @covers Image_Tag_Properties_Abstract::__get()
-	 * @covers Image_Tag_Attributes::__get()
 	 * @group magic
 	 * @group get
-	 *
-	 * @doesNotPerformAssertions
 	 */
-	function test__get() {}
+	function test__get() {
+		$attributes = array(
+			'id' => uniqid( __FUNCTION__ ),
+			'class' => ' as df  jk ',
+		);
+
+		$instance = new Image_Tag_Attributes( $attributes );
+		$this->assertSame( $attributes['id'], $instance->id );
+
+		$this->assertSame( array( 'as', 'df', 'jk' ), $instance->class );
+	}
 
 	/**
 	 * @covers Image_Tag_Properties_Abstract::__isset()
-	 * @covers Image_Tag_Attributes::__isset()
 	 * @group magic
 	 * @group isset
 	 *
