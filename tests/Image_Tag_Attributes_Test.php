@@ -3,7 +3,7 @@
 require_once 'Image_Tag_Properties_Abstract_Test.php';
 
 /**
- * @covers Image_Tag_Attributes
+ * @coversDefaultClass Image_Tag_Attributes
  * @group properties
  * @group attributes
  */
@@ -43,22 +43,62 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Abstract_Test {
 	*/
 
 	/**
-	 * @covers Image_Tag_Properties_Abstract::__construct()
-	 * @group magic
-	 * @group construct
+	 * Data for __construct() test.
+	 *
+	 * array(
+	 *     class name,
+	 *     attributes,
+	 *     defaults,
+	 *     expected value
+	 * )
+	 *
+	 * @see Image_Tag_Properties_Abstract_Test::test__construct()
 	 */
-	function test__construct() {
-		$instance = new Image_Tag_Attributes( array() );
-		$this->assertSame( array(), $instance->get() );
+	function data__construct() {
+		$data = array();
+
+		$data['empty'] = array(
+			'Image_Tag_Attributes',
+			array(),
+			array(),
+			array(),
+		);
 
 		$attributes = array( 'id' => uniqid( __FUNCTION__ ) );
-		$instance = new Image_Tag_Attributes( $attributes );
-		$this->assertSame( $attributes, $instance->get() );
+		$data['attributes'] = array(
+			'Image_Tag_Attributes',
+			$attributes,
+			array(),
+			$attributes,
+		);
+
+		$attributes = array( 'alt' => uniqid( __FUNCTION__ ) );
+		$defaults   = array(  'id' => uniqid( __FUNCTION__ ) );
+		$data['defaults'] = array(
+			'Image_Tag_Attributes',
+			$attributes,
+			$defaults,
+			wp_parse_args( $attributes, $defaults ),
+		);
 
 		$attributes = array( 'alt' => uniqid( __FUNCTION__ ) );
 		$defaults   = array(  'id' => uniqid( __FUNCTION__ ) );
 		$instance   = new Image_Tag_Attributes( $attributes, $defaults );
-		$this->assertSame( wp_parse_args( $attributes, $defaults ), $instance->get() );
+		$data['pre_instance'] = array(
+			'Image_Tag_Attributes',
+			$attributes,
+			$defaults,
+			$instance->get(),
+		);
+
+		$data['instance'] = array(
+			'Image_Tag_Attributes',
+			$instance,
+			array(),
+			wp_parse_args( $attributes, $defaults ),
+		);
+
+		return $data;
 	}
 
 	/**

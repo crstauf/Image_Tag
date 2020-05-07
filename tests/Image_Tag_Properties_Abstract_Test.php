@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @covers Image_Tag_Properties_Abstract
+ * @coversDefaultClass Image_Tag_Properties_Abstract
  * @group properties
  */
 abstract class Image_Tag_Properties_Abstract_Test extends WP_UnitTestCase {
@@ -23,36 +23,43 @@ abstract class Image_Tag_Properties_Abstract_Test extends WP_UnitTestCase {
 	##     ## ##     ##  ######   ####  ######
 	*/
 
-	/**
-	 * @covers Image_Tag_Properties_Abstract::__construct()
-	 * @group magic
-	 * @group magic
-	 */
-	abstract function test__construct();
+	abstract function data__construct();
 
 	/**
-	 * @covers Image_Tag_Properties_Abstract::__set()
+	 * @covers ::__construct()
+	 * @group magic
+	 * @group construct
+	 *
+	 * @dataProvider data__construct
+	 */
+	function test__construct( string $class, $attributes, $defaults, $expected ) {
+		$instance = new $class( $attributes, $defaults );
+		$this->assertSame( $expected, $instance->get() );
+	}
+
+	/**
+	 * @covers ::__set()
 	 * @group magic
 	 * @group set
 	 */
 	abstract function test__set();
 
 	/**
-	 * @covers Image_Tag_Properties_Abstract::__get()
+	 * @covers ::__get()
 	 * @group magic
 	 * @group get
 	 */
 	abstract function test__get();
 
 	/**
-	 * @covers Image_Tag_Properties_Abstract::__isset()
+	 * @covers ::__isset()
 	 * @group magic
 	 * @group isset
 	 */
 	abstract function test__isset();
 
 	/**
-	 * @covers Image_Tag_Properties_Abstract::__unset()
+	 * @covers ::__unset()
 	 * @group magic
 	 * @group unset
 	 */
@@ -70,7 +77,7 @@ abstract class Image_Tag_Properties_Abstract_Test extends WP_UnitTestCase {
 	*/
 
 	/**
-	 * @covers Image_Tag_Properties_Abstract::add()
+	 * @covers ::add()
 	 * @group instance
 	 * @group add
 	 */
@@ -88,14 +95,14 @@ abstract class Image_Tag_Properties_Abstract_Test extends WP_UnitTestCase {
 	*/
 
 	/**
-	 * @covers Image_Tag_Properties_Abstract::set()
+	 * @covers ::set()
 	 * @group instance
 	 * @group set
 	 */
 	abstract function test_set();
 
 	/**
-	 * @covers Image_Tag_Properties_Abstract::unset()
+	 * @covers ::unset()
 	 * @group instance
 	 * @group unset
 	 */
@@ -112,14 +119,14 @@ abstract class Image_Tag_Properties_Abstract_Test extends WP_UnitTestCase {
 	*/
 
 	/**
-	 * @covers Image_Tag_Properties_Abstract::isset()
+	 * @covers ::isset()
 	 * @group instance
 	 * @group isset
 	 */
 	abstract function test_isset();
 
 	/**
-	 * @covers Image_Tag_Properties_Abstract::get()
+	 * @covers ::get()
 	 * @group instance
 	 * @group get
 	 */
@@ -137,10 +144,10 @@ abstract class Image_Tag_Properties_Abstract_Test extends WP_UnitTestCase {
 	*/
 
 	/**
-	 * @covers Image_Tag_Properties_Abstract::offsetExists()
-	 * @covers Image_Tag_Properties_Abstract::offsetGet()
-	 * @covers Image_Tag_Properties_Abstract::offsetSet()
-	 * @covers Image_Tag_Properties_Abstract::offsetUnset()
+	 * @covers ::offsetExists()
+	 * @covers ::offsetGet()
+	 * @covers ::offsetSet()
+	 * @covers ::offsetUnset()
 	 * @group instance
 	 * @group arrayaccess
 	 */

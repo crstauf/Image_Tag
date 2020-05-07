@@ -201,9 +201,8 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess {
 	 * @return array
 	 */
 	function get( $filter = array(), string $context = 'view' ) {
-		$filter = ( array ) $filter;
-
 		$properties = $this->properties;
+		$filter     = array_filter( ( array ) $filter );
 
 		# Filter to requested properties.
 		if ( !empty( $filter ) )

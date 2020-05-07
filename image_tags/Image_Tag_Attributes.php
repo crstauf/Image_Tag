@@ -136,6 +136,7 @@ class Image_Tag_Attributes extends Image_Tag_Properties_Abstract {
 	 * @return
 	 */
 	function get( $filter = array(), string $context = 'view' ) {
+		$filter = array_filter( ( array ) $filter );
 
 		# Get filtered attributes.
 		$attributes = parent::get( $filter, $context );
@@ -169,12 +170,8 @@ class Image_Tag_Attributes extends Image_Tag_Properties_Abstract {
 			}
 
 		# If only one filter, return as string.
-		if (
-			!is_array( $filter )
-			|| 1 === count( $filter )
-		) {
+		if ( 1 === count( $filter ) )
 			return array_pop( $return );
-		}
 
 		return $return;
 	}

@@ -3,7 +3,7 @@
 require_once 'Image_Tag_Properties_Abstract_Test.php';
 
 /**
- * @covers Image_Tag_Settings
+ * @coversDefaultClass Image_Tag_Settings
  * @group properties
  * @group settings
  */
@@ -29,14 +29,26 @@ class Image_Tag_Settings_Test extends Image_Tag_Properties_Abstract_Test {
 	*/
 
 	/**
-	 * @covers Image_Tag_Settings::__construct()
-	 * @group magic
-	 * @group construct
+	 * Data for __construct() test.
 	 *
-	 * @doesNotPerformAssertions
+	 * array(
+	 *     class name,
+	 *     expected value,
+	 *     attributes,
+	 *     defaults
+	 * )
+	 *
+	 * @see Image_Tag_Properties_Abstract_Test::test__construct()
 	 */
-	function test__construct() {
-
+	function data__construct() {
+		return array(
+			array(
+				'Image_Tag_Settings',
+				array(),
+				array(),
+				array(),
+			),
+		);
 	}
 
 	/**
