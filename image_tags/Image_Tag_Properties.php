@@ -34,7 +34,7 @@ class Image_Tag_Properties implements ArrayAccess {
 	 * @uses self::get()
 	 * @uses self::set()
 	 */
-	function __construct( $properties, array $defaults = array() ) {
+	function __construct( $properties = array(), array $defaults = array() ) {
 		if ( is_a( $properties, static::class ) )
 			$properties = $properties->get( null, 'edit' );
 
@@ -61,7 +61,7 @@ class Image_Tag_Properties implements ArrayAccess {
 	 * @return mixed
 	 */
 	function __get( string $property ) {
-		return $this->get( $property );
+		return $this->get( $property, 'edit' );
 	}
 
 	/**
@@ -153,6 +153,8 @@ class Image_Tag_Properties implements ArrayAccess {
 	 * @param string|array $properties
 	 * @param mixed $value
 	 * @uses self::_set()
+	 *
+	 * @todo redefine based on self::get()
 	 */
 	function set( $properties, $value = null ) {
 		if ( is_string( $properties ) ) {
@@ -176,13 +178,13 @@ class Image_Tag_Properties implements ArrayAccess {
 
 
 	/*
-	 ######   ######## ########
-	##    ##  ##          ##
-	##        ##          ##
-	##   #### ######      ##
-	##    ##  ##          ##
-	##    ##  ##          ##
-	 ######   ########    ##
+	######## ##     ## ####  ######  ########  ######
+	##        ##   ##   ##  ##    ##    ##    ##    ##
+	##         ## ##    ##  ##          ##    ##
+	######      ###     ##   ######     ##     ######
+	##         ## ##    ##        ##    ##          ##
+	##        ##   ##   ##  ##    ##    ##    ##    ##
+	######## ##     ## ####  ######     ##     ######
 	*/
 
 	/**
@@ -224,6 +226,17 @@ class Image_Tag_Properties implements ArrayAccess {
 
 		return true;
 	}
+
+
+	/*
+	 ######   ######## ########
+	##    ##  ##          ##
+	##        ##          ##
+	##   #### ######      ##
+	##    ##  ##          ##
+	##    ##  ##          ##
+	 ######   ########    ##
+	*/
 
 	/**
 	 * Get properties.
