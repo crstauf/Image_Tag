@@ -1,13 +1,11 @@
 <?php
 
-class Image_Tag_Settings extends Image_Tag_Properties_Abstract {
+class Image_Tag_Settings extends Image_Tag_Properties {
 
-	const DEFAULT = array(
+	const DEFAULTS = array(
 		'before_output' => array(),
 		'after_output' => array(),
 	);
-
-	function set( $properties, $value = null ) {}
 
 }
 

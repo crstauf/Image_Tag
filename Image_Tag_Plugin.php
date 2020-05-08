@@ -67,9 +67,9 @@ class Image_Tag_Plugin {
 
 		# Abstracts.
 		require_once 'image_tags/Image_Tag_Abstract.php';
-		require_once 'image_tags/Image_Tag_Properties_Abstract.php';
 
 		# Properties.
+		require_once 'image_tags/Image_Tag_Properties.php';
 		require_once 'image_tags/Image_Tag_Attributes.php';
 		require_once 'image_tags/Image_Tag_Settings.php';
 

@@ -1,7 +1,8 @@
 <?php
 
-abstract class Image_Tag_Properties_Abstract implements ArrayAccess {
+class Image_Tag_Properties implements ArrayAccess {
 
+	const NAME = 'property';
 	const DEFAULTS = array();
 
 	/**
@@ -9,8 +10,11 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess {
 	 * @var null|array $defaults
 	 */
 	protected $properties = array();
-	protected $defaults = array();
+	protected $defaults   = array();
 
+	protected static function function_name( string $property ) {
+		return preg_replace( '/[^A-z0-9_]/', '_', $property );
+	}
 
 	/*
 	##     ##    ###     ######   ####  ######
@@ -57,7 +61,7 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess {
 	 * @return mixed
 	 */
 	function __get( string $property ) {
-		return $this->get( $property, 'edit' );
+		return $this->get( $property );
 	}
 
 	/**
@@ -150,7 +154,15 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess {
 	 * @param mixed $value
 	 * @uses self::_set()
 	 */
-	abstract function set( $properties, $value = null );
+	function set( $properties, $value = null ) {
+		if ( is_string( $properties ) ) {
+			$this->_set( $properties, $value );
+			return;
+		}
+
+		foreach ( $properties as $property => $value )
+			$this->_set( $property, $value );
+	}
 
 	/**
 	 * Set raw property.
@@ -194,24 +206,83 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess {
 	}
 
 	/**
+	 * Check if properties exist.
+	 *
+	 * @param string|array $properties
+	 * @return bool
+	 */
+	function exists( $properties ) {
+
+		# Check single proeprty.
+		if ( is_string( $properties ) )
+			return array_key_exists( $properties, $this->properties );
+
+		# Check multiple properties.
+		foreach ( $properties as $property )
+			if ( !array_key_exists( $property, $this->properties ) )
+				return false;
+
+		return true;
+	}
+
+	/**
 	 * Get properties.
 	 *
-	 * @param string|array $filter
+	 * @param null|string|array $properties
 	 * @param string $context
+	 * @uses self::get_property()
+	 * @uses self::get_properties()
+	 * @return string|array
+	 */
+	function get( $properties = null, string $context = 'view' ) {
+		return is_string( $properties )
+			? $this->get_property( $properties, $context )
+			: $this->get_properties( $context, $properties );
+	}
+
+	/**
+	 * Get properties.
+	 *
+	 * @param string $context
+	 * @param string|array $keys
 	 * @return array
 	 */
-	function get( $filter = array(), string $context = 'view' ) {
-		$properties = $this->properties;
-		$filter     = array_filter( ( array ) $filter );
+	protected function get_properties( string $context = 'view', array $keys = null ) {
+		if ( is_null( $keys ) )
+			$keys = array_keys( $this->properties );
 
-		# Filter to requested properties.
-		if ( !empty( $filter ) )
-			$properties = array_intersect_key( $properties, array_flip( $filter ) );
+		$properties = array();
 
-		# Return requested properties.
-		return 'view' === $context
-			? array_filter( $properties )
-			: $properties;
+		foreach ( $keys as $key )
+			$properties[$key] = $this->get_property( $key, $context );
+
+		return $properties;
+	}
+
+	/**
+	 * Get property.
+	 *
+	 * @param string $property
+	 * @param string $context
+	 * @return string
+	 */
+	protected function get_property( string $property, string $context = 'view' ) {
+		if ( !$this->isset( $property ) )
+			return null;
+
+		$format = sprintf( 'get_%%s_%s', static::NAME );
+
+		# Override by property name.
+		$method_name = sprintf( $format, static::function_name( $property ) );
+		if ( method_exists( $this, $method_name ) )
+			return call_user_func( array( $this, $method_name ), $context );
+
+		# Override by type of property's value.
+		$method_name = sprintf( $format, gettype( $this->properties[$property] ) );
+		if ( method_exists( $this, $method_name ) )
+			return call_user_func( array( $this, $method_name ), $property, $context );
+
+		return $this->properties[$property];
 	}
 
 	/**

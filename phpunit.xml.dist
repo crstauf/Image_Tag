@@ -18,8 +18,8 @@
 		<whitelist processUncoveredFilesFromWhitelist="true">
 			<file>Image_Tag_Plugin.php</file>
 			<file>image_tags/Image_Tag_Abstract.php</file>
+			<file>image_tags/Image_Tag_Properties.php</file>
 			<file>image_tags/Image_Tag_Attributes.php</file>
-			<file>image_tags/Image_Tag_Properties_Abstract.php</file>
 			<file>image_tags/Image_Tag_Settings.php</file>
 			<file>image_tags/Image.php</file>
 		</whitelist>

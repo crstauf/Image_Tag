@@ -1,16 +1,19 @@
 <?php
 
 /**
- * @coversDefaultClass Image_Tag_Properties_Abstract
+ * @coversDefaultClass Image_Tag_Properties
  * @group properties
  */
-abstract class Image_Tag_Properties_Abstract_Test extends WP_UnitTestCase {
+class Image_Tag_Properties_Test extends WP_UnitTestCase {
 
 	/**
 	 * @group constant
 	 * @group defaults
 	 */
-	abstract function test_defaults_constant();
+	function test_defaults_constant() {
+		$this->assertEmpty( Image_Tag_Properties::DEFAULTS );
+		$this->assertIsArray( Image_Tag_Properties::DEFAULTS );
+	}
 
 
 	/*
@@ -23,7 +26,21 @@ abstract class Image_Tag_Properties_Abstract_Test extends WP_UnitTestCase {
 	##     ## ##     ##  ######   ####  ######
 	*/
 
-	abstract function data__construct();
+	/**
+	 * Data provider for test__construct().
+	 *
+	 * @see self::test__construct()
+	 */
+	function data__construct() {
+		return array(
+			'empty' => array(
+				Image_Tag_Properties::class,
+				array(),
+				array(),
+				array(),
+			),
+		);
+	}
 
 	/**
 	 * @covers ::__construct()
@@ -32,38 +49,97 @@ abstract class Image_Tag_Properties_Abstract_Test extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data__construct
 	 */
-	function test__construct( string $class, $attributes, $defaults, $expected ) {
-		$instance = new $class( $attributes, $defaults );
+	function test__construct( string $class, $properties, $defaults, $expected ) {
+		$instance = new $class( $properties, $defaults );
 		$this->assertSame( $expected, $instance->get() );
+	}
+
+	/**
+	 * Data provider for test__set().
+	 *
+	 * @see self::test__set()
+	 */
+	function data__set() {
+		return array(
+			'string' => array(
+				Image_Tag_Properties::class,
+				'foo',
+				'bar',
+			),
+			'array' => array(
+				Image_Tag_Properties::class,
+				'foo',
+				range( 1, 5 ),
+			),
+			'float' => array(
+				Image_Tag_Properties::class,
+				'foo',
+				3.1415,
+			),
+			'integer' => array(
+				Image_Tag_Properties::class,
+				'foo',
+				2400,
+			),
+			'object' => array(
+				Image_Tag_Properties::class,
+				'foo',
+				( object ) range( 5, 10 ),
+			),
+			'multidimensional-array' => array(
+				Image_Tag_Properties::class,
+				'foo',
+				array_fill( 0, 5, range( 10, 15 ) ),
+			),
+			'array-objects' => array(
+				Image_Tag_Properties::class,
+				'foo',
+				array_fill( 0, 5, ( object ) range( 15, 20 ) ),
+			),
+		);
 	}
 
 	/**
 	 * @covers ::__set()
 	 * @group magic
 	 * @group set
+	 *
+	 * @dataProvider data__set
 	 */
-	abstract function test__set();
+	function test__set( string $class, $property, $value ) {
+		$instance = new $class( array() );
+		$this->assertEmpty( $instance->$property );
+
+		$instance->$property = $value;
+		$this->assertSame( $value, $instance->$property );
+	}
 
 	/**
 	 * @covers ::__get()
 	 * @group magic
 	 * @group get
+	 *
+	 * @doesNotPerformAssertions
 	 */
-	abstract function test__get();
+	function test__get() {}
 
 	/**
 	 * @covers ::__isset()
 	 * @group magic
 	 * @group isset
+	 *
+	 * @doesNotPerformAssertions
 	 */
-	abstract function test__isset();
+	function test__isset() {}
 
 	/**
 	 * @covers ::__unset()
 	 * @group magic
 	 * @group unset
+	 *
+	 * @doesNotPerformAssertions
 	 */
-	abstract function test__unset();
+	function test__unset() {}
 
 
 	/*
@@ -80,8 +156,10 @@ abstract class Image_Tag_Properties_Abstract_Test extends WP_UnitTestCase {
 	 * @covers ::add()
 	 * @group instance
 	 * @group add
+	 *
+	 * @doesNotPerformAssertions
 	 */
-	abstract function test_add();
+	function test_add() {}
 
 
 	/*
@@ -98,15 +176,19 @@ abstract class Image_Tag_Properties_Abstract_Test extends WP_UnitTestCase {
 	 * @covers ::set()
 	 * @group instance
 	 * @group set
+	 *
+	 * @doesNotPerformAssertions
 	 */
-	abstract function test_set();
+	function test_set() {}
 
 	/**
 	 * @covers ::unset()
 	 * @group instance
 	 * @group unset
+	 *
+	 * @doesNotPerformAssertions
 	 */
-	abstract function test_unset();
+	function test_unset() {}
 
 	/*
 	 ######   ######## ########
@@ -122,15 +204,19 @@ abstract class Image_Tag_Properties_Abstract_Test extends WP_UnitTestCase {
 	 * @covers ::isset()
 	 * @group instance
 	 * @group isset
+	 *
+	 * @doesNotPerformAssertions
 	 */
-	abstract function test_isset();
+	function test_isset() {}
 
 	/**
 	 * @covers ::get()
 	 * @group instance
 	 * @group get
+	 *
+	 * @doesNotPerformAssertions
 	 */
-	abstract function test_get();
+	function test_get() {}
 
 
 	/*
@@ -150,8 +236,10 @@ abstract class Image_Tag_Properties_Abstract_Test extends WP_UnitTestCase {
 	 * @covers ::offsetUnset()
 	 * @group instance
 	 * @group arrayaccess
+	 *
+	 * @doesNotPerformAssertions
 	 */
-	abstract function test_arrayAccess();
+	function test_arrayAccess() {}
 
 }
 

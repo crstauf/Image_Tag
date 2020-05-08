@@ -3,7 +3,7 @@
 /**
  * Class: Image_Tag_Attributes
  */
-class Image_Tag_Attributes extends Image_Tag_Properties_Abstract {
+class Image_Tag_Attributes extends Image_Tag_Properties {
 
 	/**
 	 * @var array
@@ -131,49 +131,20 @@ class Image_Tag_Attributes extends Image_Tag_Properties_Abstract {
 	/**
 	 * Get attributes.
 	 *
-	 * @param string|array $filter
+	 * @param string|array $keys
 	 * @param string $context view|edit
-	 * @return
+	 * @return string|array
 	 */
-	function get( $filter = array(), string $context = 'view' ) {
-		$filter = array_filter( ( array ) $filter );
+	function get( $attributes = null, string $context = 'view' ) {
+		$values = parent::get( $attributes, $context );
 
-		# Get filtered attributes.
-		$attributes = parent::get( $filter, $context );
+		if (
+			'edit' === $context
+			|| !is_array( $values )
+		)
+			return $values;
 
-		$return = array();
-
-		# If "edit" context, return raw attributes.
-		if ( 'edit' === $context ) {
-			$return = $attributes;
-
-		# Iterate across filtered attributes.
-		} else
-			foreach ( $attributes as $attribute => $value ) {
-
-				# Check for specific method for attribute.
-				$method_name = sprintf( 'get_%s_attribute', $attribute );
-				if ( method_exists( $this, $method_name ) ) {
-					$return[$attribute] = call_user_func( array( $this, $method_name ) );
-					continue;
-				}
-
-				# Check for specific method for attribute value's type.
-				$method_name = sprintf( 'get_%s_attribute', gettype( $value ) );
-				if ( method_exists( $this, $method_name ) ) {
-					$return[$attribute] = call_user_func( array( $this, $method_name ), $attribute );
-					continue;
-				}
-
-				# Store raw value.
-				$return[$attribute] = $value;
-			}
-
-		# If only one filter, return as string.
-		if ( 1 === count( $filter ) )
-			return array_pop( $return );
-
-		return $return;
+		return array_filter( $values );
 	}
 
 	/**
@@ -185,6 +156,7 @@ class Image_Tag_Attributes extends Image_Tag_Properties_Abstract {
 	protected function get_class_attribute() {
 		$classes = $this->get( 'class', 'edit' );
 		$classes = array_unique( $classes );
+
 		return implode( ' ', $classes );
 	}
 

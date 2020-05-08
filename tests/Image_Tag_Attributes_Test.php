@@ -1,13 +1,13 @@
 <?php
 
-require_once 'Image_Tag_Properties_Abstract_Test.php';
+require_once 'Image_Tag_Properties_Test.php';
 
 /**
  * @coversDefaultClass Image_Tag_Attributes
  * @group properties
  * @group attributes
  */
-class Image_Tag_Attributes_Test extends Image_Tag_Properties_Abstract_Test {
+class Image_Tag_Attributes_Test extends Image_Tag_Properties_Test {
 
 	/**
 	 * @group constant
@@ -58,7 +58,7 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Abstract_Test {
 		$data = array();
 
 		$data['empty'] = array(
-			'Image_Tag_Attributes',
+			Image_Tag_Attributes::class,
 			array(),
 			array(),
 			array(),
@@ -75,7 +75,7 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Abstract_Test {
 		$attributes = array( 'alt' => uniqid( __FUNCTION__ ) );
 		$defaults   = array(  'id' => uniqid( __FUNCTION__ ) );
 		$data['defaults'] = array(
-			'Image_Tag_Attributes',
+			Image_Tag_Attributes::class,
 			$attributes,
 			$defaults,
 			wp_parse_args( $attributes, $defaults ),
@@ -85,7 +85,7 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Abstract_Test {
 		$defaults   = array(  'id' => uniqid( __FUNCTION__ ) );
 		$instance   = new Image_Tag_Attributes( $attributes, $defaults );
 		$data['pre_instance'] = array(
-			'Image_Tag_Attributes',
+			Image_Tag_Attributes::class,
 			$attributes,
 			$defaults,
 			$instance->get(),
@@ -102,24 +102,19 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Abstract_Test {
 	}
 
 	/**
-	 * @covers Image_Tag_Properties_Abstract::__set()
-	 * @group magic
-	 * @group set
+	 * Data for __set() test.
+	 *
+	 * @see Image_Tag_Properties_Abstract_Test::test__set()
 	 */
-	function test__set() {
-		$attributes = array(
-			'id' => uniqid( __FUNCTION__ ),
+	function data__set() {
+		return array(
+			'string' => array( Image_Tag_Attributes::class, 'id', uniqid( __FUNCTION__ ) ),
+			'array'  => array( Image_Tag_Attributes::class, 'class', array( uniqid( __FUNCTION__ ) ) ),
 		);
-
-		$instance = new Image_Tag_Attributes( $attributes );
-		$this->assertSame( $attributes['id'], $instance->get( 'id' ) );
-
-		$instance->id = $attributes['id'] = uniqid( __FUNCTION__ );
-		$this->assertSame( $attributes['id'], $instance->get( 'id' ) );
 	}
 
 	/**
-	 * @covers Image_Tag_Properties_Abstract::__get()
+	 * @covers Image_Tag_Properties::__get()
 	 * @group magic
 	 * @group get
 	 */

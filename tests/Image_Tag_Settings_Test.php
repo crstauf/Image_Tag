@@ -1,13 +1,13 @@
 <?php
 
-require_once 'Image_Tag_Properties_Abstract_Test.php';
+require_once 'Image_Tag_Properties_Test.php';
 
 /**
  * @coversDefaultClass Image_Tag_Settings
  * @group properties
  * @group settings
  */
-class Image_Tag_Settings_Test extends Image_Tag_Properties_Abstract_Test {
+class Image_Tag_Settings_Test extends Image_Tag_Properties_Test {
 
 	/**
 	 * @group constant
@@ -31,22 +31,15 @@ class Image_Tag_Settings_Test extends Image_Tag_Properties_Abstract_Test {
 	/**
 	 * Data for __construct() test.
 	 *
-	 * array(
-	 *     class name,
-	 *     expected value,
-	 *     attributes,
-	 *     defaults
-	 * )
-	 *
-	 * @see Image_Tag_Properties_Abstract_Test::test__construct()
+	 * @see Image_Tag_Properties_Test::test__construct()
 	 */
 	function data__construct() {
 		return array(
-			array(
-				'Image_Tag_Settings',
+			'empty' => array(
+				Image_Tag_Settings::class,
 				array(),
 				array(),
-				array(),
+				Image_Tag_Settings::DEFAULTS,
 			),
 		);
 	}
@@ -59,7 +52,7 @@ class Image_Tag_Settings_Test extends Image_Tag_Properties_Abstract_Test {
 	 *
 	 * @doesNotPerformAssertions
 	 */
-	function test__set() {}
+	function data__set() {}
 
 	/**
 	 * @covers Image_Tag_Properties_Abstract::__get()

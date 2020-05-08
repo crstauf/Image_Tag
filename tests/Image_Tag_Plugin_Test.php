@@ -51,13 +51,13 @@ class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 
 		# Abstracts.
 		$this->assertTrue( file_exists( $includes_dir . 'Image_Tag_Abstract.php'   ) );
-		$this->assertTrue( file_exists( $includes_dir . 'Image_Tag_Properties_Abstract.php' ) );
 		$this->assertTrue( class_exists( 'Image_Tag_Abstract' ) );
-		$this->assertTrue( class_exists( 'Image_Tag_Properties_Abstract' ) );
 
 		# Properties.
+		$this->assertTrue( file_exists( $includes_dir . 'Image_Tag_Properties.php' ) );
 		$this->assertTrue( file_exists( $includes_dir . 'Image_Tag_Attributes.php' ) );
 		$this->assertTrue( file_exists( $includes_dir . 'Image_Tag_Settings.php' ) );
+		$this->assertTrue( class_exists( 'Image_Tag_Properties' ) );
 		$this->assertTrue( class_exists( 'Image_Tag_Attributes' ) );
 		$this->assertTrue( class_exists( 'Image_Tag_Settings' ) );
 
