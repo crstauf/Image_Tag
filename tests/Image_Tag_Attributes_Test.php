@@ -7,7 +7,7 @@ require_once 'Image_Tag_Properties_Test.php';
  * @group properties
  * @group attributes
  */
-class Image_Tag_Attributes_Test extends Image_Tag_Properties_Test {
+class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 
 	/**
 	 * @group constant
@@ -31,6 +31,16 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Test {
 		), Image_Tag_Attributes::DEFAULTS );
 	}
 
+	/**
+	 * Data provider for Image_Tag_Properties_Test::test_function_name().
+	 *
+	 * @see Image_Tag_Properties_Test::test_function_name()
+	 * @return array
+	 */
+	function data_function_name() {
+		$this->markTestIncomplete();
+	}
+
 
 	/*
 	##     ##    ###     ######   ####  ######
@@ -43,9 +53,10 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Test {
 	*/
 
 	/**
-	 * Data for __construct() test.
+	 * Data provider for Image_Tag_Properties_Tests::__construct().
 	 *
-	 * @see Image_Tag_Properties_Abstract_Test::test__construct()
+	 * @see Image_Tag_Properties_Tests::test__construct()
+	 * @return array
 	 */
 	function data__construct() {
 		$data = array();
@@ -95,9 +106,10 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Test {
 	}
 
 	/**
-	 * Data for __set() test.
+	 * Data provider for Image_Tag_Properties_Tests::__set().
 	 *
-	 * @see Image_Tag_Properties_Abstract_Test::test__set()
+	 * @see Image_Tag_Properties_Tests::test__set()
+	 * @return array
 	 */
 	function data__set() {
 		return array(
@@ -106,7 +118,23 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Test {
 		);
 	}
 
+	/**
+	 * Data provider for Image_Tag_Properties_Tests::__get().
+	 *
+	 * @see Image_Tag_Properties_Tests::__get()
+	 * @return array
+	 */
 	function data__get() {
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * Data provider for Image_Tag_Properties_Tests::__isset().
+	 *
+	 * @see Image_Tag_Properties_Tests::__isset()
+	 * @return array
+	 */
+	function data__isset() {
 		$this->markTestIncomplete();
 	}
 

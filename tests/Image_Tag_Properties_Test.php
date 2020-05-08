@@ -1,20 +1,37 @@
 <?php
 
+require_once 'Image_Tag_Properties_Tests.php';
+
 /**
  * @coversDefaultClass Image_Tag_Properties
  * @group properties
  */
-class Image_Tag_Properties_Test extends WP_UnitTestCase {
+class Image_Tag_Properties_Test extends Image_Tag_Properties_Tests {
 
 	/**
 	 * @group constant
 	 * @group defaults
 	 */
 	function test_defaults_constant() {
-		$this->assertEmpty( Image_Tag_Properties::DEFAULTS );
+		$this->assertEmpty(   Image_Tag_Properties::DEFAULTS );
 		$this->assertIsArray( Image_Tag_Properties::DEFAULTS );
 	}
 
+	/**
+	 * Data provider for Image_Tag_Properties_Test::test_function_name().
+	 *
+	 * @see Image_Tag_Properties_Test::test_function_name()
+	 * @return array
+	 */
+	function data_function_name() {
+		return array(
+			'no change' => array( Image_Tag_Properties::class, 'foo', 'foo' ),
+			'spaces'    => array( Image_Tag_Properties::class, ' foo bar ', 'foo_bar' ),
+			'space'     => array( Image_Tag_Properties::class, 'foo bar', 'foo_bar' ),
+			'dash'      => array( Image_Tag_Properties::class, 'foo-bar', 'foo_bar' ),
+			'tab'       => array( Image_Tag_Properties::class, 'foo	bar', 'foo_bar' ),
+		);
+	}
 
 	/*
 	##     ##    ###     ######   ####  ######
@@ -27,10 +44,12 @@ class Image_Tag_Properties_Test extends WP_UnitTestCase {
 	*/
 
 	/**
-	 * Data provider for test__construct().
+	 * Data provider for Image_Tag_Properties_Tests::test__construct().
 	 *
-	 * @see self::test__construct()
+	 * @see Image_Tag_Properties_Tests::test__construct()
 	 * @return array
+	 *
+	 * @todo add more types
 	 */
 	function data__construct() {
 		$this->markTestIncomplete();
@@ -45,27 +64,9 @@ class Image_Tag_Properties_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @param string $class_name
-	 * @param array|Image_Tag_Properties $properties
-	 * @param array $defaults
-	 * @param mixed $expected
+	 * Data provider for Image_Tag_Properties_Tests::test__set().
 	 *
-	 * @covers ::__construct()
-	 * @covers ::get()
-	 * @group magic
-	 * @group construct
-	 *
-	 * @dataProvider data__construct
-	 */
-	function test__construct( string $class_name, $properties, $defaults, $expected ) {
-		$instance = new $class_name( $properties, $defaults );
-		$this->assertSame( $expected, $instance->get() );
-	}
-
-	/**
-	 * Data provider for test__set().
-	 *
-	 * @see self::test__set()
+	 * @see Image_Tag_Properties_Tests::test__set()
 	 * @return array
 	 */
 	function data__set() {
@@ -117,30 +118,9 @@ class Image_Tag_Properties_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @param string $class_name
-	 * @param string $property
-	 * @param mixed $value
+	 * Data provider for Image_Tag_Properties_Tests::test__get().
 	 *
-	 * @covers ::__set()
-	 * @covers ::set()
-	 * @covers ::_set()
-	 * @group magic
-	 * @group set
-	 *
-	 * @dataProvider data__set
-	 */
-	function test__set( string $class_name, string $property, $value ) {
-		$instance = new $class_name();
-		$this->assertEmpty( $instance->$property );
-
-		$instance->$property = $value;
-		$this->assertSame( $value, $instance->$property );
-	}
-
-	/**
-	 * Data provider for test__get().
-	 *
-	 * @see self::test__get()
+	 * @see Image_Tag_Properties_Tests::test__get()
 	 * @return array
 	 */
 	function data__get() {
@@ -198,26 +178,11 @@ class Image_Tag_Properties_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers ::__get()
-	 * @covers::get()
-	 * @covers::get_property()
-	 * @group magic
-	 * @group get
+	 * Data provider for Image_Tag_Properties_Tests::test__isset().
 	 *
-	 * @dataProvider data__get
+	 * @see Image_Tag_Properties_Tests::test__isset()
+	 * @return array
 	 */
-	function test__get( string $class_name, string $property, $value ) {
-		if ( is_null( $value ) ) {
-			$instance = new $class_name();
-			$this->assertNull( $instance->$property );
-			return;
-		}
-
-		$properties = array( $property => $value );
-		$instance = new $class_name( $properties );
-		$this->assertSame( $value, $instance->$property );
-	}
-
 	function data__isset() {
 		$data = array(
 
@@ -267,156 +232,4 @@ class Image_Tag_Properties_Test extends WP_UnitTestCase {
 		return $data;
 	}
 
-	/**
-	 * @param string $class_name
-	 * @param array $attributes
-	 * @param string $property
-	 * @param bool $expected
-	 *
-	 * @covers ::__isset()
-	 * @covers ::isset()
-	 * @group magic
-	 * @group isset
-	 *
-	 * @dataProvider data__isset
-	 */
-	function test__isset( string $class_name, $attributes, string $property, $expected ) {
-		$instance = new $class_name( $attributes );
-
-		$expected
-			? $this->assertTrue(  isset( $instance->$property ) )
-			: $this->assertFalse( isset( $instance->$property ) );
-	}
-
-	/**
-	 * @covers ::__unset()
-	 * @group magic
-	 * @group unset
-	 */
-	function test__unset() {
-		$this->markTestIncomplete();
-	}
-
-
-	/*
-	   ###    ########  ########
-	  ## ##   ##     ## ##     ##
-	 ##   ##  ##     ## ##     ##
-	##     ## ##     ## ##     ##
-	######### ##     ## ##     ##
-	##     ## ##     ## ##     ##
-	##     ## ########  ########
-	*/
-
-	/**
-	 * @covers ::add()
-	 * @group instance
-	 * @group add
-	 */
-	function test_add() {
-		$this->markTestIncomplete();
-	}
-
-
-	/*
-	 ######  ######## ########
-	##    ## ##          ##
-	##       ##          ##
-	 ######  ######      ##
-	      ## ##          ##
-	##    ## ##          ##
-	 ######  ########    ##
-	*/
-
-	/**
-	 * @covers ::set()
-	 * @group instance
-	 * @group set
-	 */
-	function test_set() {
-		$this->markTestIncomplete();
-	}
-
-	/**
-	 * @covers ::unset()
-	 * @group instance
-	 * @group unset
-	 */
-	function test_unset() {
-		$this->markTestIncomplete();
-	}
-
-
-	/*
-	######## ##     ## ####  ######  ########  ######
-	##        ##   ##   ##  ##    ##    ##    ##    ##
-	##         ## ##    ##  ##          ##    ##
-	######      ###     ##   ######     ##     ######
-	##         ## ##    ##        ##    ##          ##
-	##        ##   ##   ##  ##    ##    ##    ##    ##
-	######## ##     ## ####  ######     ##     ######
-	*/
-
-	/**
-	 * @covers ::isset()
-	 * @group instance
-	 * @group exists
-	 */
-	function test_isset() {
-		$this->markTestIncomplete();
-	}
-
-	/**
-	 * @covers ::exists()
-	 * @group instance
-	 * @group exists
-	 */
-	function test_exists() {
-		$this->markTestIncomplete();
-	}
-
-	/*
-	 ######   ######## ########
-	##    ##  ##          ##
-	##        ##          ##
-	##   #### ######      ##
-	##    ##  ##          ##
-	##    ##  ##          ##
-	 ######   ########    ##
-	*/
-
-	/**
-	 * @covers ::get()
-	 * @group instance
-	 * @group get
-	 */
-	function test_get() {
-		$this->markTestIncomplete();
-	}
-
-
-	/*
-	   ###    ########  ########     ###    ##    ##    ###     ######   ######  ########  ######   ######
-	  ## ##   ##     ## ##     ##   ## ##    ##  ##    ## ##   ##    ## ##    ## ##       ##    ## ##    ##
-	 ##   ##  ##     ## ##     ##  ##   ##    ####    ##   ##  ##       ##       ##       ##       ##
-	##     ## ########  ########  ##     ##    ##    ##     ## ##       ##       ######    ######   ######
-	######### ##   ##   ##   ##   #########    ##    ######### ##       ##       ##             ##       ##
-	##     ## ##    ##  ##    ##  ##     ##    ##    ##     ## ##    ## ##    ## ##       ##    ## ##    ##
-	##     ## ##     ## ##     ## ##     ##    ##    ##     ##  ######   ######  ########  ######   ######
-	*/
-
-	/**
-	 * @covers ::offsetExists()
-	 * @covers ::offsetGet()
-	 * @covers ::offsetSet()
-	 * @covers ::offsetUnset()
-	 * @group instance
-	 * @group arrayaccess
-	 */
-	function test_arrayAccess() {
-		$this->markTestIncomplete();
-	}
-
 }
-
-?>

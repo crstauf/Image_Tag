@@ -12,8 +12,16 @@ class Image_Tag_Properties implements ArrayAccess {
 	protected $properties = array();
 	protected $defaults   = array();
 
-	protected static function function_name( string $property ) {
-		return preg_replace( '/[^A-z0-9_]/', '_', $property );
+	/**
+	 * Make provided property safe for use in function name.
+	 *
+	 * Replaces any non-alphanumeric characters with underscore.
+	 *
+	 * @param string $property
+	 * @return string
+	 */
+	static function function_name( string $property ) {
+		return preg_replace( '/[^A-z0-9_]/', '_', trim( $property ) );
 	}
 
 	/*
