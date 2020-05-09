@@ -6,6 +6,25 @@
 abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 
 	/**
+	 * Get the class name to run tests against.
+	 *
+	 * @return string
+	 */
+	abstract protected function class_name();
+
+	/**
+	 * Create a new instance of the tested class.
+	 *
+	 * @param array $params
+	 * @uses self::class_name()
+	 * @return Image_Tag_Properties
+	 */
+	function new_instance( ...$params ) {
+		$class_name = $this->class_name();
+		return new $class_name( ...$params );
+	}
+
+	/**
 	 * @param string $class_name
 	 * @param string $property
 	 * @param string $expected
@@ -15,8 +34,8 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_function_name()
 	 */
-	function test_function_name( string $class_name, string $property, string $expected ) {
-		$this->assertSame( $expected, call_user_func( array( $class_name, 'function_name' ), $property ) );
+	function test_function_name( string $property, string $expected ) {
+		$this->assertSame( $expected, call_user_func( array( $this->class_name(), 'function_name' ), $property ) );
 	}
 
 	/*
@@ -30,7 +49,6 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	*/
 
 	/**
-	 * @param string $class_name
 	 * @param array|Image_Tag_Properties $properties
 	 * @param array $defaults
 	 * @param mixed $expected
@@ -43,13 +61,14 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data__construct
 	 */
-	function test__construct( string $class_name, $properties, $defaults, $expected ) {
-		$instance = new $class_name( $properties, $defaults );
+	function test__construct( $properties, $defaults, $expected ) {
+		echo $this->class_name();
+		$instance = $this->new_instance( $properties, $defaults );
 		$this->assertSame( $expected, $instance->get() );
 	}
 
 	/**
-	 * @param string $class_name
+	 * @param mixed $properties
 	 * @param string $property
 	 * @param mixed $value
 	 *
@@ -62,8 +81,8 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data__set
 	 */
-	function test__set( string $class_name, string $property, $value ) {
-		$instance = new $class_name();
+	function test__set( $properties, string $property, $value ) {
+		$instance = $this->new_instance( $properties );
 		$this->assertEmpty( $instance->$property );
 
 		$instance->$property = $value;
@@ -71,7 +90,6 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @param string $class_name
 	 * @param string $property
 	 * @param mixed $value
 	 *
@@ -83,20 +101,19 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data__get
 	 */
-	function test__get( string $class_name, string $property, $value ) {
+	function test__get( string $property, $value ) {
 		if ( is_null( $value ) ) {
-			$instance = new $class_name();
+			$instance = $this->new_instance();
 			$this->assertNull( $instance->$property );
 			return;
 		}
 
 		$properties = array( $property => $value );
-		$instance = new $class_name( $properties );
+		$instance = $this->new_instance( $properties );
 		$this->assertSame( $value, $instance->$property );
 	}
 
 	/**
-	 * @param string $class_name
 	 * @param array|Image_Tag_Properties $properties
 	 * @param string $property
 	 * @param bool $expected
@@ -108,8 +125,8 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data__isset
 	 */
-	function test__isset( string $class_name, $properties, string $property, $expected ) {
-		$instance = new $class_name( $properties );
+	function test__isset( $properties, string $property, $expected ) {
+		$instance = $this->new_instance( $properties );
 
 		$expected
 			? $this->assertTrue(  isset( $instance->$property ) )
@@ -118,7 +135,9 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 
 	/**
 	 * @param string $class_name
-	 * @param
+	 * @param array|Image_Tag_Properties $properties
+	 * @param string $property
+	 *
 	 * @covers ::__unset()
 	 * @covers ::unset()
 	 * @group magic
@@ -126,8 +145,8 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data__unset
 	 */
-	function test__unset( string $class_name, $properties, string $property ) {
-		$instance = new $class_name( $properties );
+	function test__unset( $properties, string $property ) {
+		$instance = $instance = $this->new_instance( $properties );
 		$this->assertSame( $properties[$property], $instance->$property );
 
 		unset( $instance->$property );
@@ -146,7 +165,6 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	*/
 
 	/**
-	 * @param string $class_name
 	 * @param array|Image_Tag_Properties $properties
 	 * @param string|array $add_properties
 	 * @param mixed $value
@@ -160,8 +178,8 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_add
 	 */
-	function test_add( string $class_name, $properties, $add_properties, $value, $expected ) {
-		$instance = new $class_name( $properties );
+	function test_add( $properties, $add_properties, $value, $expected ) {
+		$instance = $this->new_instance( $properties );
 
 		$instance->add( $add_properties, $value );
 
@@ -186,8 +204,10 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	*/
 
 	/**
-	 * @param string $class_name
 	 * @param mixed $properties
+	 * @param string|array $set_properties
+	 * @param mixed $value
+	 * @param mixed $expected
 	 *
 	 * @covers ::set()
 	 * @covers ::set_property()
@@ -198,10 +218,10 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_set
 	 */
-	function test_set( string $class_name, $properties, $set_properties, $value, $expected ) {
+	function test_set( $properties, $set_properties, $value, $expected ) {
 		$this->markTestIncomplete();
 
-		$instance = new $class_name( $properties );
+		$instance = $this->new_instance( $properties );
 
 		if ( is_string( $set_properties ) ) {
 			if ( array_key_exists( $set_properties, $properties ) )

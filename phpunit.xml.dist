@@ -12,8 +12,7 @@
 >
 	<testsuites>
 		<testsuite name="properties">
-			<directory suffix="_Test.php">./tests/properties</directory>
-			<file>./tests/properties/chaining.php</file>
+			<directory>./tests/properties</directory>
 		</testsuite>
 	</testsuites>
 	<filter>
