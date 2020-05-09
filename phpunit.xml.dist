@@ -10,11 +10,17 @@
 	beStrictAboutTestsThatDoNotTestAnything="true"
 	beStrictAboutOutputDuringTests="true"
 >
+
 	<testsuites>
+
 		<testsuite name="properties">
-			<directory suffix=".php">./tests/properties</directory>
+			<file>./tests/properties/properties.php</file>
+			<file>./tests/properties/attributes.php</file>
+			<file>./tests/properties/settings.php</file>
 		</testsuite>
+
 	</testsuites>
+
 	<filter>
 		<whitelist processUncoveredFilesFromWhitelist="true">
 			<file>Image_Tag_Plugin.php</file>
@@ -25,7 +31,9 @@
 			<file>image_tags/Image.php</file>
 		</whitelist>
 	</filter>
+
 	<logging>
 		<log type="coverage-html" target="./report" />
 	</logging>
+
 </phpunit>

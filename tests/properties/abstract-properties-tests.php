@@ -15,19 +15,24 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	abstract protected function class_name();
 
 	/**
+	 * Test Image_Tag_Properties::NAME constant value.
+	 *
 	 * @group constant
-	 * @group defaults
 	 */
-	function test_defaults_constant() {
-		$this->assertEmpty(   Image_Tag_Properties::DEFAULTS );
-		$this->assertIsArray( Image_Tag_Properties::DEFAULTS );
-	}
+	abstract function test_name_constant();
+
+	/**
+	 * Test Image_Tag_Properties::DEFAULTS constant value.
+	 *
+	 * @group constant
+	 */
+	abstract function test_defaults_constant();
 
 	/**
 	 * Data provider for Image_Tag_Properties_Test::test_function_name().
 	 *
 	 * @see Image_Tag_Properties_Test::test_function_name()
-	 * @return array
+	 * @return array[]
 	 */
 	function data_function_name() {
 		return array(
@@ -53,7 +58,7 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	 * Data provider for Image_Tag_Properties_Base::test__construct().
 	 *
 	 * @see Image_Tag_Properties_Base::test__construct()
-	 * @return array
+	 * @return array[]
 	 */
 	function data__construct() {
 		$data = array(
@@ -105,7 +110,7 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	 * Data provider for Image_Tag_Properties_Base::test__set().
 	 *
 	 * @see Image_Tag_Properties_Base::test__set()
-	 * @return array
+	 * @return array[]
 	 *
 	 * @todo add tests that override existing values
 	 */
@@ -161,7 +166,7 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	 * Data provider for Image_Tag_Properties_Base::test__get().
 	 *
 	 * @see Image_Tag_Properties_Base::test__get()
-	 * @return array
+	 * @return array[]
 	 */
 	function data__get() {
 		return array(
@@ -213,7 +218,7 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	 * Data provider for Image_Tag_Properties_Base::test__isset().
 	 *
 	 * @see Image_Tag_Properties_Base::test__isset()
-	 * @return array
+	 * @return array[]
 	 */
 	function data__isset() {
 		$data = array(
@@ -264,7 +269,7 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	 * Data provider for Image_Tag_Properties_Base::test__unset().
 	 *
 	 * @see Image_Tag_Properties_Base::test__unset()
-	 * @return array
+	 * @return array[]
 	 */
 	function data__unset() {
 		return array(
@@ -298,7 +303,7 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	 * Data provider for Image_Tag_Properties_Test::test_add().
 	 *
 	 * @see Image_Tag_Properties_Test::test_add()
-	 * @return array
+	 * @return array[]
 	 */
 	function data_add() {
 		return array(
@@ -352,6 +357,12 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	 ######  ########    ##
 	*/
 
+	/**
+	 * Data provider for Image_Tag_Properties_Test::test_set().
+	 *
+	 * @see Image_Tag_Properties_Test::test_set()
+	 * @return array[]
+	 */
 	function data_set() {
 		return array(
 			'empty' => array(
@@ -367,6 +378,134 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 				__FUNCTION__,
 			),
 		);
+	}
+
+	/**
+	 * Data provider for Image_Tag_Properties_Test::test_unset().
+	 *
+	 * @see Image_Tag_Properties_Test::test_unset()
+	 * @return array[]
+	 */
+	function data_unset() {
+		return array(
+			'string' => array(
+				array( 'id' => __FUNCTION__ ),
+				'id',
+			),
+			'array' => array(
+				array( 'id' => __FUNCTION__ ),
+				array( 'id' ),
+			),
+			'multiple strings' => array(
+				array(
+					'foo' => uniqid(),
+					'bar' => uniqid(),
+					'zoo' => uniqid(),
+				),
+				array( 'foo', 'bar' ),
+			),
+			'multiple arrays' => array(
+				array(
+					'foo' => range(  1, 10, 2 ),
+					'bar' => range( 10, 20, 2 ),
+					'zoo' => uniqid(),
+				),
+				array( 'foo', 'bar' ),
+			),
+			'multiple objects' => array(
+				array(
+					'foo' => ( object ) range(  1, 10, 2 ),
+					'bar' => ( object ) range( 10, 20, 2 ),
+					'zoo' => uniqid(),
+				),
+				array( 'foo', 'bar' ),
+			),
+		);
+	}
+
+
+	/*
+	######## ##     ## ####  ######  ########  ######
+	##        ##   ##   ##  ##    ##    ##    ##    ##
+	##         ## ##    ##  ##          ##    ##
+	######      ###     ##   ######     ##     ######
+	##         ## ##    ##        ##    ##          ##
+	##        ##   ##   ##  ##    ##    ##    ##    ##
+	######## ##     ## ####  ######     ##     ######
+	*/
+
+	/**
+	 * Data provider for Image_Tag_Properties_Test::test_isset().
+	 *
+	 * @see Image_Tag_Properties_Test::test_isset()
+	 * @return array[]
+	 */
+	function data_isset() {
+		return array(
+			'string' => array(
+				array( 'foo' => uniqid() ),
+				'foo',
+			),
+			'false string' => array(
+				array( 'foo' => uniqid() ),
+				null,
+				'bar',
+			),
+			'array' => array(
+				array( 'foo' => range( 1, 5 ) ),
+				'foo',
+			),
+			'null' => array(
+				array( 'foo' => null ),
+				null,
+				'foo',
+			),
+			'object' => array(
+				array( 'foo' => ( object ) range( 1, 5 ) ),
+				'foo',
+			),
+			'multiple strings' => array(
+				array(
+					'foo' => uniqid(),
+					'bar' => uniqid(),
+				),
+				array( 'foo', 'bar' ),
+				'zoo',
+			),
+			'multiple arrays' => array(
+				array(
+					'foo' => range(  1, 10 ),
+					'bar' => range( 10, 20 ),
+				),
+				array( 'foo', 'bar' ),
+			),
+			'multiple_objects' => array(
+				array(
+					'foo' => ( object ) range(  1, 10 ),
+					'bar' => ( object ) range( 10, 20 ),
+				),
+				array( 'foo', 'bar' ),
+			)
+		);
+	}
+
+	/**
+	 * Data provider for Image_Tag_Properties_Test::test_exists().
+	 *
+	 * @see Image_Tag_Properties_Test::test_exists()
+	 * @uses static::data_isset()
+	 * @return array[]
+	 */
+	function data_exists() {
+
+		# Reuse isset test data.
+		$data = $this->data_isset();
+
+		# Adjust test to expect property with null value exists.
+		$data['null'][1] = 'foo';
+		$data['null'][2] = null;
+
+		return $data;
 	}
 
 }

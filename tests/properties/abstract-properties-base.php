@@ -17,6 +17,23 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 		return new $class_name( ...$params );
 	}
 
+	function test_chaining() {
+		$instance = $this->new_instance();
+		$this->assertInstanceOf( $this->class_name(), $instance->add( 'id', __FUNCTION__ ) );
+		$this->assertInstanceOf( $this->class_name(), $instance->set( 'id', __FUNCTION__ ) );
+	}
+
+
+	/*
+	 ######  ########    ###    ######## ####  ######
+	##    ##    ##      ## ##      ##     ##  ##    ##
+	##          ##     ##   ##     ##     ##  ##
+	 ######     ##    ##     ##    ##     ##  ##
+	      ##    ##    #########    ##     ##  ##
+	##    ##    ##    ##     ##    ##     ##  ##    ##
+	 ######     ##    ##     ##    ##    ####  ######
+	*/
+
 	/**
 	 * @param string $class_name
 	 * @param string $property
@@ -30,6 +47,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	function test_function_name( string $property, string $expected ) {
 		$this->assertSame( $expected, call_user_func( array( $this->class_name(), 'function_name' ), $property ) );
 	}
+
 
 	/*
 	##     ##    ###     ######   ####  ######
@@ -228,12 +246,33 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	}
 
 	/**
+	 * @param array $properties
+	 * @param string|array $unset_properties
+	 *
 	 * @covers ::unset()
 	 * @group instance
 	 * @group unset
+	 *
+	 * @dataProvider data_unset
 	 */
-	function test_unset() {
-		$this->markTestIncomplete();
+	function test_unset( $properties, $unset_properties ) {
+		$instance = $this->new_instance( $properties );
+
+		# Check properties are set.
+		foreach ( ( array ) $unset_properties as $property )
+			$this->assertSame( $properties[$property], $instance->$property );
+
+		# Unset specified properties.
+		$instance->unset( $unset_properties );
+
+		# Check specified properties are unset (null).
+		foreach ( ( array ) $unset_properties as $property )
+			$this->assertNull( $instance->$property );
+
+		# Check remaining properties are still set.
+		$remaining = array_diff( array_keys( $properties ), ( array ) $unset_properties );
+		foreach ( $remaining as $property )
+			$this->assertSame( $properties[$property], $instance->$property );
 	}
 
 
@@ -248,21 +287,44 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	*/
 
 	/**
+	 * @param array $properties
+	 * @param string|array $isset_properties
+	 * @param array $not_isset_properties
+	 *
 	 * @covers ::isset()
 	 * @group instance
 	 * @group exists
+	 *
+	 * @dataProvider data_isset
 	 */
-	function test_isset() {
-		$this->markTestIncomplete();
+	function test_isset( $properties, $isset_properties, $not_isset_properties = null ) {
+		$instance = $this->new_instance( $properties );
+
+		if ( !is_null( $isset_properties ) )
+			$this->assertTrue( $instance->isset( $isset_properties ) );
+
+		if ( !is_null( $not_isset_properties ) )
+			$this->assertFalse( $instance->isset( $not_isset_properties ) );
 	}
 
 	/**
+	 * @param array $properties
+	 * @param string|array $exist_properties
+	 * @param array $not_exist_properties
 	 * @covers ::exists()
 	 * @group instance
 	 * @group exists
+	 *
+	 * @dataProvider data_exists
 	 */
-	function test_exists() {
-		$this->markTestIncomplete();
+	function test_exists( $properties, $exist_properties, $not_exist_properties = null ) {
+		$instance = $this->new_instance( $properties );
+
+		if ( !is_null( $exist_properties ) )
+			$this->assertTrue( $instance->exists( $exist_properties ) );
+
+		if ( !is_null( $not_exist_properties ) )
+			$this->assertFalse( $instance->exists( $not_exist_properties ) );
 	}
 
 	/*

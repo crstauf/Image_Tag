@@ -4,7 +4,6 @@ require_once 'abstract-properties-tests.php';
 
 /**
  * @coversDefaultClass Image_Tag_Attributes
- * @group properties
  * @group attributes
  */
 class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
@@ -14,8 +13,18 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 	}
 
 	/**
+	 * Test Image_Tag_Attributes::NAME constant value.
+	 *
 	 * @group constant
-	 * @group defaults
+	 */
+	function test_name_constant() {
+		$this->assertSame( 'attribute', constant( $this->class_name() . '::NAME' ) );
+	}
+
+	/**
+	 * Test Image_Tag_Attribute::DEFAULTS constant.
+	 *
+	 * @group constant
 	 */
 	function test_defaults_constant() {
 		$this->assertSame( array(
