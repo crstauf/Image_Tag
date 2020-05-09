@@ -338,12 +338,41 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	*/
 
 	/**
+	 * @param array $properties
+	 * @param string|array $get_properties
+	 *
 	 * @covers ::get()
+	 * @covers ::get_properties()
+	 * @covers ::get_property()
+	 * @covers ::_get()
 	 * @group instance
 	 * @group get
+	 *
+	 * @dataProvider data_get
 	 */
-	function test_get() {
-		$this->markTestIncomplete();
+	function test_get( $properties, $get_properties ) {
+		$instance = $this->new_instance( $properties );
+
+		if ( is_string( $get_properties ) ) {
+			$this->assertSame( $properties[$get_properties], $instance->get( $get_properties ) );
+			return;
+		}
+
+		if ( is_null( $get_properties ) ) {
+			$this->assertSame( $properties, $instance->get( null ) );
+			return;
+		}
+
+		$expected
+		= $actual
+		= array();
+
+		foreach ( $get_properties as $property ) {
+			$expected[$property] = $properties[$property];
+			$actual[$property] = $instance->get( $property, 'edit' );
+		}
+
+		$this->assertSame( $expected, $actual );
 	}
 
 
@@ -358,15 +387,98 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	*/
 
 	/**
+	 * @param array $properties
+	 * @param string|array $exist_properties
+	 * @param array $not_exist_properties
+	 *
+	 * @covers ::offsetExists()
+	 * @group instance
+	 * @group arrayaccess
+	 *
+	 * @dataProvider data_arrayAccess_exists
+	 */
+	function test_arrayAccess_exists( $properties, $exist_properties, $not_exist_properties = null ) {
+		$instance = $this->new_instance( $properties );
+
+		if ( !is_null( $exist_properties ) )
+			foreach ( ( array ) $exist_properties as $property )
+				$this->assertTrue( isset( $instance[$property] ) );
+
+		if ( !is_null( $not_exist_properties ) )
+			foreach ( ( array ) $not_exist_properties as $property )
+				$this->assertFalse( isset( $instance[$property] ) );
+	}
+
+	/**
+	 * @param array $properties
+	 *
 	 * @covers ::offsetExists()
 	 * @covers ::offsetGet()
 	 * @covers ::offsetSet()
 	 * @covers ::offsetUnset()
 	 * @group instance
 	 * @group arrayaccess
+	 *
+	 * @dataProvider data_arrayAccess_get
 	 */
-	function test_arrayAccess() {
-		$this->markTestIncomplete();
+	function test_arrayAccess_get( $properties ) {
+		$instance = $this->new_instance( $properties );
+
+		foreach ( $properties as $property => $value )
+			$this->assertSame( $value, $instance[$property] );
+	}
+
+	/**
+	 * @param array $properties
+	 * @param string $set_property
+	 * @param mixed $set_value
+	 *
+	 * @covers ::offsetSet()
+	 * @group instance
+	 * @group arrayaccess
+	 *
+	 * @dataProvider data_arrayAccess_set
+	 */
+	function test_arrayAccess_set( $properties, string $set_property, $set_value ) {
+		$instance = $this->new_instance( $properties );
+
+		if ( array_key_exists( $set_property, $properties ) )
+			$this->assertSame( $properties[$set_property], $instance->$set_property );
+
+		$instance[$set_property] = $set_value;
+
+		$this->assertSame( $set_value, $instance->$set_property );
+	}
+
+	/**
+	 * @param array $properties
+	 * @param string|array $unset_properties
+	 *
+	 * @covers ::offsetUnset()
+	 * @group instance
+	 * @group arrayaccess
+	 *
+	 * @dataProvider data_arrayAccess_unset
+	 */
+	function test_arrayAccess_unset( $properties, $unset_properties ) {
+		$instance = $this->new_instance( $properties );
+
+		# Check properties are set.
+		foreach ( ( array ) $unset_properties as $property )
+			$this->assertSame( $properties[$property], $instance->$property );
+
+		# Unset specified properties.
+		foreach ( ( array ) $unset_properties as $property )
+			unset( $instance[$property] );
+
+		# Check specified properties are unset (null).
+		foreach ( ( array ) $unset_properties as $property )
+			$this->assertNull( $instance->$property );
+
+		# Check remaining properties are still set.
+		$remaining = array_diff( array_keys( $properties ), ( array ) $unset_properties );
+		foreach ( $remaining as $property )
+			$this->assertSame( $properties[$property], $instance->$property );
 	}
 
 }

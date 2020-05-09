@@ -1,7 +1,14 @@
 <?php
+/**
+ * @todo implement Iterator
+ */
 
 class Image_Tag_Properties implements ArrayAccess {
 
+	/**
+	 * @var string NAME
+	 * @var array DEFAULTS
+	 */
 	const NAME = 'property';
 	const DEFAULTS = array();
 
@@ -397,23 +404,43 @@ class Image_Tag_Properties implements ArrayAccess {
 	##     ## ##     ## ##     ## ##     ##    ##    ##     ##  ######   ######  ########  ######   ######
 	*/
 
+	/**
+	 * ArrayAccess: exists
+	 *
+	 * @param string|int $offset
+	 * @return bool
+	 */
 	function offsetExists( $offset ) {
 		return isset( $this->properties[$offset] );
 	}
 
+	/**
+	 * ArrayAccess: get
+	 *
+	 * @param string|int $offset
+	 * @return mixed
+	 */
 	function offsetGet( $offset ) {
 		return $this->properties[$offset];
 	}
 
+	/**
+	 * ArrayAccess: set
+	 *
+	 * @param string|int $offset
+	 * @param mixed $value
+	 */
 	function offsetSet( $offset, $value ) {
 		$this->properties[$offset] = $value;
 	}
 
+	/**
+	 * ArrayAccess: unset
+	 *
+	 * @param string|int $offset
+	 */
 	function offsetUnset( $offset ) {
 		unset( $this->properties[$offset] );
-
-		if ( isset( static::DEFAULTS[$offset] ) )
-			$this->properties[$offset] = static::DEFAULTS[$offset];
 	}
 
 }

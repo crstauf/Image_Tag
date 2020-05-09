@@ -525,4 +525,186 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 		return $data;
 	}
 
+
+		/*
+	 ######   ######## ########
+	##    ##  ##          ##
+	##        ##          ##
+	##   #### ######      ##
+	##    ##  ##          ##
+	##    ##  ##          ##
+	 ######   ########    ##
+	*/
+
+	/**
+	 * Data provider for Image_Tag_Properties_Test::test_exists().
+	 *
+	 * @see Image_Tag_Properties_Test::test_exists()
+	 * @uses static::data_isset()
+	 * @return array[]
+	 */
+	function data_get() {
+		return array(
+			'single' => array(
+				array(
+					'foo' => uniqid(),
+					'bar' => uniqid(),
+				),
+				'foo',
+			),
+			'multiple' => array(
+				array(
+					'foo' => uniqid(),
+					'bar' => uniqid(),
+				),
+				array( 'foo', 'bar' ),
+			),
+			'arrays' => array(
+				array(
+					'foo' => range( 1, 10 ),
+					'bar' => range( 1, 20 ),
+				),
+				array( 'foo' ),
+			),
+			'null' => array(
+				array(
+					'foo' => uniqid(),
+					'bar' => uniqid(),
+				),
+				null,
+			),
+		);
+	}
+
+
+	/*
+	   ###    ########  ########     ###    ##    ##    ###     ######   ######  ########  ######   ######
+	  ## ##   ##     ## ##     ##   ## ##    ##  ##    ## ##   ##    ## ##    ## ##       ##    ## ##    ##
+	 ##   ##  ##     ## ##     ##  ##   ##    ####    ##   ##  ##       ##       ##       ##       ##
+	##     ## ########  ########  ##     ##    ##    ##     ## ##       ##       ######    ######   ######
+	######### ##   ##   ##   ##   #########    ##    ######### ##       ##       ##             ##       ##
+	##     ## ##    ##  ##    ##  ##     ##    ##    ##     ## ##    ## ##    ## ##       ##    ## ##    ##
+	##     ## ##     ## ##     ## ##     ##    ##    ##     ##  ######   ######  ########  ######   ######
+	*/
+
+	/**
+	 * Data provider for Image_Tag_Properties::offsetExists().
+	 *
+	 * @see Image_Tag_Properties::offsetExists()
+	 * @return array[]
+	 */
+	function data_arrayAccess_exists() {
+		return array(
+			'null' => array(
+				array(),
+				null,
+				'id',
+			),
+			'string' => array(
+				array( 'foo' => uniqid() ),
+				'foo',
+				'bar',
+			),
+			'array' => array(
+				array( 'foo' => range( 1, 5 ) ),
+				'foo',
+			),
+			'object' => array(
+				array( 'foo' => ( object ) range( 1, 5 ) ),
+				'foo',
+				'zoo',
+			),
+		);
+	}
+
+	/**
+	 * Data provider for Image_Tag_Properties::offsetGet().
+	 *
+	 * @see Image_Tag_Properties::offsetGet()
+	 * @return array[]
+	 */
+	function data_arrayAccess_get() {
+		return array(
+			'string' => array( array( 'foo' => __FUNCTION__ ) ),
+			'array'  => array( array( 'foo' => range( 10, 20 ) ) ),
+			'object' => array( array( 'foo' => ( object ) range( 20, 30 ) ) ),
+			'int'    => array( array( 'foo' => mt_rand( 10, 30 ) ) ),
+			'float'  => array( array( 'foo' => 3.1415 ) ),
+		);
+	}
+
+	/**
+	 * Data provider for Image_Tag_Properties::offsetSet().
+	 *
+	 * @see Image_Tag_Properties::offsetSet()
+	 * @return array[]
+	 */
+	function data_arrayAccess_set() {
+		return array(
+			'string' => array(
+				array(),
+				'foo',
+				uniqid(),
+			),
+			'string override' => array(
+				array( 'foo' => __FUNCTION__ ),
+				'foo',
+				uniqid(),
+			),
+			'array' => array(
+				array(),
+				'foo',
+				range( 1, 5 ),
+			),
+			'array override' => array(
+				array( 'foo' => __FUNCTION__ ),
+				'foo',
+				range( 5, 10 ),
+			),
+			'object' => array(
+				array(),
+				'foo',
+				( object ) range( 5, 10 ),
+			),
+			'object override' => array(
+				array( 'foo' => range( 1, 5 ) ),
+				'foo',
+				( object ) range( 10, 20 ),
+			),
+		);
+	}
+
+	/**
+	 * Data provider for Image_Tag_Properties::offsetUnset().
+	 *
+	 * @see Image_Tag_Properties::offsetUnset()
+	 * @return array[]
+	 */
+	function data_arrayAccess_unset() {
+		return array(
+			'string' => array(
+				array( 'foo' => uniqid() ),
+				'foo',
+			),
+			'multiple' => array(
+				array(
+					'foo' => uniqid(),
+					'bar' => uniqid(),
+				),
+				'foo',
+			),
+			'array' => array(
+				array( 'foo' => range( 1, 5 ) ),
+				'foo',
+			),
+			'object' => array(
+				array(
+					'foo' => ( object ) range( 10, 20 ),
+					'bar' => uniqid(),
+				),
+				'foo',
+			),
+		);
+	}
+
 }

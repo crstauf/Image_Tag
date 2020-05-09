@@ -34,6 +34,10 @@ class Image_Tag_Settings_Test extends Image_Tag_Properties_Tests {
 		$this->markTestIncomplete();
 	}
 
+	function data_get() {
+		$this->markTestIncomplete();
+	}
+
 }
 
 ?>
