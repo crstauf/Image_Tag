@@ -185,15 +185,44 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	*/
 
 	/**
+	 * @param string $class_name
+	 * @param mixed $properties
+	 *
 	 * @covers ::set()
 	 * @covers ::set_property()
 	 * @covers ::set_properties()
 	 * @covers ::_set()
 	 * @group instance
 	 * @group set
+	 *
+	 * @dataProvider data_set
 	 */
-	function test_set() {
+	function test_set( string $class_name, $properties, $set_properties, $value, $expected ) {
 		$this->markTestIncomplete();
+
+		$instance = new $class_name( $properties );
+
+		if ( is_string( $set_properties ) ) {
+			if ( array_key_exists( $set_properties, $properties ) )
+				$this->assertSame( $properties[$set_properties], $instance->$set_properties );
+
+			$instance->set( $set_properties, $value );
+
+			$this->assertSame( $value, $instance->$set_properties );
+			return;
+		}
+
+		$override_properties = array_key_intersect( $properties, $set_properties );
+		$override_properties = array_keys( $override_properties );
+
+		foreach ( $override_properties as $property )
+			$this->assertSame( $properties[$property], $instance->$property );
+
+		$instance->set( $set_properties );
+
+		foreach ( $set_properties as $property => $value )
+			$this->assertSame( $value, $instance->$property );
+
 	}
 
 	/**

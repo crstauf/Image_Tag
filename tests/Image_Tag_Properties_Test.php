@@ -297,6 +297,17 @@ class Image_Tag_Properties_Test extends Image_Tag_Properties_Tests {
 		);
 	}
 
+
+	/*
+	   ###    ########  ########
+	  ## ##   ##     ## ##     ##
+	 ##   ##  ##     ## ##     ##
+	##     ## ##     ## ##     ##
+	######### ##     ## ##     ##
+	##     ## ##     ## ##     ##
+	##     ## ########  ########
+	*/
+
 	/**
 	 * Data provider for Image_Tag_Properties_Test::test_add().
 	 *
@@ -345,6 +356,36 @@ class Image_Tag_Properties_Test extends Image_Tag_Properties_Tests {
 					'foo' => 'bar',
 				),
 			)
+		);
+	}
+
+
+	/*
+	 ######  ######## ########
+	##    ## ##          ##
+	##       ##          ##
+	 ######  ######      ##
+	      ## ##          ##
+	##    ## ##          ##
+	 ######  ########    ##
+	*/
+
+	function data_set() {
+		return array(
+			'empty' => array(
+				Image_Tag_Properties::class,
+				array(),
+				'id',
+				__FUNCTION__,
+				__FUNCTION__,
+			),
+			'override string' => array(
+				Image_Tag_Properties::class,
+				array( 'id' => uniqid( __FUNCTION__ ) ),
+				'id',
+				__FUNCTION__,
+				__FUNCTION__,
+			),
 		);
 	}
 
