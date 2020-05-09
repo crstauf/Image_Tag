@@ -3,6 +3,8 @@
 require_once 'Image_Tag_Properties_Tests.php';
 
 /**
+ * Testing of Image_Tag_Properties class.
+ *
  * @coversDefaultClass Image_Tag_Properties
  * @group properties
  */
@@ -48,12 +50,9 @@ class Image_Tag_Properties_Test extends Image_Tag_Properties_Tests {
 	 *
 	 * @see Image_Tag_Properties_Tests::test__construct()
 	 * @return array
-	 *
-	 * @todo add more types
 	 */
 	function data__construct() {
-		$this->markTestIncomplete();
-		return array(
+		$data = array(
 			'empty' => array(
 				Image_Tag_Properties::class,
 				array(),
@@ -61,6 +60,46 @@ class Image_Tag_Properties_Test extends Image_Tag_Properties_Tests {
 				array(),
 			),
 		);
+
+		$properties = array(
+			'foo' => 'bar',
+			'rand' => mt_rand( 50, 200 ),
+		);
+		$data['properties'] = array(
+			Image_Tag_Properties::class,
+			$properties,
+			array(),
+			$properties,
+		);
+
+		$defaults = array(
+			'foo' => __FUNCTION__,
+		);
+		$data['defaults-overridden'] = array(
+			Image_Tag_Properties::class,
+			$properties,
+			$defaults,
+			$properties,
+		);
+
+		$defaults['bar'] = range( 1, 5 );
+		$data['defaults'] = array(
+			Image_Tag_Properties::class,
+			$properties,
+			$defaults,
+			wp_parse_args( $properties, $defaults ),
+		);
+
+
+		$instance = new Image_Tag_Properties( $properties, $defaults );
+		$data['object'] = array(
+			Image_Tag_Properties::class,
+			$instance,
+			array(),
+			wp_parse_args( $properties, $defaults ),
+		);
+
+		return $data;
 	}
 
 	/**
@@ -230,6 +269,83 @@ class Image_Tag_Properties_Test extends Image_Tag_Properties_Tests {
 			);
 
 		return $data;
+	}
+
+	/**
+	 * Data provider for Image_Tag_Properties_Tests::test__unset().
+	 *
+	 * @see Image_Tag_Properties_Tests::test__unset()
+	 * @return array
+	 */
+	function data__unset() {
+		return array(
+			'string' => array(
+				Image_Tag_Properties::class,
+				array( 'id' => uniqid( __FUNCTION__ ) ),
+				'id',
+			),
+			'array' => array(
+				Image_Tag_Properties::class,
+				array( 'id' => range( 1, 5 ) ),
+				'id',
+			),
+			'self' => array(
+				Image_Tag_Properties::class,
+				new Image_Tag_Properties( array(), array( 'id' => uniqid( __FUNCTION__ ) ) ),
+				'id',
+			),
+		);
+	}
+
+	/**
+	 * Data provider for Image_Tag_Properties_Test::test_add().
+	 *
+	 * @see Image_Tag_Properties_Test::test_add()
+	 * @return array
+	 */
+	function data_add() {
+		return array(
+			array(
+				Image_Tag_Properties::class,
+				array( 'id' => __FUNCTION__ ),
+				'id',
+				uniqid( __FUNCTION__ ),
+				__FUNCTION__,
+			),
+			array(
+				Image_Tag_Properties::class,
+				array(),
+				'id',
+				__FUNCTION__,
+				__FUNCTION__,
+			),
+			array(
+				Image_Tag_Properties::class,
+				array(),
+				array(
+					'id' => __FUNCTION__,
+					'foo' => 'bar',
+				),
+				null,
+				array(
+					'id' => __FUNCTION__,
+					'foo' => 'bar',
+				),
+			),
+			array(
+				Image_Tag_Properties::class,
+				array( 'id' => __FUNCTION__ ),
+				array(
+					'id' => uniqid( __FUNCTION__ ),
+					'foo' => 'bar',
+				),
+				null,
+				array(
+					'id' => __FUNCTION__,
+					'foo' => 'bar',
+				),
+			)
+		);
 	}
 
 }

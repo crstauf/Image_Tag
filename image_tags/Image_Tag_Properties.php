@@ -12,6 +12,17 @@ class Image_Tag_Properties implements ArrayAccess {
 	protected $properties = array();
 	protected $defaults   = array();
 
+
+	/*
+	 ######  ########    ###    ######## ####  ######
+	##    ##    ##      ## ##      ##     ##  ##    ##
+	##          ##     ##   ##     ##     ##  ##
+	 ######     ##    ##     ##    ##     ##  ##
+	      ##    ##    #########    ##     ##  ##
+	##    ##    ##    ##     ##    ##     ##  ##    ##
+	 ######     ##    ##     ##    ##    ####  ######
+	*/
+
 	/**
 	 * Make provided property safe for use in function name.
 	 *
@@ -39,8 +50,8 @@ class Image_Tag_Properties implements ArrayAccess {
 	 *
 	 * @param array|self $properties
 	 * @param array $defaults
-	 * @uses self::get()
-	 * @uses self::set()
+	 * @uses static::get()
+	 * @uses static::set()
 	 */
 	function __construct( $properties = array(), array $defaults = array() ) {
 		if ( is_a( $properties, static::class ) )
@@ -55,7 +66,7 @@ class Image_Tag_Properties implements ArrayAccess {
 	 *
 	 * @param string $property
 	 * @param mixed $value
-	 * @uses self::set()
+	 * @uses static::set()
 	 */
 	function __set( string $property, $value ) {
 		$this->set( $property, $value );
@@ -65,7 +76,7 @@ class Image_Tag_Properties implements ArrayAccess {
 	 * Getter.
 	 *
 	 * @param string $property
-	 * @uses self::get()
+	 * @uses static::get()
 	 * @return mixed
 	 */
 	function __get( string $property ) {
@@ -76,7 +87,7 @@ class Image_Tag_Properties implements ArrayAccess {
 	 * Check if isset.
 	 *
 	 * @param string $property
-	 * @uses self::isset()
+	 * @uses static::isset()
 	 * @return bool
 	 */
 	function __isset( string $property ) {
@@ -87,7 +98,7 @@ class Image_Tag_Properties implements ArrayAccess {
 	 * Unsetter.
 	 *
 	 * @param string $property
-	 * @uses self::unset()
+	 * @uses static::unset()
 	 */
 	function __unset( string $property ) {
 		$this->unset( $property );
@@ -111,13 +122,16 @@ class Image_Tag_Properties implements ArrayAccess {
 	 *
 	 * @param string|array $properties
 	 * @param mixed $value
-	 * @uses self::add_property()
-	 * @uses self::add_properties()
+	 * @uses static::add_property()
+	 * @uses static::add_properties()
+	 * @return $this
 	 */
 	function add( $properties, $value = null ) {
 		is_string( $properties )
-			? $this->add_property( $properties, $value )
+			? $this->add_property(   $properties, $value )
 			: $this->add_properties( $properties );
+
+		return $this;
 	}
 
 	/**
@@ -125,19 +139,19 @@ class Image_Tag_Properties implements ArrayAccess {
 	 *
 	 * @param string $property
 	 * @param mixed $value
-	 * @uses self::isset()
-	 * @uses self::set()
+	 * @uses static::isset()
+	 * @uses static::set_property()
 	 */
 	protected function add_property( string $property, $value ) {
 		if ( !$this->isset( $property ) )
-			$this->set( $property, $value );
+			$this->set_property( $property, $value );
 	}
 
 	/**
 	 * Add multiple properties.
 	 *
 	 * @param array $properties
-	 * @uses self::add_property()
+	 * @uses static::add_property()
 	 */
 	protected function add_properties( array $properties ) {
 		foreach ( $properties as $property => $value )
@@ -160,28 +174,79 @@ class Image_Tag_Properties implements ArrayAccess {
 	 *
 	 * @param string|array $properties
 	 * @param mixed $value
-	 * @uses self::_set()
-	 *
-	 * @todo redefine based on self::get()
+	 * @uses static::set_property()
+	 * @uses static::set_properties()
+	 * @return $this
 	 */
 	function set( $properties, $value = null ) {
-		if ( is_string( $properties ) ) {
-			$this->_set( $properties, $value );
-			return;
-		}
+		is_string( $properties )
+			? $this->set_property(   $properties, $value )
+			: $this->set_properties( $properties );
 
-		foreach ( $properties as $property => $value )
-			$this->_set( $property, $value );
+		return $this;
 	}
 
 	/**
-	 * Set raw property.
+	 * Set property.
+	 *
+	 * @param string $property
+	 * @param mixed $value
+	 * @uses static::function_name()
+	 * @uses self::_set()
+	 */
+	protected function set_property( string $property, $value ) {
+		$format = sprintf( 'set_%%s_%s', static::NAME );
+
+		# Override by property name.
+		$method_name = sprintf( $format, static::function_name( $property ) );
+		if ( method_exists( $this, $method_name ) ) {
+			call_user_func( array( $this, $method_name ), $value );
+			return;
+		}
+
+		# Override by property type.
+		$method_name = sprintf( $format, gettype( $value ) );
+		if ( method_exists( $this, $method_name ) ) {
+			call_user_func( array( $this, $method_name ) );
+			return;
+		}
+
+		# Set directly.
+		$this->_set( $property, $value );
+	}
+
+	/**
+	 * Set property directly.
 	 *
 	 * @param string $property
 	 * @param mixed $value
 	 */
-	function _set( string $property, $value ) {
+	final function _set( string $property, $value ) {
 		$this->properties[$property] = $value;
+	}
+
+	/**
+	 * Set properties.
+	 *
+	 * @param array $properties
+	 * @uses static::set_property()
+	 */
+	protected function set_properties( array $properties ) {
+		foreach ( $properties as $property => $value )
+			$this->set_property( $property, $value );
+	}
+
+	/**
+	 * Unset properties.
+	 *
+	 * @param string|array $properties
+	 * @todo define
+	 */
+	function unset( $properties ) {
+		foreach ( ( array ) $properties as $property )
+			unset( $this->properties[$property] );
+
+		return $this;
 	}
 
 
@@ -251,8 +316,8 @@ class Image_Tag_Properties implements ArrayAccess {
 	 *
 	 * @param null|string|array $properties
 	 * @param string $context
-	 * @uses self::get_property()
-	 * @uses self::get_properties()
+	 * @uses static::get_property()
+	 * @uses static::get_properties()
 	 * @return string|array
 	 */
 	function get( $properties = null, string $context = 'view' ) {
@@ -305,14 +370,6 @@ class Image_Tag_Properties implements ArrayAccess {
 
 		return $this->properties[$property];
 	}
-
-	/**
-	 * Unset properties.
-	 *
-	 * @param string|array $properties
-	 * @todo define
-	 */
-	function unset( $properties ) {}
 
 
 	/*

@@ -1,4 +1,7 @@
 <?php
+/**
+ * Tests for Image_Tag_Properties and descendants.
+ */
 
 abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 
@@ -34,6 +37,7 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	 *
 	 * @covers ::__construct()
 	 * @covers ::get()
+	 * @covers ::get_properties()
 	 * @group magic
 	 * @group construct
 	 *
@@ -51,6 +55,7 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	 *
 	 * @covers ::__set()
 	 * @covers ::set()
+	 * @covers ::set_property()
 	 * @covers ::_set()
 	 * @group magic
 	 * @group set
@@ -66,6 +71,10 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	}
 
 	/**
+	 * @param string $class_name
+	 * @param string $property
+	 * @param mixed $value
+	 *
 	 * @covers ::__get()
 	 * @covers::get()
 	 * @covers::get_property()
@@ -88,7 +97,7 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 
 	/**
 	 * @param string $class_name
-	 * @param array $attributes
+	 * @param array|Image_Tag_Properties $properties
 	 * @param string $property
 	 * @param bool $expected
 	 *
@@ -99,8 +108,8 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data__isset
 	 */
-	function test__isset( string $class_name, $attributes, string $property, $expected ) {
-		$instance = new $class_name( $attributes );
+	function test__isset( string $class_name, $properties, string $property, $expected ) {
+		$instance = new $class_name( $properties );
 
 		$expected
 			? $this->assertTrue(  isset( $instance->$property ) )
@@ -108,12 +117,21 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	}
 
 	/**
+	 * @param string $class_name
+	 * @param
 	 * @covers ::__unset()
+	 * @covers ::unset()
 	 * @group magic
 	 * @group unset
+	 *
+	 * @dataProvider data__unset
 	 */
-	function test__unset() {
-		$this->markTestIncomplete();
+	function test__unset( string $class_name, $properties, string $property ) {
+		$instance = new $class_name( $properties );
+		$this->assertSame( $properties[$property], $instance->$property );
+
+		unset( $instance->$property );
+		$this->assertFalse( isset( $instance->$property ) );
 	}
 
 
@@ -128,12 +146,31 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	*/
 
 	/**
+	 * @param string $class_name
+	 * @param array|Image_Tag_Properties $properties
+	 * @param string|array $add_properties
+	 * @param mixed $value
+	 * @param mixed $expected Expected value of property.
+	 *
 	 * @covers ::add()
+	 * @covers ::add_property()
+	 * @covers ::add_properties()
 	 * @group instance
 	 * @group add
+	 *
+	 * @dataProvider data_add
 	 */
-	function test_add() {
-		$this->markTestIncomplete();
+	function test_add( string $class_name, $properties, $add_properties, $value, $expected ) {
+		$instance = new $class_name( $properties );
+		$instance->add( $add_properties, $value );
+
+		if ( is_string( $add_properties ) ) {
+			$this->assertSame( $expected, $instance->$add_properties );
+			return;
+		}
+
+		foreach ( $expected as $property => $expected_value )
+			$this->assertSame( $expected_value, $instance->$property );
 	}
 
 
@@ -149,6 +186,9 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 
 	/**
 	 * @covers ::set()
+	 * @covers ::set_property()
+	 * @covers ::set_properties()
+	 * @covers ::_set()
 	 * @group instance
 	 * @group set
 	 */

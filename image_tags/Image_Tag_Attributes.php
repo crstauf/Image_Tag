@@ -29,6 +29,42 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 
 	);
 
+	/**
+	 * Remove typical leading/trailing characters from property.
+	 *
+	 * @see trim()
+	 * @param mixed Attribute value (passed by reference).
+	 * @return mixed
+	 */
+	static function trim( &$value ) {
+
+		$mask  = " \t\n\r\0\x0B"; # from PHP's trim()
+		$mask .= ','; # for sizes and srcset attributes
+		$mask .= ';'; # for style attribute
+
+		# Trim string.
+		if ( is_string( $value ) )
+			return trim( $value, $mask );
+
+		# If not an array, no trimming.
+		if ( !is_array( $value ) )
+			return $value;
+
+		# Deep trim items in array.
+		array_walk( $value, function( &$item, $key ) use( $mask ) {
+
+			if ( is_string( $item ) )
+				$item = trim( $item, $mask );
+
+			# Recursive is fun.
+			else if ( is_array( $item ) )
+				$item = self::trim( $item );
+
+		} );
+
+		return $value;
+	}
+
 
 	/*
 	 ######  ######## ########
@@ -41,59 +77,12 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 	*/
 
 	/**
-	 * Set attributes.
-	 *
-	 * @param string|array $attributes
-	 * @param mixed $value
-	 * @uses self::set_one()
-	 * @return self
-	 */
-	function set( $attributes, $value = null ) {
-
-		# Set single attribute.
-		if ( is_string( $attributes ) ) {
-			$this->set_one( $attributes, $value );
-			return $this;
-		}
-
-		# Set multiple attributes.
-		foreach ( $attributes as $attribute => $value )
-			$this->set_one( $attribute, $value );
-
-		# Return self for chaining.
-		return $this;
-	}
-
-	/**
-	 * Set one attribute.
-	 *
-	 * @param string $attribute
-	 * @param mixed $value
-	 * @uses parent::_set()
-	 */
-	protected function set_one( string $attribute, $value ) {
-		$format = 'set_%s_attribute';
-
-		# Override by attribute name.
-		$method_name = sprintf( $format, $attribute );
-		if ( method_exists( $this, $method_name ) )
-			return call_user_func( array( $this, $method_name ), $value );
-
-		# Override by value type.
-		$method_name = sprintf( $format, gettype( $value ) );
-		if ( method_exists( $this, $method_name ) )
-			return call_user_func( array( $this, $method_name ), $value );
-
-		# Set raw value.
-		$this->_set( $attribute, $value );
-	}
-
-	/**
 	 * Set "class" attribute.
 	 *
 	 * @param string|array $value
 	 * @uses Image_Tag::trim()
-	 * @uses self::_set()
+	 * @uses static::trim()
+	 * @uses static::_set()
 	 */
 	protected function set_class_attribute( $classes ) {
 		if ( is_string( $classes ) )
@@ -109,9 +98,9 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 		}
 
 		# Cleanup.
-		$classes = Image_Tag::trim( $classes ); // remove excess characters from items
-		$classes = array_filter( $classes );    // remove empty items
-		$classes = array_values( $classes );    // reset array keys
+		$classes = static::trim( $classes ); // remove excess characters from items
+		$classes = array_filter( $classes ); // remove empty items
+		$classes = array_values( $classes ); // reset array keys
 
 		# Set.
 		$this->_set( 'class', $classes );
@@ -150,7 +139,7 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 	/**
 	 * Get "class" attribute, in "view" context.
 	 *
-	 * @uses self::get()
+	 * @uses static::get()
 	 * @return string
 	 */
 	protected function get_class_attribute() {
