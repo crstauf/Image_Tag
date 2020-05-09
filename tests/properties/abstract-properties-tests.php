@@ -472,6 +472,11 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 				array( 'foo', 'bar' ),
 				'zoo',
 			),
+			'false multiple string' => array(
+				array( 'foo' => uniqid() ),
+				null,
+				array( 'foo', 'bar' ),
+			),
 			'multiple arrays' => array(
 				array(
 					'foo' => range(  1, 10 ),
@@ -479,11 +484,23 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 				),
 				array( 'foo', 'bar' ),
 			),
+			'false multiple arrays' => array(
+				array( 'bar' => uniqid() ),
+				null,
+				array( 'foo', 'bar' ),
+			),
 			'multiple_objects' => array(
 				array(
 					'foo' => ( object ) range(  1, 10 ),
 					'bar' => ( object ) range( 10, 20 ),
 				),
+				array( 'foo', 'bar' ),
+			),
+			'false multiple_objects' => array(
+				array(
+					'bar' => ( object ) range( 10, 20 ),
+				),
+				null,
 				array( 'foo', 'bar' ),
 			)
 		);
