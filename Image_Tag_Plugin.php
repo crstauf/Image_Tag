@@ -8,8 +8,8 @@
  * Author: Caleb Stauffer
  * Author URI: https://develop.calebstauffer.com
  * Version: 2.0
- * Requires at least: 5.4
- * Requires PHP: 7.3
+ * Requires at least: 5.1
+ * Requires PHP: 7.1
  */
 
 defined( 'ABSPATH' ) || die();

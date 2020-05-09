@@ -36,8 +36,8 @@ class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 
 		$data = get_plugin_data( dirname( __DIR__ ) . '/Image_Tag_Plugin.php', false, false );
 
-		$this->assertEquals( '5.4', $data['RequiresWP']  );
-		$this->assertEquals( '7.3', $data['RequiresPHP'] );
+		$this->assertEquals( '5.1', $data['RequiresWP']  );
+		$this->assertEquals( '7.1', $data['RequiresPHP'] );
 	}
 
 	function test_constants() {
