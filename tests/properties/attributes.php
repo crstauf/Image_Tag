@@ -1,13 +1,17 @@
 <?php
 
-require_once 'Image_Tag_Properties_Test.php';
+require_once 'abstract-properties-tests.php';
 
 /**
  * @coversDefaultClass Image_Tag_Attributes
  * @group properties
  * @group attributes
  */
-class Image_Tag_Attributes_Test extends Image_Tag_Properties_Test {
+class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
+
+	protected function class_name() {
+		return Image_Tag_Attributes::class;
+	}
 
 	/**
 	 * @group constant
@@ -28,7 +32,11 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Test {
 			'style' => array(),
 			'sizes' => array(),
 			'class' => array(),
-		), Image_Tag_Attributes::DEFAULTS );
+		), constant( $this->class_name() . '::DEFAULTS' ) );
+	}
+
+	function data__construct() {
+		$this->markTestIncomplete();
 	}
 
 }

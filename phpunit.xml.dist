@@ -12,7 +12,7 @@
 >
 	<testsuites>
 		<testsuite name="properties">
-			<directory>./tests/properties</directory>
+			<directory suffix=".php">./tests/properties</directory>
 		</testsuite>
 	</testsuites>
 	<filter>
@@ -26,6 +26,6 @@
 		</whitelist>
 	</filter>
 	<logging>
-		<log type="coverage-html" target="/report" />
+		<log type="coverage-html" target="./report" />
 	</logging>
 </phpunit>

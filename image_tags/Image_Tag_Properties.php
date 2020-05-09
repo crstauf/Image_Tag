@@ -356,18 +356,33 @@ class Image_Tag_Properties implements ArrayAccess {
 		if ( !$this->isset( $property ) )
 			return null;
 
+		# If edit context, return raw.
+		if ( 'edit' === $context )
+			return $this->_get( $property );
+
 		$format = sprintf( 'get_%%s_%s', static::NAME );
 
 		# Override by property name.
 		$method_name = sprintf( $format, static::function_name( $property ) );
 		if ( method_exists( $this, $method_name ) )
-			return call_user_func( array( $this, $method_name ), $context );
+			return call_user_func( array( $this, $method_name ) );
 
 		# Override by type of property's value.
 		$method_name = sprintf( $format, gettype( $this->properties[$property] ) );
 		if ( method_exists( $this, $method_name ) )
-			return call_user_func( array( $this, $method_name ), $property, $context );
+			return call_user_func( array( $this, $method_name ), $property );
 
+		# No overrides; get directly.
+		return $this->_get( $property );
+	}
+
+	/**
+	 * Get property directly.
+	 *
+	 * @param string $property
+	 * @return mixed
+	 */
+	protected function _get( string $property ) {
 		return $this->properties[$property];
 	}
 

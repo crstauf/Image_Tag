@@ -1,18 +1,18 @@
 <?php
 
-require_once 'Image_Tag_Properties_Tests.php';
+require_once 'abstract-properties-base.php';
 
 /**
- * Testing of Image_Tag_Properties class.
- *
- * @coversDefaultClass Image_Tag_Properties
- * @group properties
+ * Tests for descendants of Image_Tag_Properties.
  */
-class Image_Tag_Properties_Test extends Image_Tag_Properties_Tests {
+abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 
-	protected function class_name() {
-		return Image_Tag_Properties::class;
-	}
+	/**
+	 * Get the class name to run tests against.
+	 *
+	 * @return string
+	 */
+	abstract protected function class_name();
 
 	/**
 	 * @group constant
@@ -50,9 +50,9 @@ class Image_Tag_Properties_Test extends Image_Tag_Properties_Tests {
 	*/
 
 	/**
-	 * Data provider for Image_Tag_Properties_Tests::test__construct().
+	 * Data provider for Image_Tag_Properties_Base::test__construct().
 	 *
-	 * @see Image_Tag_Properties_Tests::test__construct()
+	 * @see Image_Tag_Properties_Base::test__construct()
 	 * @return array
 	 */
 	function data__construct() {
@@ -91,8 +91,8 @@ class Image_Tag_Properties_Test extends Image_Tag_Properties_Tests {
 		);
 
 
-		$instance = new Image_Tag_Properties( $properties, $defaults );
-		$data['object'] = array(
+		$instance = $this->new_instance( $properties, $defaults );
+		$data['self'] = array(
 			$instance,
 			array(),
 			wp_parse_args( $properties, $defaults ),
@@ -102,9 +102,9 @@ class Image_Tag_Properties_Test extends Image_Tag_Properties_Tests {
 	}
 
 	/**
-	 * Data provider for Image_Tag_Properties_Tests::test__set().
+	 * Data provider for Image_Tag_Properties_Base::test__set().
 	 *
-	 * @see Image_Tag_Properties_Tests::test__set()
+	 * @see Image_Tag_Properties_Base::test__set()
 	 * @return array
 	 *
 	 * @todo add tests that override existing values
@@ -158,9 +158,9 @@ class Image_Tag_Properties_Test extends Image_Tag_Properties_Tests {
 	}
 
 	/**
-	 * Data provider for Image_Tag_Properties_Tests::test__get().
+	 * Data provider for Image_Tag_Properties_Base::test__get().
 	 *
-	 * @see Image_Tag_Properties_Tests::test__get()
+	 * @see Image_Tag_Properties_Base::test__get()
 	 * @return array
 	 */
 	function data__get() {
@@ -210,9 +210,9 @@ class Image_Tag_Properties_Test extends Image_Tag_Properties_Tests {
 	}
 
 	/**
-	 * Data provider for Image_Tag_Properties_Tests::test__isset().
+	 * Data provider for Image_Tag_Properties_Base::test__isset().
 	 *
-	 * @see Image_Tag_Properties_Tests::test__isset()
+	 * @see Image_Tag_Properties_Base::test__isset()
 	 * @return array
 	 */
 	function data__isset() {
@@ -261,9 +261,9 @@ class Image_Tag_Properties_Test extends Image_Tag_Properties_Tests {
 	}
 
 	/**
-	 * Data provider for Image_Tag_Properties_Tests::test__unset().
+	 * Data provider for Image_Tag_Properties_Base::test__unset().
 	 *
-	 * @see Image_Tag_Properties_Tests::test__unset()
+	 * @see Image_Tag_Properties_Base::test__unset()
 	 * @return array
 	 */
 	function data__unset() {
@@ -277,7 +277,7 @@ class Image_Tag_Properties_Test extends Image_Tag_Properties_Tests {
 				'id',
 			),
 			'self' => array(
-				new Image_Tag_Properties( array(), array( 'id' => uniqid( __FUNCTION__ ) ) ),
+				$this->new_instance( array(), array( 'id' => uniqid( __FUNCTION__ ) ) ),
 				'id',
 			),
 		);

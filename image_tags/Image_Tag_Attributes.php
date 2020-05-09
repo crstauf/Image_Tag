@@ -6,8 +6,10 @@
 class Image_Tag_Attributes extends Image_Tag_Properties {
 
 	/**
+	 * @var string
 	 * @var array
 	 */
+	const NAME = 'attribute';
 	const DEFAULTS = array(
 
 		# Strings or integers.
@@ -38,9 +40,9 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 	 */
 	static function trim( &$value ) {
 
-		$mask  = " \t\n\r\0\x0B"; # from PHP's trim()
-		$mask .= ','; # for sizes and srcset attributes
-		$mask .= ';'; # for style attribute
+		$mask  = " \t\n\r\0\x0B"; // from PHP's trim()
+		$mask .= ','; // for sizes and srcset attributes
+		$mask .= ';'; // for style attribute
 
 		# Trim string.
 		if ( is_string( $value ) )
@@ -137,24 +139,35 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 	}
 
 	/**
-	 * Get "class" attribute, in "view" context.
+	 * Get "class" attribute in view context.
 	 *
 	 * @uses static::get()
 	 * @return string
 	 */
 	protected function get_class_attribute() {
-		$classes = $this->get( 'class', 'edit' );
+		$classes = $this->_get( 'class' );
 		$classes = array_unique( $classes );
-
 		return implode( ' ', $classes );
 	}
 
+	/**
+	 * Get "style" attribute in view context.
+	 *
+	 * @return string
+	 */
 	protected function get_style_attribute() {
 		return $this->get_array_attribute( 'style', '; ' );
 	}
 
+	/**
+	 * Get attribute that's an array in view context.
+	 *
+	 * @param string $attribute
+	 * @param string $glue
+	 * @return string
+	 */
 	protected function get_array_attribute( string $attribute, string $glue = ', ' ) {
-		$value = $this->get( $attribute, 'edit' );
+		$value = $this->_get( $attribute );
 		return implode( $glue, $value );
 	}
 

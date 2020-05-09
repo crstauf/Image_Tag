@@ -3,14 +3,7 @@
  * Tests for Image_Tag_Properties and descendants.
  */
 
-abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
-
-	/**
-	 * Get the class name to run tests against.
-	 *
-	 * @return string
-	 */
-	abstract protected function class_name();
+abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 
 	/**
 	 * Create a new instance of the tested class.
@@ -54,15 +47,12 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	 * @param mixed $expected
 	 *
 	 * @covers ::__construct()
-	 * @covers ::get()
-	 * @covers ::get_properties()
 	 * @group magic
 	 * @group construct
 	 *
 	 * @dataProvider data__construct
 	 */
 	function test__construct( $properties, $defaults, $expected ) {
-		echo $this->class_name();
 		$instance = $this->new_instance( $properties, $defaults );
 		$this->assertSame( $expected, $instance->get() );
 	}
@@ -73,9 +63,6 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	 * @param mixed $value
 	 *
 	 * @covers ::__set()
-	 * @covers ::set()
-	 * @covers ::set_property()
-	 * @covers ::_set()
 	 * @group magic
 	 * @group set
 	 *
@@ -94,8 +81,6 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	 * @param mixed $value
 	 *
 	 * @covers ::__get()
-	 * @covers::get()
-	 * @covers::get_property()
 	 * @group magic
 	 * @group get
 	 *
@@ -119,7 +104,6 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	 * @param bool $expected
 	 *
 	 * @covers ::__isset()
-	 * @covers ::isset()
 	 * @group magic
 	 * @group isset
 	 *
@@ -139,7 +123,6 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	 * @param string $property
 	 *
 	 * @covers ::__unset()
-	 * @covers ::unset()
 	 * @group magic
 	 * @group unset
 	 *
@@ -219,8 +202,6 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	 * @dataProvider data_set
 	 */
 	function test_set( $properties, $set_properties, $value, $expected ) {
-		$this->markTestIncomplete();
-
 		$instance = $this->new_instance( $properties );
 
 		if ( is_string( $set_properties ) ) {
