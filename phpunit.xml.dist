@@ -11,8 +11,9 @@
 	beStrictAboutOutputDuringTests="true"
 >
 	<testsuites>
-		<testsuite name="Image_Tag">
-			<directory suffix="_Test.php">./tests/</directory>
+		<testsuite name="properties">
+			<directory suffix="_Test.php">./tests/properties</directory>
+			<file>./tests/properties/chaining.php</file>
 		</testsuite>
 	</testsuites>
 	<filter>
@@ -25,4 +26,7 @@
 			<file>image_tags/Image.php</file>
 		</whitelist>
 	</filter>
+	<logging>
+		<log type="coverage-html" target="/report" />
+	</logging>
 </phpunit>

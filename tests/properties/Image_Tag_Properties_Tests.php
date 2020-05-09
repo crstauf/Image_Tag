@@ -162,6 +162,7 @@ abstract class Image_Tag_Properties_Tests extends WP_UnitTestCase {
 	 */
 	function test_add( string $class_name, $properties, $add_properties, $value, $expected ) {
 		$instance = new $class_name( $properties );
+
 		$instance->add( $add_properties, $value );
 
 		if ( is_string( $add_properties ) ) {
