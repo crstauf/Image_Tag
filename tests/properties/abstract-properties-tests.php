@@ -63,8 +63,7 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	function data__construct() {
 		$data = array(
 			'empty' => array(
-				array(),
-				array(),
+				$this->new_instance( array() ),
 				array(),
 			),
 		);
@@ -74,8 +73,7 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 			'rand' => mt_rand( 50, 200 ),
 		);
 		$data['properties'] = array(
-			$properties,
-			array(),
+			$this->new_instance( $properties ),
 			$properties,
 		);
 
@@ -83,23 +81,20 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 			'foo' => __FUNCTION__,
 		);
 		$data['defaults-overridden'] = array(
-			$properties,
-			$defaults,
+			$this->new_instance( $properties, $defaults ),
 			$properties,
 		);
 
 		$defaults['bar'] = range( 1, 5 );
 		$data['defaults'] = array(
-			$properties,
-			$defaults,
+			$this->new_instance( $properties, $defaults ),
 			wp_parse_args( $properties, $defaults ),
 		);
 
 
 		$instance = $this->new_instance( $properties, $defaults );
 		$data['self'] = array(
-			$instance,
-			array(),
+			$this->new_instance( $instance ),
 			wp_parse_args( $properties, $defaults ),
 		);
 
@@ -118,43 +113,43 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 		return array(
 
 			'string' => array(
-				array(),
+				$this->get_instance(),
 				'foo',
 				'bar',
 			),
 
 			'array' => array(
-				array(),
+				$this->get_instance(),
 				'foo',
 				range( 1, 5 ),
 			),
 
 			'float' => array(
-				array(),
+				$this->get_instance(),
 				'foo',
 				3.1415,
 			),
 
 			'integer' => array(
-				array(),
+				$this->get_instance(),
 				'foo',
 				2400,
 			),
 
 			'object' => array(
-				array(),
+				$this->get_instance(),
 				'foo',
 				( object ) range( 5, 10 ),
 			),
 
 			'multi-dimensional array' => array(
-				array(),
+				$this->get_instance(),
 				'foo',
 				array_fill( 0, 5, range( 10, 15 ) ),
 			),
 
 			'array of objects' => array(
-				array(),
+				$this->get_instance(),
 				'foo',
 				array_fill( 0, 5, ( object ) range( 15, 20 ) ),
 			),
@@ -224,19 +219,19 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 		$data = array(
 
 			'empty' => array(
-				null,
+				$this->new_instance( array() ),
 				'foo',
 				false,
 			),
 
 			'null' => array(
-				array( 'foo' => null ),
+				$this->new_instance( array( 'foo' => null ) ),
 				'foo',
 				false,
 			),
 
 			'false' => array(
-				array( 'foo' => uniqid( __FUNCTION__ ) ),
+				$this->new_instance( array( 'foo' => uniqid( __FUNCTION__ ) ) ),
 				'bar',
 				false,
 			),
@@ -257,7 +252,7 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 
 		) as $name => $value )
 			$data[$name] = array(
-				array( 'foo' => $value ),
+				$this->new_instance( array( 'foo' => $value ) ),
 				'foo',
 				true,
 			);
@@ -274,11 +269,11 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	function data__unset() {
 		return array(
 			'string' => array(
-				array( 'id' => uniqid( __FUNCTION__ ) ),
+				$this->new_instance( array( 'id' => uniqid( __FUNCTION__ ) ) ),
 				'id',
 			),
 			'array' => array(
-				array( 'id' => range( 1, 5 ) ),
+				$this->new_instance( array( 'id' => range( 1, 5 ) ) ),
 				'id',
 			),
 			'self' => array(
@@ -308,19 +303,19 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	function data_add() {
 		return array(
 			array(
-				array( 'id' => __FUNCTION__ ),
+				$this->new_instance( array( 'id' => __FUNCTION__ ) ),
 				'id',
 				uniqid( __FUNCTION__ ),
 				__FUNCTION__,
 			),
 			array(
-				array(),
+				$this->new_instance( array() ),
 				'id',
 				__FUNCTION__,
 				__FUNCTION__,
 			),
 			array(
-				array(),
+				$this->new_instance( array() ),
 				array(
 					'id' => __FUNCTION__,
 					'foo' => 'bar',
@@ -332,7 +327,7 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 				),
 			),
 			array(
-				array( 'id' => __FUNCTION__ ),
+				$this->new_instance( array( 'id' => __FUNCTION__ ) ),
 				array(
 					'id' => uniqid( __FUNCTION__ ),
 					'foo' => 'bar',
@@ -366,13 +361,13 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	function data_set() {
 		return array(
 			'empty' => array(
-				array(),
+				$this->new_instance(),
 				'id',
 				__FUNCTION__,
 				__FUNCTION__,
 			),
 			'override string' => array(
-				array( 'id' => uniqid( __FUNCTION__ ) ),
+				$this->new_instance( array( 'id' => uniqid( __FUNCTION__ ) ) ),
 				'id',
 				__FUNCTION__,
 				__FUNCTION__,
@@ -389,35 +384,35 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	function data_unset() {
 		return array(
 			'string' => array(
-				array( 'id' => __FUNCTION__ ),
+				$this->new_instance( array( 'id' => __FUNCTION__ ) ),
 				'id',
 			),
 			'array' => array(
-				array( 'id' => __FUNCTION__ ),
+				$this->new_instance( array( 'id' => __FUNCTION__ ) ),
 				array( 'id' ),
 			),
 			'multiple strings' => array(
-				array(
+				$this->new_instance( array(
 					'foo' => uniqid(),
 					'bar' => uniqid(),
 					'zoo' => uniqid(),
-				),
+				) ),
 				array( 'foo', 'bar' ),
 			),
 			'multiple arrays' => array(
-				array(
+				$this->new_instance( array(
 					'foo' => range(  1, 10, 2 ),
 					'bar' => range( 10, 20, 2 ),
 					'zoo' => uniqid(),
-				),
+				) ),
 				array( 'foo', 'bar' ),
 			),
 			'multiple objects' => array(
-				array(
+				$this->new_instance( array(
 					'foo' => ( object ) range(  1, 10, 2 ),
 					'bar' => ( object ) range( 10, 20, 2 ),
 					'zoo' => uniqid(),
-				),
+				) ),
 				array( 'foo', 'bar' ),
 			),
 		);
@@ -443,63 +438,63 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	function data_isset() {
 		return array(
 			'string' => array(
-				array( 'foo' => uniqid() ),
+				$this->get_instance( array( 'foo' => uniqid() ) ),
 				'foo',
 			),
 			'false string' => array(
-				array( 'foo' => uniqid() ),
+				$this->get_instance(),
 				null,
 				'bar',
 			),
 			'array' => array(
-				array( 'foo' => range( 1, 5 ) ),
+				$this->new_instance( array( 'foo' => range( 1, 5 ) ) ),
 				'foo',
 			),
 			'null' => array(
-				array( 'foo' => null ),
+				$this->new_instance( array( 'foo' => null ) ),
 				null,
 				'foo',
 			),
 			'object' => array(
-				array( 'foo' => ( object ) range( 1, 5 ) ),
+				$this->new_instance( array( 'foo' => ( object ) range( 1, 5 ) ) ),
 				'foo',
 			),
 			'multiple strings' => array(
-				array(
+				$this->new_instance( array(
 					'foo' => uniqid(),
 					'bar' => uniqid(),
-				),
+				) ),
 				array( 'foo', 'bar' ),
 				'zoo',
 			),
 			'false multiple string' => array(
-				array( 'foo' => uniqid() ),
+				$this->new_instance( array( 'foo' => uniqid() ) ),
 				null,
 				array( 'foo', 'bar' ),
 			),
 			'multiple arrays' => array(
-				array(
+				$this->new_instance( array(
 					'foo' => range(  1, 10 ),
 					'bar' => range( 10, 20 ),
-				),
+				) ),
 				array( 'foo', 'bar' ),
 			),
 			'false multiple arrays' => array(
-				array( 'bar' => uniqid() ),
+				$this->new_instance( array( 'bar' => uniqid() ) ),
 				null,
 				array( 'foo', 'bar' ),
 			),
 			'multiple_objects' => array(
-				array(
+				$this->new_instance( array(
 					'foo' => ( object ) range(  1, 10 ),
 					'bar' => ( object ) range( 10, 20 ),
-				),
+				) ),
 				array( 'foo', 'bar' ),
 			),
 			'false multiple_objects' => array(
-				array(
+				$this->new_instance( array(
 					'bar' => ( object ) range( 10, 20 ),
-				),
+				) ),
 				null,
 				array( 'foo', 'bar' ),
 			)
@@ -546,32 +541,39 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	function data_get() {
 		return array(
 			'single' => array(
-				array(
-					'foo' => uniqid(),
+				$this->new_instance( array(
+					'foo' => __FUNCTION__,
 					'bar' => uniqid(),
-				),
+				) ),
 				'foo',
+				__FUNCTION__,
 			),
 			'multiple' => array(
-				array(
-					'foo' => uniqid(),
-					'bar' => uniqid(),
-				),
+				$this->new_instance( array(
+					'foo' => 'foo',
+					'bar' => 'bar',
+				) ),
 				array( 'foo', 'bar' ),
+				array(
+					'foo' => 'foo',
+					'bar' => 'bar',
+				),
 			),
 			'arrays' => array(
-				array(
+				$this->new_instance( array(
 					'foo' => range( 1, 10 ),
 					'bar' => range( 1, 20 ),
-				),
+				) ),
 				array( 'foo' ),
+				array( 'foo' => range( 1, 10 ) ),
 			),
 			'null' => array(
-				array(
+				$this->get_instance( array(
 					'foo' => uniqid(),
 					'bar' => uniqid(),
-				),
+				) ),
 				null,
+				$this->get_instance()->properties,
 			),
 		);
 	}
@@ -596,21 +598,21 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	function data_arrayAccess_exists() {
 		return array(
 			'null' => array(
-				array(),
+				$this->new_instance( array() ),
 				null,
 				'id',
 			),
 			'string' => array(
-				array( 'foo' => uniqid() ),
+				$this->new_instance( array( 'foo' => uniqid() ) ),
 				'foo',
 				'bar',
 			),
 			'array' => array(
-				array( 'foo' => range( 1, 5 ) ),
+				$this->new_instance( array( 'foo' => range( 1, 5 ) ) ),
 				'foo',
 			),
 			'object' => array(
-				array( 'foo' => ( object ) range( 1, 5 ) ),
+				$this->new_instance( array( 'foo' => ( object ) range( 1, 5 ) ) ),
 				'foo',
 				'zoo',
 			),
@@ -642,32 +644,32 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	function data_arrayAccess_set() {
 		return array(
 			'string' => array(
-				array(),
+				$this->new_instance( array() ),
 				'foo',
 				uniqid(),
 			),
 			'string override' => array(
-				array( 'foo' => __FUNCTION__ ),
+				$this->new_instance( array( 'foo' => __FUNCTION__ ) ),
 				'foo',
 				uniqid(),
 			),
 			'array' => array(
-				array(),
+				$this->new_instance( array() ),
 				'foo',
 				range( 1, 5 ),
 			),
 			'array override' => array(
-				array( 'foo' => __FUNCTION__ ),
+				$this->new_instance( array( 'foo' => __FUNCTION__ ) ),
 				'foo',
 				range( 5, 10 ),
 			),
 			'object' => array(
-				array(),
+				$this->new_instance( array() ),
 				'foo',
 				( object ) range( 5, 10 ),
 			),
 			'object override' => array(
-				array( 'foo' => range( 1, 5 ) ),
+				$this->new_instance( array( 'foo' => range( 1, 5 ) ) ),
 				'foo',
 				( object ) range( 10, 20 ),
 			),

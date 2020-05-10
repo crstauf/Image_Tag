@@ -85,8 +85,13 @@ class Image_Tag_Properties implements ArrayAccess {
 	 * @param string $property
 	 * @uses static::get()
 	 * @return mixed
+	 *
+	 * @todo add test for accessing 'properties' and 'defaults'
 	 */
 	function __get( string $property ) {
+		if ( in_array( $property, array( 'properties', 'defaults' ) ) )
+			return $this->$property;
+
 		return $this->get( $property, 'edit' );
 	}
 
