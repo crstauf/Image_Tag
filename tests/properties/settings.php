@@ -27,7 +27,10 @@ class Image_Tag_Settings_Test extends Image_Tag_Properties_Tests {
 	 * @group constant
 	 */
 	function test_defaults_constant() {
-		$this->markTestIncomplete();
+		$this->assertSame( array(
+			'before_output' => array(),
+			 'after_output' => array(),
+		), constant( $this->class_name() . '::DEFAULTS' ) );
 	}
 
 	function data__construct() {

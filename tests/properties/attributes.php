@@ -51,13 +51,23 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 	/**
 	 * Test Image_Tag_Attribute::set() function.
 	 *
-	 * @covers ::set_class_attribute()
-	 *
 	 * @see self::test_set()
 	 * @uses Image_Tag_Properties_Test::data_set()
+	 * @return array[]
 	 */
 	function data_set() {
 		$data = parent::data_set();
+		$data = array_merge( $data, $this->data_set_class() );
+		return $data;
+	}
+	
+	/**
+	 * Test data for Image_Tag_Attribute::set_class_attribute().
+	 *
+	 * @return array[]
+	 */
+	protected function data_set_class() {
+		$data = array();
 
 		$data['class strings'] = array(
 			$this->new_instance( array() ),
@@ -130,6 +140,15 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 	 */
 	function test_set( Image_Tag_Properties $instance, $set_properties, $value = null, $expected = null ) {
 		parent::test_set( $instance, $set_properties, $value, $expected );
+	}
+
+	/**
+	 * @todo add test data for get_class_attribute(), get_style_attribute()
+	 * and get_array_attribute()
+	 */
+	function data_get() {
+		$this->markTestIncomplete();
+		return parent::data_get();
 	}
 
 }
