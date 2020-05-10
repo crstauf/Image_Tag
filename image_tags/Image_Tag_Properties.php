@@ -192,10 +192,21 @@ class Image_Tag_Properties implements ArrayAccess {
 	 */
 	function set( $properties, $value = null ) {
 		is_string( $properties )
-			? $this->set_property(   $properties, $value )
-			: $this->set_properties( $properties );
+			? $this->set_property( $properties, $value )
+			: $this->set_properties( ( array ) $properties );
 
 		return $this;
+	}
+
+	/**
+	 * Set properties.
+	 *
+	 * @param array $properties
+	 * @uses static::set_property()
+	 */
+	protected function set_properties( array $properties ) {
+		foreach ( $properties as $property => $value )
+			$this->set_property( $property, $value );
 	}
 
 	/**
@@ -235,17 +246,6 @@ class Image_Tag_Properties implements ArrayAccess {
 	 */
 	final function _set( string $property, $value ) {
 		$this->properties[$property] = $value;
-	}
-
-	/**
-	 * Set properties.
-	 *
-	 * @param array $properties
-	 * @uses static::set_property()
-	 */
-	protected function set_properties( array $properties ) {
-		foreach ( $properties as $property => $value )
-			$this->set_property( $property, $value );
 	}
 
 	/**

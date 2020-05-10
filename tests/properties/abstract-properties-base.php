@@ -123,6 +123,11 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 * @dataProvider data__get
 	 */
 	function test__get( string $property, $value ) {
+		if ( in_array( $property, array( 'properties', 'defaults' ) ) ) {
+			$this->assertIsArray( $this->get_instance( array() )->$property );
+			return;
+		}
+
 		if ( is_null( $value ) ) {
 			$instance = $this->new_instance();
 			$this->assertNull( $instance->$property );
@@ -231,13 +236,15 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_set
 	 */
-	function test_set( Image_Tag_Properties $instance, $set_properties, $value = null ) {
+	function test_set( Image_Tag_Properties $instance, $set_properties, $value = null, $expected = null ) {
 		if ( is_string( $set_properties ) ) {
 			$this->assertNotEquals( $value, $instance->$set_properties );
 
-			$instance->set( $set_properties, $value );
+			if ( is_null( $expected ) )
+				$expected = $value;
 
-			$this->assertSame( $value, $instance->$set_properties );
+			$instance->set( $set_properties, $value );
+			$this->assertSame( $expected, $instance->$set_properties );
 			return;
 		}
 
@@ -246,8 +253,11 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 
 		$instance->set( $set_properties );
 
+		if ( is_null( $expected ) )
+			$expected = $set_properties;
+
 		foreach ( $set_properties as $property => $value )
-			$this->assertSame( $value, $instance->$property );
+			$this->assertSame( $expected[$property], $instance->$property );
 
 	}
 

@@ -67,6 +67,33 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 		return $value;
 	}
 
+	/**
+	 * Recursively explode strings in a multi-dimensional array.
+	 *
+	 * @param array $array
+	 * @param string $delimeter
+	 * @uses static::explode_deep()
+	 * @return string[]
+	 */
+	static function explode_deep( array $array, string $delimeter = ',' ) {
+		$array_of_strings = array();
+
+		foreach ( $array as $item )
+			if ( is_array( $item ) )
+				$array_of_strings = array_merge(
+					$array_of_strings,
+					static::explode_deep( $item, $delimeter )
+				);
+
+			else if ( is_string( $item ) )
+				$array_of_strings = array_merge(
+					$array_of_strings,
+					explode( $delimeter, $item )
+				);
+
+		return $array_of_strings;
+	}
+
 
 	/*
 	 ######  ######## ########
@@ -90,8 +117,8 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 		if ( is_string( $classes ) )
 			$classes = explode( ' ', trim( $classes ) );
 
-		if ( empty( $classes ) )
-			$classes = array();
+		else if ( is_array( $classes ) )
+			$classes = static::explode_deep( $classes, ' ' );
 
 		# If no array, bail.
 		if ( !is_array( $classes ) ) {
