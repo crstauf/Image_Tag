@@ -12,12 +12,12 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 * @uses self::class_name()
 	 * @return Image_Tag_Properties
 	 */
-	function new_instance( ...$params ) {
+	protected function new_instance( ...$params ) {
 		$class_name = $this->class_name();
 		return new $class_name( ...$params );
 	}
 
-	function get_instance( ...$params ) {
+	protected function get_instance( ...$params ) {
 		static $instance = null;
 
 		if ( !empty( $params ) )
@@ -29,6 +29,13 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 		return $instance;
 	}
 
+	/**
+	 * Test specific methods return object to allow for chaining.
+	 *
+	 * @covers ::add()
+	 * @covers ::set()
+	 * @group instance
+	 */
 	function test_chaining() {
 		$instance = $this->new_instance();
 		$this->assertInstanceOf( $this->class_name(), $instance->add( 'id', __FUNCTION__ ) );
@@ -82,7 +89,8 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data__construct
 	 */
-	function test__construct( Image_Tag_Properties $instance, array $expected ) {
+	function test__construct( $properties, array $defaults, array $expected ) {
+		$instance = $this->new_instance( $properties, $defaults );
 		$this->assertSame( $expected, $instance->get( null, 'edit' ) );
 	}
 
@@ -223,9 +231,9 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_set
 	 */
-	function test_set( Image_Tag_Properties $instance, $set_properties, $value, $expected ) {
+	function test_set( Image_Tag_Properties $instance, $set_properties, $value = null ) {
 		if ( is_string( $set_properties ) ) {
-			$this->assertNotEquals( $expected, $instance->$set_properties );
+			$this->assertNotEquals( $value, $instance->$set_properties );
 
 			$instance->set( $set_properties, $value );
 

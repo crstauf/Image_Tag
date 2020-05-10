@@ -63,7 +63,8 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	function data__construct() {
 		$data = array(
 			'empty' => array(
-				$this->new_instance( array() ),
+				array(),
+				array(),
 				array(),
 			),
 		);
@@ -73,7 +74,8 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 			'rand' => mt_rand( 50, 200 ),
 		);
 		$data['properties'] = array(
-			$this->new_instance( $properties ),
+			$properties,
+			array(),
 			$properties,
 		);
 
@@ -81,20 +83,23 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 			'foo' => __FUNCTION__,
 		);
 		$data['defaults-overridden'] = array(
-			$this->new_instance( $properties, $defaults ),
+			$properties,
+			$defaults,
 			$properties,
 		);
 
 		$defaults['bar'] = range( 1, 5 );
 		$data['defaults'] = array(
-			$this->new_instance( $properties, $defaults ),
+			$properties,
+			$defaults,
 			wp_parse_args( $properties, $defaults ),
 		);
 
 
 		$instance = $this->new_instance( $properties, $defaults );
 		$data['self'] = array(
-			$this->new_instance( $instance ),
+			$instance,
+			array(),
 			wp_parse_args( $properties, $defaults ),
 		);
 
@@ -362,15 +367,20 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 		return array(
 			'empty' => array(
 				$this->new_instance(),
-				'id',
-				__FUNCTION__,
+				'foo',
 				__FUNCTION__,
 			),
 			'override string' => array(
-				$this->new_instance( array( 'id' => uniqid( __FUNCTION__ ) ) ),
-				'id',
+				$this->new_instance( array( 'foo' => uniqid( __FUNCTION__ ) ) ),
+				'foo',
 				__FUNCTION__,
-				__FUNCTION__,
+			),
+			'multiple' => array(
+				$this->new_instance( array( 'foo' => uniqid( __FUNCTION__ ) ) ),
+				array(
+					'foo' => __FUNCTION__,
+					'bar' => __METHOD__,
+				),
 			),
 		);
 	}
