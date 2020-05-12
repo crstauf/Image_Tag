@@ -66,6 +66,39 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 	*/
 
 	/**
+	 * Test Image_Tag_Attributes::__toString().
+	 *
+	 * @covers Image_Tag_Attributes::__toString()
+	 * @group instance
+	 * @group magic
+	 * @group output
+	 */
+	function test__toString() {
+		$attributes = array(
+			'class' => array( 'foo', 'bar' ),
+			'id' => __FUNCTION__,
+			'sizes' => '( max-width: 800px ) 50vw, 100vw',
+			'data-preloaded' => 1, // test attribute not in DEFAULTS
+		);
+
+		$defaults = array(
+			'width' => 1600,
+			'height' => 900,
+		);
+
+		$instance = $this->new_instance( $attributes, $defaults );
+
+		$expected = 'id="' . esc_attr( __FUNCTION__ ) . '" ' .
+			'class="foo bar" ' .
+			'sizes="( max-width: 800px ) 50vw, 100vw" ' .
+			'width="1600" ' .
+			'height="900" ' .
+			'data-preloaded="1"';
+
+		$this->assertsame( $expected, $instance->__toString() );
+	}
+
+	/**
 	 * Data provider for Image_Tag_Properties_Test::test__set().
 	 *
 	 * Set expected value to flattened original value.

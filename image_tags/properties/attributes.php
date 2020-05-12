@@ -32,6 +32,38 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 	);
 
 	/**
+	 * @var string[] Order of attributes.
+	 *
+	 * @todo add test
+	 */
+	const ORDER = array(
+		'id',
+		'class',
+		'src',
+		'data-src',
+		'srcset',
+		'data-srcset',
+		'sizes',
+		'data-sizes',
+		'width',
+		'height',
+		'title',
+		'alt',
+		'style',
+	);
+
+
+	/*
+	 ######  ########    ###    ######## ####  ######
+	##    ##    ##      ## ##      ##     ##  ##    ##
+	##          ##     ##   ##     ##     ##  ##
+	 ######     ##    ##     ##    ##     ##  ##
+	      ##    ##    #########    ##     ##  ##
+	##    ##    ##    ##     ##    ##     ##  ##    ##
+	 ######     ##    ##     ##    ##    ####  ######
+	*/
+
+	/**
 	 * Remove typical leading/trailing characters from property.
 	 *
 	 * @see trim()
@@ -101,6 +133,43 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 		return $flattened_array;
 	}
 
+
+	/*
+	##     ##    ###     ######   ####  ######
+	###   ###   ## ##   ##    ##   ##  ##    ##
+	#### ####  ##   ##  ##         ##  ##
+	## ### ## ##     ## ##   ####  ##  ##
+	##     ## ######### ##    ##   ##  ##
+	##     ## ##     ## ##    ##   ##  ##    ##
+	##     ## ##     ##  ######   ####  ######
+	*/
+
+	/**
+	 * To string.
+	 *
+	 * @uses static::get()
+	 * @return string
+	 */
+	function __toString() {
+		$attributes = $this->get( null, 'view' );
+		$array = array();
+
+		# Add attributes to string in specified order.
+		foreach ( static::ORDER as $attribute )
+			if ( isset( $attributes[$attribute] ) )
+				$array[$attribute] = sprintf( '%s="%s"', $attribute, esc_attr( $this->get( $attribute ) ) );
+
+		# Add remaining attributes.
+		$diff = array_diff_key( $attributes, array_flip( static::ORDER ) );
+		foreach ( $diff as $attribute => $value )
+			$array[$attribute] = sprintf( '%s="%s"', $attribute, esc_attr( $value ) );
+
+		# Apply filters.
+		$array  = apply_filters( 'image_tag/attributes/output/array', $array, $this );
+		$string = apply_filters( 'image_tag/attributes/output', implode( ' ', $array ), $array, $this );
+
+		return $string;
+	}
 
 	/*
 	 ######  ######## ########
@@ -182,7 +251,15 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 	 * @return string|array
 	 */
 	function get( $attributes = null, string $context = 'view' ) {
-		return parent::get( $attributes, $context );
+		$value = parent::get( $attributes, $context );
+
+		if (
+			'edit' === $context
+			|| !is_array( $value )
+		)
+			return $value;
+
+		return array_filter( $value );
 	}
 
 	/**

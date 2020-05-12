@@ -84,6 +84,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 * @param mixed $expected
 	 *
 	 * @covers ::__construct()
+	 * @group instance
 	 * @group magic
 	 * @group construct
 	 *
@@ -101,6 +102,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 * @param mixed $expected
 	 *
 	 * @covers ::__set()
+	 * @group instance
 	 * @group magic
 	 * @group set
 	 *
@@ -122,6 +124,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 * @param mixed $expected
 	 *
 	 * @covers ::__get()
+	 * @group instance
 	 * @group magic
 	 * @group get
 	 *
@@ -153,6 +156,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 * @param bool $expected
 	 *
 	 * @covers ::__isset()
+	 * @group instance
 	 * @group magic
 	 * @group isset
 	 *
@@ -169,6 +173,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 * @param string $property
 	 *
 	 * @covers ::__unset()
+	 * @group instance
 	 * @group magic
 	 * @group unset
 	 *
