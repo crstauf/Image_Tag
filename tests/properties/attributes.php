@@ -118,6 +118,17 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 	 */
 	function data_set() {
 		$data = parent::data_set();
+		$data = array_merge( $data, $this->data_set_class() );
+		return $data;
+	}
+
+	/**
+	 * Test data for Image_Tag_Attribute::set_class_attribute().
+	 *
+	 * @return array[]
+	 */
+	protected function data_set_class() {
+		$data = array();
 
 		$data['class strings'] = array(
 			$this->new_instance( array() ),

@@ -38,7 +38,7 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 	 * @param mixed Attribute value (passed by reference).
 	 * @return mixed
 	 */
-	static function trim( &$value ) {
+	protected static function trim( &$value ) {
 
 		$mask  = " \t\n\r\0\x0B"; // from PHP's trim()
 		$mask .= ','; // for sizes and srcset attributes
@@ -75,7 +75,7 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 	 * @uses static::explode_deep()
 	 * @return array
 	 */
-	static function explode_deep( array $array, string $delimeter = ',' ) {
+	protected static function explode_deep( array $array, string $delimeter = ',' ) {
 		$flattened_array = array();
 
 		foreach ( $array as $item )
@@ -178,6 +178,7 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 	 *
 	 * @param string|array $keys
 	 * @param string $context view|edit
+	 * @uses Image_Tag_Properties::get()
 	 * @return string|array
 	 */
 	function get( $attributes = null, string $context = 'view' ) {
@@ -187,13 +188,14 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 	/**
 	 * Get "class" attribute in view context.
 	 *
-	 * @uses static::get()
+	 * @uses static::_get()
 	 * @return string
 	 */
 	protected function get_class_attribute_for_view() {
 		$classes = $this->_get( 'class' );                            // get array of classes
 		$classes = array_unique( $classes );                          // remove duplicates
 		$classes = array_map( array( __CLASS__, 'trim' ), $classes ); // trim items in array
+		$classes = array_filter( $classes );
 		return implode( ' ', $classes );
 	}
 
