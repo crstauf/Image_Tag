@@ -98,6 +98,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 * @param Image_Tag_Properties $instance
 	 * @param string $property
 	 * @param mixed $value
+	 * @param mixed $expected
 	 *
 	 * @covers ::__set()
 	 * @group magic
@@ -105,16 +106,20 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data__set
 	 */
-	function test__set( Image_Tag_Properties $instance, string $property, $value ) {
-		$this->assertNotEquals( $value, $instance->$property );
+	function test__set( Image_Tag_Properties $instance, string $property, $value, $expected = null ) {
+		if ( is_null( $expected ) )
+			$expected = $value;
+
+		$this->assertNotEquals( $expected, $instance->$property );
 
 		$instance->$property = $value;
-		$this->assertSame( $value, $instance->$property );
+		$this->assertSame( $expected, $instance->$property );
 	}
 
 	/**
 	 * @param string $property
 	 * @param mixed $value
+	 * @param mixed $expected
 	 *
 	 * @covers ::__get()
 	 * @group magic
@@ -122,7 +127,10 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data__get
 	 */
-	function test__get( string $property, $value ) {
+	function test__get( string $property, $value, $expected = null ) {
+		if ( is_null( $expected ) )
+			$expected = $value;
+
 		if ( in_array( $property, array( 'properties', 'defaults' ) ) ) {
 			$this->assertIsArray( $this->get_instance( array() )->$property );
 			return;
@@ -136,7 +144,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 
 		$properties = array( $property => $value );
 		$instance = $this->new_instance( $properties );
-		$this->assertSame( $value, $instance->$property );
+		$this->assertSame( $expected, $instance->$property );
 	}
 
 	/**
@@ -353,6 +361,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 * @param Image_Tag_Properties $instance
 	 * @param string|array $get_properties
 	 * @param mixed $expected
+	 * @param string $context
 	 *
 	 * @covers ::get()
 	 * @covers ::get_properties()
@@ -363,21 +372,21 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_get
 	 */
-	function test_get( Image_Tag_Properties $instance, $get_properties, $expected ) {
+	function test_get( Image_Tag_Properties $instance, $get_properties, $expected, $context = 'edit' ) {
 		if ( is_string( $get_properties ) ) {
-			$this->assertSame( $expected, $instance->get( $get_properties, 'edit' ) );
+			$this->assertSame( $expected, $instance->get( $get_properties, $context ) );
 			return;
 		}
 
 		if ( is_null( $get_properties ) ) {
-			$this->assertSame( $expected, $instance->get( null, 'edit' ) );
+			$this->assertSame( $expected, $instance->get( null, $context ) );
 			return;
 		}
 
 		$actual = array();
 
 		foreach ( $get_properties as $property )
-			$actual[$property] = $instance->get( $property, 'edit' );
+			$actual[$property] = $instance->get( $property, $context );
 
 		$this->assertSame( $expected, $actual );
 	}

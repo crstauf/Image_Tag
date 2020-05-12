@@ -70,28 +70,35 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 	/**
 	 * Recursively explode strings in a multi-dimensional array.
 	 *
-	 * @param array $array
+	 * @param array[] $array
 	 * @param string $delimeter
 	 * @uses static::explode_deep()
-	 * @return string[]
+	 * @return array
 	 */
 	static function explode_deep( array $array, string $delimeter = ',' ) {
-		$array_of_strings = array();
+		$flattened_array = array();
 
 		foreach ( $array as $item )
+
+			# If an array, do recursive!
 			if ( is_array( $item ) )
-				$array_of_strings = array_merge(
-					$array_of_strings,
+				$flattened_array = array_merge(
+					$flattened_array,
 					static::explode_deep( $item, $delimeter )
 				);
 
+			# If string, explode and merge.
 			else if ( is_string( $item ) )
-				$array_of_strings = array_merge(
-					$array_of_strings,
+				$flattened_array = array_merge(
+					$flattened_array,
 					explode( $delimeter, $item )
 				);
 
-		return $array_of_strings;
+			# If something else, add to array.
+			else
+				$flattened_array[] = $item;
+
+		return $flattened_array;
 	}
 
 
@@ -108,31 +115,51 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 	/**
 	 * Set "class" attribute.
 	 *
-	 * @param string|array $value
-	 * @uses Image_Tag::trim()
+	 * @param string|array $classes
+	 * @uses static::set_array_attribute()
+	 */
+	protected function set_class_attribute( $classes ) {
+		$this->set_array_attribute( 'class', $classes, ' ' );
+	}
+
+	/**
+	 * Set array attribute.
+	 *
+	 * @param string $attribute
+	 * @param mixed $value
+	 * @param string $delimeter
 	 * @uses static::trim()
 	 * @uses static::_set()
 	 */
-	protected function set_class_attribute( $classes ) {
-		if ( is_string( $classes ) )
-			$classes = explode( ' ', trim( $classes ) );
+	protected function set_array_attribute( string $attribute, $value, string $delimeter = ',' ) {
 
-		else if ( is_array( $classes ) )
-			$classes = static::explode_deep( $classes, ' ' );
+		# If value is empty, set empty array.
+		if ( empty( $value ) ) {
+			$this->_set( $attribute, array() );
+			return;
+		}
 
-		# If no array, bail.
-		if ( !is_array( $classes ) ) {
-			trigger_error( sprintf( 'Value of type <code>%s</code> is not valid for <code>%s</code> attribute.', gettype( $classes ), 'class' ) );
+		# If value is a string, explode!
+		if ( is_string( $value ) )
+			$value = explode( $delimeter, $value );
+
+		# If value is an array, explode deeply!
+		else if ( is_array( $value ) )
+			$value = static::explode_deep( $value, $delimeter );
+
+		# If not an array, alert and bail.
+		if ( !is_array( $value ) ) {
+			trigger_error( sprintf( 'Value of type <code>%s</code> is not valid for <code>%s</code> attribute.', gettype( $value ), $attribute ) );
 			return;
 		}
 
 		# Cleanup.
-		$classes = static::trim( $classes ); // remove excess characters from items
-		$classes = array_filter( $classes ); // remove empty items
-		$classes = array_values( $classes ); // reset array keys
+		$value = static::trim( $value ); // remove excess characters from items
+		$value = array_filter( $value ); // remove empty items
+		$value = array_values( $value ); // reset array keys
 
-		# Set.
-		$this->_set( 'class', $classes );
+		# Set value.
+		$this->_set( $attribute, $value );
 	}
 
 
@@ -154,15 +181,7 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 	 * @return string|array
 	 */
 	function get( $attributes = null, string $context = 'view' ) {
-		$values = parent::get( $attributes, $context );
-
-		if (
-			'edit' === $context
-			|| !is_array( $values )
-		)
-			return $values;
-
-		return array_filter( $values );
+		return parent::get( $attributes, $context );
 	}
 
 	/**
@@ -171,19 +190,21 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 	 * @uses static::get()
 	 * @return string
 	 */
-	protected function get_class_attribute() {
-		$classes = $this->_get( 'class' );
-		$classes = array_unique( $classes );
+	protected function get_class_attribute_for_view() {
+		$classes = $this->_get( 'class' );                            // get array of classes
+		$classes = array_unique( $classes );                          // remove duplicates
+		$classes = array_map( array( __CLASS__, 'trim' ), $classes ); // trim items in array
 		return implode( ' ', $classes );
 	}
 
 	/**
 	 * Get "style" attribute in view context.
 	 *
+	 * @uses static::get_array_attribute_for_view()
 	 * @return string
 	 */
-	protected function get_style_attribute() {
-		return $this->get_array_attribute( 'style', '; ' );
+	protected function get_style_attribute_for_view() {
+		return $this->get_array_attribute_for_view( 'style', '; ' );
 	}
 
 	/**
@@ -193,8 +214,9 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 	 * @param string $glue
 	 * @return string
 	 */
-	protected function get_array_attribute( string $attribute, string $glue = ', ' ) {
+	protected function get_array_attribute_for_view( string $attribute, string $glue = ', ' ) {
 		$value = $this->_get( $attribute );
+		$value = array_map( array( __CLASS__, 'trim' ), $value );
 		return implode( $glue, $value );
 	}
 

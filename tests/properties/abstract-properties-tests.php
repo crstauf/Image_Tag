@@ -7,6 +7,8 @@ require_once 'abstract-properties-base.php';
  */
 abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 
+	const DEFAULTS = array();
+
 	/**
 	 * Get the class name to run tests against.
 	 *
@@ -22,11 +24,13 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	abstract function test_name_constant();
 
 	/**
-	 * Test Image_Tag_Properties::DEFAULTS constant value.
+	 * Test Image_Tag_Properties::DEFAULTS constant.
 	 *
 	 * @group constant
 	 */
-	abstract function test_defaults_constant();
+	function test_defaults_constant() {
+		$this->assertSame( static::DEFAULTS, constant( $this->class_name() . '::DEFAULTS' ) );
+	}
 
 	/**
 	 * Data provider for Image_Tag_Properties_Test::test_function_name().
@@ -64,8 +68,8 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 		$data = array(
 			'empty' => array(
 				array(),
-				array(),
-				array(),
+				static::DEFAULTS,
+				static::DEFAULTS,
 			),
 		);
 
@@ -75,17 +79,17 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 		);
 		$data['properties'] = array(
 			$properties,
-			array(),
-			$properties,
+			static::DEFAULTS,
+			wp_parse_args( $properties, static::DEFAULTS ),
 		);
 
-		$defaults = array(
+		$defaults = wp_parse_args( array(
 			'foo' => __FUNCTION__,
-		);
+		), static::DEFAULTS );
 		$data['defaults-overridden'] = array(
 			$properties,
 			$defaults,
-			$properties,
+			wp_parse_args( $properties, static::DEFAULTS ),
 		);
 
 		$defaults['bar'] = range( 1, 5 );
@@ -94,7 +98,6 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 			$defaults,
 			wp_parse_args( $properties, $defaults ),
 		);
-
 
 		$instance = $this->new_instance( $properties, $defaults );
 		$data['self'] = array(
@@ -386,6 +389,12 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 		return array(
 
 			'empty' => array(
+				$this->new_instance(),
+				'foo',
+				array(),
+			),
+
+			'string' => array(
 				$this->new_instance(),
 				'foo',
 				__FUNCTION__,

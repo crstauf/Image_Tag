@@ -228,10 +228,23 @@ class Image_Tag_Properties implements ArrayAccess {
 		}
 
 		# Override by property type.
-		$method_name = sprintf( $format, gettype( $value ) );
-		if ( method_exists( $this, $method_name ) ) {
-			call_user_func( array( $this, $method_name ) );
-			return;
+		$types = array();
+
+		# Get type from defaults.
+		if ( array_key_exists( $property, static::DEFAULTS ) )
+			$types[] = gettype( static::DEFAULTS[$property] );
+
+		# Add type of setting value.
+		$types[] = gettype( $value );
+
+		# Check each type for a defined method, and call the first existing.
+		foreach ( $types as $type ) {
+			$method_name = sprintf( $format, $type );
+
+			if ( method_exists( $this, $method_name ) ) {
+				call_user_func( array( $this, $method_name ), $property, $value );
+				return;
+			}
 		}
 
 		# Set directly.
@@ -372,7 +385,7 @@ class Image_Tag_Properties implements ArrayAccess {
 		if ( 'edit' === $context )
 			return $this->_get( $property );
 
-		$format = sprintf( 'get_%%s_%s', static::NAME );
+		$format = sprintf( 'get_%%s_%s_for_view', static::NAME );
 
 		# Override by property name.
 		$method_name = sprintf( $format, static::function_name( $property ) );
