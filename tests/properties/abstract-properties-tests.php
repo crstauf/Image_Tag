@@ -601,6 +601,12 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	function data_get() {
 		return array(
 
+			'empty' => array(
+				$this->new_instance(),
+				'does-not-exist',
+				null,
+			),
+
 			'single' => array(
 				$this->new_instance( array(
 					'foo' => __FUNCTION__,
@@ -638,6 +644,13 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 				) ),
 				null,
 				$this->get_instance()->properties,
+			),
+
+			'view' => array(
+				$this->get_instance( array( 'foo' => __FUNCTION__ ) ),
+				'foo',
+				__FUNCTION__,
+				'view',
 			),
 
 		);

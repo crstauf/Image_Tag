@@ -55,7 +55,6 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 		$this->assertSame( 'attribute', constant( $this->class_name() . '::NAME' ) );
 	}
 
-
 	/*
 	##     ##    ###     ######   ####  ######
 	###   ###   ## ##   ##    ##   ##  ##    ##
@@ -118,17 +117,12 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 	 */
 	function data_set() {
 		$data = parent::data_set();
-		$data = array_merge( $data, $this->data_set_class() );
-		return $data;
-	}
 
-	/**
-	 * Test data for Image_Tag_Attribute::set_class_attribute().
-	 *
-	 * @return array[]
-	 */
-	protected function data_set_class() {
-		$data = array();
+		$data['srcset'] = array(
+			$this->new_instance(),
+			'sizes',
+			array( '( max-width: 800px ) 100vw', '50vw' ),
+		);
 
 		$data['class strings'] = array(
 			$this->new_instance( array() ),
@@ -169,6 +163,7 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 						'foo4',
 						'bar4',
 					),
+					5, // to test direct add to $flattened_array in explode_deep()
 				),
 			),
 			null,
@@ -182,6 +177,7 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 					'bar3',
 					'foo4',
 					'bar4',
+					5,
 				),
 			),
 		);
@@ -195,6 +191,8 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 	 * @covers Image_Tag_Properties::set()
 	 * @covers Image_Tag_Properties::set_properties()
 	 * @covers Image_Tag_Properties::set_property()
+	 * @covers Image_Tag_Attributes::trim()
+	 * @covers Image_Tag_Attributes::explode_deep()
 	 * @covers Image_Tag_Attributes::set_class_attribute()
 	 * @covers Image_Tag_Attributes::set_array_attribute()
 	 *
@@ -273,6 +271,7 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 	 * @covers Image_Tag_Properties::get_properties()
 	 * @covers Image_Tag_Properties::get_property()
 	 * @covers Image_Tag_Attributes::get()
+	 * @covers Image_Tag_Attributes::trim()
 	 * @covers Image_Tag_Attributes::get_class_attribute_for_view()
 	 * @covers Image_Tag_Attributes::get_style_attribute_for_view()
 	 * @covers Image_Tag_Attributes::get_array_attribute_for_view()
