@@ -19,6 +19,10 @@
 			<file>./tests/properties/settings.php</file>
 		</testsuite>
 
+		<testsuite name="plugin">
+			<file>./tests/Image_Tag_Plugin_Test.php</file>
+		</testsuite>
+
 	</testsuites>
 
 	<filter>

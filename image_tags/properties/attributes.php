@@ -53,21 +53,6 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 		'style',
 	);
 
-	/**
-	 * Force attributes to a certain value.
-	 *
-	 * @see static::__toString()
-	 */
-	protected function force( &$attributes ) {
-
-		# Always have an "alt" at1tribute.
-		// if ( empty( $attributes['alt'] ) )
-		// 	$attributes['alt'] = '';
-
-		# Allow others to force attributes.
-		do_action_ref_array( 'image_tag/attributes/force', array( &$attributes, $this ) );
-	}
-
 
 	/*
 	 ######  ########    ###    ######## ####  ######
