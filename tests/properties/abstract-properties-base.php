@@ -41,6 +41,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 		$this->assertInstanceOf( $this->class_name(), $instance->add( 'id', __FUNCTION__ ) );
 		$this->assertInstanceOf( $this->class_name(), $instance->set( 'id', __FUNCTION__ ) );
 		$this->assertInstanceOf( $this->class_name(), $instance->unset( 'id' ) );
+		$this->assertInstanceOf( $this->class_name(), $instance->add_to( 'id', __FUNCTION__ ) );
 	}
 
 	/**
@@ -368,6 +369,60 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 		if ( !is_null( $not_exist_properties ) )
 			$this->assertFalse( $instance->exists( $not_exist_properties ) );
 	}
+
+
+	/*
+	   ###    ########  ########     ########  #######
+	  ## ##   ##     ## ##     ##       ##    ##     ##
+	 ##   ##  ##     ## ##     ##       ##    ##     ##
+	##     ## ##     ## ##     ##       ##    ##     ##
+	######### ##     ## ##     ##       ##    ##     ##
+	##     ## ##     ## ##     ##       ##    ##     ##
+	##     ## ########  ########        ##     #######
+	*/
+
+	/**
+	 * @param Image_Tag_Properties $instance
+	 * @param string|array $add_properties
+	 * @param mixed $value
+	 * @param string|array $expected
+	 *
+	 * @covers ::add_to()
+	 * @covers ::add_to_properties()
+	 * @covers ::add_to_property()
+	 * @covers ::add_to_array_property()
+	 * @covers ::add_to_string_property()
+	 * @covers ::add_to_integer_property()
+	 * @covers ::add_to_float_property()
+	 * @covers ::add_to_double_property()
+	 * @group instance
+	 * @group add_to
+	 *
+	 * @dataProvider data_add_to
+	 */
+	function test_add_to( Image_Tag_Properties $instance, $add_properties, $value, $expected ) {
+		if ( is_string( $add_properties ) ) {
+			$this->assertNotSame( $expected, $instance->$add_properties );
+			$instance->add_to( $add_properties, $value );
+			$this->assertSame( $expected, $instance->$add_properties );
+			return;
+		}
+
+		foreach ( $add_properties as $property => $value )
+			$this->assertNotSame( $expected[$property], $instance->$property );
+
+		$instance->add_to( $add_properties );
+
+		foreach ( $expected as $property => $expected_value ) {
+			if ( is_double( $expected_value ) ) {
+				$this->assertEqualsWithDelta( $expected_value, $instance->$property, 0.00001 );
+				continue;
+			}
+
+			$this->assertSame( $expected_value, $instance->$property );
+		}
+	}
+
 
 	/*
 	 ######   ######## ########

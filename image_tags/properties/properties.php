@@ -327,6 +327,160 @@ class Image_Tag_Properties implements ArrayAccess, Countable, Iterator {
 
 
 	/*
+	   ###    ########  ########     ########  #######
+	  ## ##   ##     ## ##     ##       ##    ##     ##
+	 ##   ##  ##     ## ##     ##       ##    ##     ##
+	##     ## ##     ## ##     ##       ##    ##     ##
+	######### ##     ## ##     ##       ##    ##     ##
+	##     ## ##     ## ##     ##       ##    ##     ##
+	##     ## ########  ########        ##     #######
+	*/
+
+	/**
+	 * Add values to existing properties.
+	 *
+	 * @param string|array $properties
+	 * @param mixed $value
+	 * @uses self::add_to_property()
+	 * @uses self::add_to_properties()
+	 * @return $this
+	 */
+	function add_to( $properties, $value = null ) {
+		is_string( $properties )
+			? $this->add_to_property( $properties, $value )
+			: $this->add_to_properties( ( array ) $properties );
+
+		return $this;
+	}
+
+	/**
+	 * Add values to multiple existing properties.
+	 *
+	 * @param array $properties
+	 * @uses static::add_to_property()
+	 */
+	protected function add_to_properties( array $properties ) {
+		foreach ( $properties as $property => $value )
+			$this->add_to_property( $property, $value );
+	}
+
+	/**
+	 * Add value to existing property.
+	 *
+	 * @param string $property
+	 * @param mixed $add_value
+	 * @uses static::get_property()
+	 * @uses static::set_property()
+	 */
+	protected function add_to_property( string $property, $add_value ) {
+		$value = $this->get_property( $property, 'edit' );
+
+		# If property is empty, set.
+		if ( empty( $value ) ) {
+			$this->set_property( $property, $add_value );
+			return;
+		}
+
+		$format = 'add_to_%s_%s';
+
+		# Override by property name.
+		$method_name = sprintf( $format, static::function_name( $property ), static::NAME );
+		if ( method_exists( $this, $method_name ) ) {
+			call_user_func( array( $this, $method_name ), $add_value );
+			return;
+		}
+
+		# Override by property value type.
+		foreach ( array(
+			static::NAME,
+			  self::NAME, // also check Image_Tag_Properties for override
+		) as $name ) {
+			$method_name = sprintf( $format, gettype( $value ), $name );
+
+			if ( method_exists( $this, $method_name ) ) {
+				call_user_func( array( $this, $method_name ), $property, $add_value );
+				return;
+			}
+		}
+
+		# Don't make any assumptions: if no method found, warn.
+		trigger_error( sprintf( 'No method found to add to <code>%s</code> property of type <code>%s</code>.', $property, gettype( $value ) ), E_USER_WARNING );
+	}
+
+	/**
+	 * Add to string property value.
+	 *
+	 * @param string $property
+	 * @param string $add_value
+	 * @uses static::get_property()
+	 * @uses static::set_property()
+	 */
+	protected function add_to_string_property( string $property, string $add_value ) {
+		$value = $this->get_property( $property, 'edit' );
+		$this->set_property( $property, $value . $add_value );
+	}
+
+	/**
+	 * Add to integer property value.
+	 *
+	 * @param string $property
+	 * @param int $add_value
+	 * @uses static::get_property()
+	 * @uses static::set_property()
+	 */
+	protected function add_to_integer_property( string $property, int $add_value ) {
+		$value = $this->get_property( $property, 'edit' );
+		$this->set_property( $property, $value + $add_value );
+	}
+
+	/**
+	 * Add to float property value.
+	 *
+	 * @param string $property
+	 * @param float $add_value
+	 * @uses static::get_property()
+	 * @uses static::set_property()
+	 */
+	protected function add_to_float_property( string $property, float $add_value ) {
+		$value = $this->get_property( $property, 'edit' );
+		$this->set_property( $property, $value + $add_value );
+	}
+
+	/**
+	 * Aliast of add_to_float_property().
+	 *
+	 * @param string $property
+	 * @param float $add_value
+	 * @uses static::add_to_float_property()
+	 */
+	protected function add_to_double_property( string $property, float $add_value ) {
+		$this->add_to_float_property( $property, $add_value );
+	}
+
+	/**
+	 * Add to array property value.
+	 *
+	 * @param string $property
+	 * @param mixed $add_values
+	 * @uses static::get_property()
+	 * @uses static::set_property()
+	 */
+	protected function add_to_array_property( string $property, $add_values ) {
+		$value = $this->get_property( $property, 'edit' );
+
+		if ( is_string( $add_values ) ) {
+			$value[] = $add_values;
+			$this->set_property( $property, $value );
+			return;
+		}
+
+		foreach ( $add_values as $key => $add_value )
+			$value[$key] = $add_value;
+
+		$this->set_property( $property, $value );
+	}
+
+	/*
 	 ######   ######## ########
 	##    ##  ##          ##
 	##        ##          ##

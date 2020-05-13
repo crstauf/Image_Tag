@@ -263,6 +263,35 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 
 
 	/*
+	   ###    ########  ########     ########  #######
+	  ## ##   ##     ## ##     ##       ##    ##     ##
+	 ##   ##  ##     ## ##     ##       ##    ##     ##
+	##     ## ##     ## ##     ##       ##    ##     ##
+	######### ##     ## ##     ##       ##    ##     ##
+	##     ## ##     ## ##     ##       ##    ##     ##
+	##     ## ########  ########        ##     #######
+	*/
+
+	/**
+	 * Data provider for Image_Tag_Properties_Test::test_add_to().
+	 *
+	 * Adjust test for use with attributes.
+	 *
+	 * @see Image_Tag_Properties_Test::test_add_to()
+	 * @uses Image_Tag_Properties_Test::data_add_to()
+	 * @return array[]
+	 */
+	function data_add_to() {
+		$data = parent::data_add_to();
+
+		$data['multiple arrays'][3]['bar'] = array_values( $data['multiple arrays'][3]['bar'] );
+		$data['multiple arrays'][3]['zoo'] = static::flatten( $data['multiple arrays'][3]['zoo'] );
+
+		return $data;
+	}
+
+
+	/*
 	 ######   ######## ########
 	##    ##  ##          ##
 	##        ##          ##

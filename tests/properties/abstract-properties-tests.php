@@ -581,7 +581,140 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	}
 
 
-		/*
+	/*
+	   ###    ########  ########     ########  #######
+	  ## ##   ##     ## ##     ##       ##    ##     ##
+	 ##   ##  ##     ## ##     ##       ##    ##     ##
+	##     ## ##     ## ##     ##       ##    ##     ##
+	######### ##     ## ##     ##       ##    ##     ##
+	##     ## ##     ## ##     ##       ##    ##     ##
+	##     ## ########  ########        ##     #######
+	*/
+
+	/**
+	 * Data provider for Image_Tag_Properties_Test::test_add_to().
+	 *
+	 * @see Image_Tag_Properties_Test::test_add_to()
+	 * @return array[]
+	 */
+	function data_add_to() {
+		return array(
+			'empty' => array(
+				$this->new_instance(),
+				'foo',
+				'bar',
+				'bar',
+			),
+			'string' => array(
+				$this->new_instance( array( 'foo' => __FUNCTION__ ) ),
+				'foo',
+				'bar',
+				__FUNCTION__ . 'bar',
+			),
+			'integer' => array(
+				$this->new_instance( array( 'foo' => 72 ) ),
+				'foo',
+				28,
+				100,
+			),
+			'double/float' => array(
+				$this->new_instance( array( 'foo' => 3.1415 ) ),
+				'foo',
+				7.3585,
+				10.5
+			),
+			'array string' => array(
+				$this->new_instance( array( 'foo' => array( __FUNCTION__ ) ) ),
+				'foo',
+				'foobar',
+				array(
+					__FUNCTION__,
+					'foobar',
+				),
+			),
+			'multiple strings' => array(
+				$this->new_instance( array(
+					'foo' => __FUNCTION__,
+					'bar' => __FUNCTION__,
+				) ),
+				array(
+					'foo' => 'foo',
+					'bar' => 'bar',
+				),
+				null,
+				array(
+					'foo' => __FUNCTION__ . 'foo',
+					'bar' => __FUNCTION__ . 'bar',
+				),
+			),
+			'multiple integers' => array(
+				$this->new_instance( array(
+					'two' => 2,
+					'four' => 4,
+					'six' => 6,
+				) ),
+				array(
+					'two' => 8,
+					'four' => 6,
+					'six' => 4,
+				),
+				null,
+				array(
+					'two'  => 10,
+					'four' => 10,
+					'six'  => 10,
+				),
+			),
+			'multiple dobules/floats' => array(
+				$this->new_instance( array(
+					'one' => 1.0,
+					'pi' => 3.1415,
+				) ),
+				array(
+					'one' => 2.1415,
+					'pi' => 1,
+				),
+				null,
+				array(
+					'one' => 3.1415,
+					'pi'  => 4.1415
+				),
+			),
+			'multiple arrays' => array(
+				$this->new_instance( array(
+					'foo' => array(),
+					'bar' => array( 'key1' => __FUNCTION__ ),
+					'zoo' => array( 'keyA' => __FUNCTION__ ),
+				) ),
+				array(
+					'foo' => array( __FUNCTION__, 'bar' ),
+					'bar' => array( 'key2' => 'foo' ),
+					'zoo' => array( 'keyB' => array(
+						'food' => 'bar',
+						'drink' => 'foo',
+					) ),
+				),
+				null,
+				array(
+					'foo' => array( __FUNCTION__, 'bar' ),
+					'bar' => array(
+						'key1' => __FUNCTION__,
+						'key2' => 'foo',
+					),
+					'zoo' => array(
+						'keyA' => __FUNCTION__,
+						'keyB' => array(
+							'food' => 'bar',
+							'drink' => 'foo',
+						),
+					),
+				),
+			),
+		);
+	}
+
+
+	/*
 	 ######   ######## ########
 	##    ##  ##          ##
 	##        ##          ##
