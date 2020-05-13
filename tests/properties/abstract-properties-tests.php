@@ -804,4 +804,37 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 		);
 	}
 
+
+	/*
+	 ######   #######  ##     ## ##    ## ########    ###    ########  ##       ########
+	##    ## ##     ## ##     ## ###   ##    ##      ## ##   ##     ## ##       ##
+	##       ##     ## ##     ## ####  ##    ##     ##   ##  ##     ## ##       ##
+	##       ##     ## ##     ## ## ## ##    ##    ##     ## ########  ##       ######
+	##       ##     ## ##     ## ##  ####    ##    ######### ##     ## ##       ##
+	##    ## ##     ## ##     ## ##   ###    ##    ##     ## ##     ## ##       ##
+	 ######   #######   #######  ##    ##    ##    ##     ## ########  ######## ########
+	*/
+
+	/**
+	 * @covers ::count()
+	 */
+	function test_countable() {
+		$properties = array(
+			'foo' => uniqid(),
+			'bar' => uniqid(),
+		);
+
+		$defaults = array(
+			'foo' => __FUNCTION__,
+			'zoo' => uniqid(),
+		);
+
+		$instance = $this->new_instance( $properties, $defaults );
+
+		$defaults = wp_parse_args( $defaults, static::DEFAULTS );
+		$expected = wp_parse_args( $properties, $defaults );
+
+		$this->assertEquals( count( $expected ), count( $instance ) );
+	}
+
 }

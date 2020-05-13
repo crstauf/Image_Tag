@@ -3,7 +3,7 @@
  * @todo implement Iterator
  */
 
-class Image_Tag_Properties implements ArrayAccess {
+class Image_Tag_Properties implements ArrayAccess, Countable {
 
 	/**
 	 * @var string NAME
@@ -459,6 +459,26 @@ class Image_Tag_Properties implements ArrayAccess {
 	 */
 	function offsetUnset( $offset ) {
 		unset( $this->properties[$offset] );
+	}
+
+
+	/*
+	 ######   #######  ##     ## ##    ## ########    ###    ########  ##       ########
+	##    ## ##     ## ##     ## ###   ##    ##      ## ##   ##     ## ##       ##
+	##       ##     ## ##     ## ####  ##    ##     ##   ##  ##     ## ##       ##
+	##       ##     ## ##     ## ## ## ##    ##    ##     ## ########  ##       ######
+	##       ##     ## ##     ## ##  ####    ##    ######### ##     ## ##       ##
+	##    ## ##     ## ##     ## ##   ###    ##    ##     ## ##     ## ##       ##
+	 ######   #######   #######  ##    ##    ##    ##     ## ########  ######## ########
+	*/
+
+	/**
+	 * Countable.
+	 *
+	 * @return int
+	 */
+	function count() {
+		return count( $this->properties );
 	}
 
 }
