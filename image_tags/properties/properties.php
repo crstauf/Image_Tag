@@ -3,7 +3,7 @@
  * @todo implement Iterator
  */
 
-class Image_Tag_Properties implements ArrayAccess, Countable {
+class Image_Tag_Properties implements ArrayAccess, Countable, Iterator {
 
 	/**
 	 * @var string NAME
@@ -479,6 +479,64 @@ class Image_Tag_Properties implements ArrayAccess, Countable {
 	 */
 	function count() {
 		return count( $this->properties );
+	}
+
+
+	/*
+	#### ######## ######## ########     ###    ########  #######  ########
+	 ##     ##    ##       ##     ##   ## ##      ##    ##     ## ##     ##
+	 ##     ##    ##       ##     ##  ##   ##     ##    ##     ## ##     ##
+	 ##     ##    ######   ########  ##     ##    ##    ##     ## ########
+	 ##     ##    ##       ##   ##   #########    ##    ##     ## ##   ##
+	 ##     ##    ##       ##    ##  ##     ##    ##    ##     ## ##    ##
+	####    ##    ######## ##     ## ##     ##    ##     #######  ##     ##
+	*/
+
+	/**
+	 * Iterator: rewind.
+	 *
+	 * @uses reset()
+	 */
+	function rewind() {
+		reset( $this->properties );
+	}
+
+	/**
+	 * Iterator: current.
+	 *
+	 * @uses current()
+	 * @return mixed
+	 */
+	function current() {
+		return current( $this->properties );
+	}
+
+	/**
+	 * Iterator: key.
+	 *
+	 * @uses key()
+	 * @return mixed
+	 */
+	function key() {
+		return key( $this->properties );
+	}
+
+	/**
+	 * Iterator: next.
+	 *
+	 * @uses next()
+	 */
+	function next() {
+		next( $this->properties );
+	}
+
+	/**
+	 * Iterator: valid.
+	 *
+	 * @uses key()
+	 */
+	function valid() {
+		return null !== key( $this->properties );
 	}
 
 }

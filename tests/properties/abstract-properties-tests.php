@@ -817,6 +817,8 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 
 	/**
 	 * @covers ::count()
+	 * @group instance
+	 * @group countable
 	 */
 	function test_countable() {
 		$properties = array(
@@ -835,6 +837,59 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 		$expected = wp_parse_args( $properties, $defaults );
 
 		$this->assertEquals( count( $expected ), count( $instance ) );
+	}
+
+
+	/*
+	#### ######## ######## ########     ###    ########  #######  ########
+	 ##     ##    ##       ##     ##   ## ##      ##    ##     ## ##     ##
+	 ##     ##    ##       ##     ##  ##   ##     ##    ##     ## ##     ##
+	 ##     ##    ######   ########  ##     ##    ##    ##     ## ########
+	 ##     ##    ##       ##   ##   #########    ##    ##     ## ##   ##
+	 ##     ##    ##       ##    ##  ##     ##    ##    ##     ## ##    ##
+	####    ##    ######## ##     ## ##     ##    ##     #######  ##     ##
+	*/
+
+	/**
+	 * @covers ::rewind()
+	 * @covers ::current()
+	 * @covers ::key()
+	 * @covers ::next()
+	 * @covers ::valid()
+	 * @group instance
+	 * @group iterator
+	 */
+	function test_iterator() {
+		$properties = array(
+			'foo' => uniqid(),
+			'bar' => uniqid(),
+			'zoo' => uniqid(),
+		);
+
+		$defaults = array(
+			'alpha'   => uniqid(),
+			'beta'    => uniqid(),
+			'charlie' => uniqid(),
+		);
+
+		$instance = $this->new_instance( $properties, $defaults );
+
+		$defaults = wp_parse_args( $defaults, static::DEFAULTS );
+		$expected = wp_parse_args( $properties, $defaults );
+
+		# Run tests twice to ensure reset() works.
+		for ( $i = 0; $i < 2; $i++ ) {
+			$position = 0;
+			$keys = array_keys( $expected );
+
+			foreach ( $instance as $property => $value ) {
+				$this->assertSame( $keys[$position], $property );
+				$this->assertSame( $expected[$property], $value );
+
+				$position++;
+			}
+		}
+
 	}
 
 }
