@@ -40,6 +40,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 		$instance = $this->new_instance();
 		$this->assertInstanceOf( $this->class_name(), $instance->add( 'id', __FUNCTION__ ) );
 		$this->assertInstanceOf( $this->class_name(), $instance->set( 'id', __FUNCTION__ ) );
+		$this->assertInstanceOf( $this->class_name(), $instance->unset( 'id' ) );
 	}
 
 	/**
