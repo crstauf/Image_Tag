@@ -42,6 +42,17 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 		$this->assertInstanceOf( $this->class_name(), $instance->set( 'id', __FUNCTION__ ) );
 	}
 
+	/**
+	 * Test class implements.
+	 */
+	function test_implements() {
+		$implements = class_implements( $this->class_name() );
+
+		$this->assertContains( 'ArrayAccess', $implements );
+		$this->assertContains(   'Countable', $implements );
+		$this->assertContains(    'Iterator', $implements );
+	}
+
 
 	/*
 	 ######  ########    ###    ######## ####  ######
