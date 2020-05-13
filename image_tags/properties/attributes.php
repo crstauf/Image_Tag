@@ -184,6 +184,7 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 		return $string;
 	}
 
+
 	/*
 	 ######  ######## ########
 	##    ## ##          ##

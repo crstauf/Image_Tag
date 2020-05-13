@@ -153,11 +153,14 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 			$expected = $value;
 
 		if ( in_array( $property, array( 'properties', 'defaults' ) ) ) {
-			$this->assertIsArray( $this->get_instance( array() )->$property );
+			$this->assertIsArray( $this->get_instance()->$property );
 			return;
 		}
 
-		if ( is_null( $value ) ) {
+		if (
+			   is_null( $value )
+			&& is_null( $expected )
+		) {
 			$instance = $this->new_instance();
 			$this->assertNull( $instance->$property );
 			return;

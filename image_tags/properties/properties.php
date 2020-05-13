@@ -73,26 +73,24 @@ class Image_Tag_Properties implements ArrayAccess, Countable, Iterator {
 	 *
 	 * @param string $property
 	 * @param mixed $value
-	 * @uses static::set()
+	 * @uses static::set_property()
 	 */
 	function __set( string $property, $value ) {
-		$this->set( $property, $value );
+		$this->set_property( $property, $value );
 	}
 
 	/**
 	 * Getter.
 	 *
 	 * @param string $property
-	 * @uses static::get()
+	 * @uses static::get_property()
 	 * @return mixed
-	 *
-	 * @todo add test for accessing 'properties' and 'defaults'
 	 */
 	function __get( string $property ) {
 		if ( in_array( $property, array( 'properties', 'defaults' ) ) )
 			return $this->$property;
 
-		return $this->get( $property, 'edit' );
+		return $this->get_property( $property, 'edit' );
 	}
 
 	/**
