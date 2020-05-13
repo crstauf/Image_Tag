@@ -4,13 +4,14 @@ require_once 'abstract-properties-tests.php';
 
 /**
  * @coversDefaultClass Image_Tag_Attributes
+ * @group properties
  * @group attributes
  */
 class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 
 	const DEFAULTS = array(
 		'id' => null,
-		'alt' => null,
+		'alt' => '',
 		'src' => null,
 		'title' => null,
 		'width' => null,
@@ -20,7 +21,7 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 		'data-sizes' => array(),
 		'srcset' => array(),
 		'style' => array(),
-		'sizes' => array(),
+		'sizes' => array( '100vw' ),
 		'class' => array(),
 	);
 
@@ -54,6 +55,30 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 	function test_name_constant() {
 		$this->assertSame( 'attribute', constant( $this->class_name() . '::NAME' ) );
 	}
+
+	/**
+	 * Test Image_Tag_Attributes::ORDER constant value.
+	 *
+	 * @group constant
+	 */
+	function test_order() {
+		$this->assertSame( array(
+			'id',
+			'class',
+			'src',
+			'data-src',
+			'srcset',
+			'data-srcset',
+			'sizes',
+			'data-sizes',
+			'width',
+			'height',
+			'title',
+			'alt',
+			'style',
+		), Image_Tag_Attributes::ORDER );
+	}
+
 
 	/*
 	##     ##    ###     ######   ####  ######
@@ -93,6 +118,7 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 			'sizes="( max-width: 800px ) 50vw, 100vw" ' .
 			'width="1600" ' .
 			'height="900" ' .
+			'alt="" ' .
 			'data-preloaded="1"';
 
 		$this->assertsame( $expected, $instance->__toString() );

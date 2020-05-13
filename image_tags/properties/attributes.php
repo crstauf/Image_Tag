@@ -6,15 +6,18 @@
 class Image_Tag_Attributes extends Image_Tag_Properties {
 
 	/**
-	 * @var string
-	 * @var array
+	 * @var string NAME
 	 */
 	const NAME = 'attribute';
+
+	/**
+	 * @var array DEFAULTS Default attributes and values.
+	 */
 	const DEFAULTS = array(
 
 		# Strings or integers.
 		'id' => null,
-		'alt' => null,
+		'alt' => '',
 		'src' => null,
 		'title' => null,
 		'width' => null,
@@ -26,15 +29,13 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 		'data-sizes' => array(),
 		'srcset' => array(),
 		'style' => array(),
-		'sizes' => array(),
+		'sizes' => array( '100vw' ),
 		'class' => array(),
 
 	);
 
 	/**
-	 * @var string[] Order of attributes.
-	 *
-	 * @todo add test
+	 * @var string[] ORDER Order of printing attributes.
 	 */
 	const ORDER = array(
 		'id',
@@ -51,6 +52,21 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 		'alt',
 		'style',
 	);
+
+	/**
+	 * Force attributes to a certain value.
+	 *
+	 * @see static::__toString()
+	 */
+	protected function force( &$attributes ) {
+
+		# Always have an "alt" at1tribute.
+		// if ( empty( $attributes['alt'] ) )
+		// 	$attributes['alt'] = '';
+
+		# Allow others to force attributes.
+		do_action_ref_array( 'image_tag/attributes/force', array( &$attributes, $this ) );
+	}
 
 
 	/*
@@ -148,10 +164,22 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 	 * To string.
 	 *
 	 * @uses static::get()
+	 * @uses static::force()
 	 * @return string
 	 */
 	function __toString() {
-		$attributes = $this->get( null, 'view' );
+
+		# Get attributes.
+		$attributes = $this->get( null, 'edit' );
+
+		# Remove empty values, except empty string.
+		$attributes = array_filter( $attributes, function( $value ) {
+			return (
+				!empty( $value )
+				|| '' === $value
+			);
+		} );
+
 		$array = array();
 
 		# Add attributes to string in specified order.
@@ -251,15 +279,7 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 	 * @return string|array
 	 */
 	function get( $attributes = null, string $context = 'view' ) {
-		$value = parent::get( $attributes, $context );
-
-		if (
-			'edit' === $context
-			|| !is_array( $value )
-		)
-			return $value;
-
-		return array_filter( $value );
+		return parent::get( $attributes, $context );
 	}
 
 	/**
