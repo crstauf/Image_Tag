@@ -1,9 +1,6 @@
 <?php
-/**
- * @todo implement Iterator
- */
 
-class Image_Tag_Properties implements ArrayAccess, Countable, Iterator {
+abstract class Image_Tag_Properties_Abstract implements ArrayAccess, Countable, Iterator {
 
 	/**
 	 * @var string NAME
@@ -229,8 +226,8 @@ class Image_Tag_Properties implements ArrayAccess, Countable, Iterator {
 		$types = array();
 
 		# Get type from defaults.
-		if ( array_key_exists( $property, static::DEFAULTS ) )
-			$types[] = gettype( static::DEFAULTS[$property] );
+		if ( array_key_exists( $property, $this->defaults ) )
+			$types[] = gettype( $this->defaults[$property] );
 
 		# Add type of setting value.
 		$types[] = gettype( $value );
@@ -391,7 +388,7 @@ class Image_Tag_Properties implements ArrayAccess, Countable, Iterator {
 		# Override by property value type.
 		foreach ( array(
 			static::NAME,
-			  self::NAME, // also check Image_Tag_Properties for override
+			  self::NAME, // also check Image_Tag_Properties_Abstract ("property") for override
 		) as $name ) {
 			$method_name = sprintf( $format, gettype( $value ), $name );
 

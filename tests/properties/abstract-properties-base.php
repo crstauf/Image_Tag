@@ -1,6 +1,6 @@
 <?php
 /**
- * Tests for Image_Tag_Properties and descendants.
+ * Tests for Image_Tag_Properties_Abstract and descendants.
  */
 
 abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
@@ -97,7 +97,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	*/
 
 	/**
-	 * @param array|Image_Tag_Properties $properties
+	 * @param array|Image_Tag_Properties_Abstract $properties
 	 * @param array $defaults
 	 * @param mixed $expected
 	 *
@@ -114,7 +114,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @param Image_Tag_Properties $instance
+	 * @param Image_Tag_Properties_Abstract $instance
 	 * @param string $property
 	 * @param mixed $value
 	 * @param mixed $expected
@@ -126,7 +126,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data__set
 	 */
-	function test__set( Image_Tag_Properties $instance, string $property, $value, $expected = null ) {
+	function test__set( Image_Tag_Properties_Abstract $instance, string $property, $value, $expected = null ) {
 		if ( is_null( $expected ) )
 			$expected = $value;
 
@@ -172,7 +172,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @param Image_Tag_Properties $instance
+	 * @param Image_Tag_Properties_Abstract $instance
 	 * @param string $property
 	 * @param bool $expected
 	 *
@@ -183,14 +183,14 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data__isset
 	 */
-	function test__isset( Image_Tag_Properties $instance, string $property, $expected ) {
+	function test__isset( Image_Tag_Properties_Abstract $instance, string $property, $expected ) {
 		$expected
 			? $this->assertTrue(  isset( $instance->$property ) )
 			: $this->assertFalse( isset( $instance->$property ) );
 	}
 
 	/**
-	 * @param Image_Tag_Properties $instance
+	 * @param Image_Tag_Properties_Abstract $instance
 	 * @param string $property
 	 *
 	 * @covers ::__unset()
@@ -200,7 +200,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data__unset
 	 */
-	function test__unset( Image_Tag_Properties $instance, string $property ) {
+	function test__unset( Image_Tag_Properties_Abstract $instance, string $property ) {
 		$this->assertTrue( isset( $instance->$property ) );
 
 		unset( $instance->$property );
@@ -219,7 +219,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	*/
 
 	/**
-	 * @param Image_Tag_Properties $instance
+	 * @param Image_Tag_Properties_Abstract $instance
 	 * @param string|array $add_properties
 	 * @param mixed $value
 	 * @param mixed $expected Expected value of property.
@@ -232,7 +232,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_add
 	 */
-	function test_add( Image_Tag_Properties $instance, $add_properties, $value, $expected ) {
+	function test_add( Image_Tag_Properties_Abstract $instance, $add_properties, $value, $expected ) {
 		$instance->add( $add_properties, $value );
 
 		if ( is_string( $add_properties ) ) {
@@ -256,7 +256,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	*/
 
 	/**
-	 * @param Image_Tag_Properties $instance
+	 * @param Image_Tag_Properties_Abstract $instance
 	 * @param string|array $set_properties
 	 * @param mixed $value
 	 * @param mixed $expected
@@ -270,7 +270,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_set
 	 */
-	function test_set( Image_Tag_Properties $instance, $set_properties, $value = null, $expected = null ) {
+	function test_set( Image_Tag_Properties_Abstract $instance, $set_properties, $value = null, $expected = null ) {
 		if ( is_string( $set_properties ) ) {
 			$this->assertNotEquals( $value, $instance->$set_properties );
 
@@ -296,7 +296,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @param Image_Tag_Properties $instance
+	 * @param Image_Tag_Properties_Abstract $instance
 	 * @param string|array $unset_properties
 	 *
 	 * @covers ::unset()
@@ -305,7 +305,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_unset
 	 */
-	function test_unset( Image_Tag_Properties $instance, $unset_properties ) {
+	function test_unset( Image_Tag_Properties_Abstract $instance, $unset_properties ) {
 		$properties = $instance->get( null, 'edit' );
 
 		# Check properties are set.
@@ -337,7 +337,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	*/
 
 	/**
-	 * @param Image_Tag_Properties $instance
+	 * @param Image_Tag_Properties_Abstract $instance
 	 * @param string|array $isset_properties
 	 * @param array $not_isset_properties
 	 *
@@ -347,7 +347,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_isset
 	 */
-	function test_isset( Image_Tag_Properties $instance, $isset_properties, $not_isset_properties = null ) {
+	function test_isset( Image_Tag_Properties_Abstract $instance, $isset_properties, $not_isset_properties = null ) {
 		if ( !is_null( $isset_properties ) )
 			$this->assertTrue( $instance->isset( $isset_properties ) );
 
@@ -356,7 +356,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @param Image_Tag_Properties $instance
+	 * @param Image_Tag_Properties_Abstract $instance
 	 * @param string|array $exist_properties
 	 * @param array $not_exist_properties
 	 * @covers ::exists()
@@ -365,7 +365,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_exists
 	 */
-	function test_exists( Image_Tag_Properties $instance, $exist_properties, $not_exist_properties = null ) {
+	function test_exists( Image_Tag_Properties_Abstract $instance, $exist_properties, $not_exist_properties = null ) {
 		if ( !is_null( $exist_properties ) )
 			$this->assertTrue( $instance->exists( $exist_properties ) );
 
@@ -385,7 +385,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	*/
 
 	/**
-	 * @param Image_Tag_Properties $instance
+	 * @param Image_Tag_Properties_Abstract $instance
 	 * @param string|array $add_properties
 	 * @param mixed $value
 	 * @param string|array $expected
@@ -403,7 +403,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_add_to
 	 */
-	function test_add_to( Image_Tag_Properties $instance, $add_properties, $value, $expected ) {
+	function test_add_to( Image_Tag_Properties_Abstract $instance, $add_properties, $value, $expected ) {
 		if ( is_string( $add_properties ) ) {
 			$this->assertNotSame( $expected, $instance->$add_properties );
 			$instance->add_to( $add_properties, $value );
@@ -438,7 +438,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	*/
 
 	/**
-	 * @param Image_Tag_Properties $instance
+	 * @param Image_Tag_Properties_Abstract $instance
 	 * @param string|array $get_properties
 	 * @param mixed $expected
 	 * @param string $context
@@ -452,7 +452,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_get
 	 */
-	function test_get( Image_Tag_Properties $instance, $get_properties, $expected, $context = 'edit' ) {
+	function test_get( Image_Tag_Properties_Abstract $instance, $get_properties, $expected, $context = 'edit' ) {
 		if ( is_string( $get_properties ) ) {
 			$this->assertSame( $expected, $instance->get( $get_properties, $context ) );
 			return;
@@ -483,7 +483,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	*/
 
 	/**
-	 * @param Image_Tag_Properties $instance
+	 * @param Image_Tag_Properties_Abstract $instance
 	 * @param string|array $exist_properties
 	 * @param array $not_exist_properties
 	 *
@@ -493,7 +493,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_arrayAccess_exists
 	 */
-	function test_arrayAccess_exists( Image_Tag_Properties $instance, $exist_properties, $not_exist_properties = null ) {
+	function test_arrayAccess_exists( Image_Tag_Properties_Abstract $instance, $exist_properties, $not_exist_properties = null ) {
 		if ( !is_null( $exist_properties ) )
 			foreach ( ( array ) $exist_properties as $property )
 				$this->assertTrue( isset( $instance[$property] ) );
@@ -520,7 +520,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @param Image_Tag_Properties $instance
+	 * @param Image_Tag_Properties_Abstract $instance
 	 * @param string $set_property
 	 * @param mixed $set_value
 	 *
@@ -530,7 +530,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_arrayAccess_set
 	 */
-	function test_arrayAccess_set( Image_Tag_Properties $instance, string $set_property, $set_value ) {
+	function test_arrayAccess_set( Image_Tag_Properties_Abstract $instance, string $set_property, $set_value ) {
 		$this->assertNotEquals( $set_value, $instance->$set_property );
 
 		$instance[$set_property] = $set_value;

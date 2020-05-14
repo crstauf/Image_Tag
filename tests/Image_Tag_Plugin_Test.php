@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @covers Image_Tag_Plugin
+ * @coversDefaultClass Image_Tag_Plugin
  * @group plugin
  */
 class Image_Tag_Plugin_Test extends WP_UnitTestCase {
@@ -45,21 +45,21 @@ class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers Image_Tag_Plugin::instance()
+	 * @covers ::instance()
 	 */
 	function test_instance() {
 		$this->assertInstanceOf( Image_Tag_Plugin::class, Image_Tag_Plugin::instance() );
 	}
 
 	/**
-	 * @covers Image_Tag_Plugin::__construct()
+	 * @covers ::__construct()
 	 */
 	function test_construct() {
 		$this->assertSame( 100, has_action( 'template_redirect', array( Image_Tag_Plugin::instance(), 'action__template_redirect' ) ) );
 	}
 
 	/**
-	 * @covers Image_Tag_Plugin::includes()
+	 * @covers ::includes()
 	 */
 	function test_includes() {
 		$includes_dir = trailingslashit( dirname( __DIR__ ) ) . 'image_tags/';
@@ -67,12 +67,12 @@ class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 		# Abstracts.
 		$this->assertTrue( file_exists( $includes_dir . 'Image_Tag_Abstract.php' ) );
 		$this->assertTrue( class_exists( 'Image_Tag_Abstract' ) );
+		$this->assertTrue( file_exists( $includes_dir . 'properties/abstract.php' ) );
+		$this->assertTrue( class_exists( 'Image_Tag_Properties_Abstract' ) );
 
 		# Properties.
-		$this->assertTrue( file_exists( $includes_dir . 'properties/properties.php' ) );
 		$this->assertTrue( file_exists( $includes_dir . 'properties/attributes.php' ) );
 		$this->assertTrue( file_exists( $includes_dir . 'properties/settings.php' ) );
-		$this->assertTrue( class_exists( 'Image_Tag_Properties' ) );
 		$this->assertTrue( class_exists( 'Image_Tag_Attributes' ) );
 		$this->assertTrue( class_exists( 'Image_Tag_Settings' ) );
 

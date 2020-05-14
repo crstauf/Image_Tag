@@ -1,6 +1,6 @@
 <?php
 
-class Image_Tag_Settings extends Image_Tag_Properties {
+class Image_Tag_Settings extends Image_Tag_Properties_Abstract {
 
 	const NAME = 'setting';
 	const DEFAULTS = array(

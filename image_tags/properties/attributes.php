@@ -3,7 +3,7 @@
 /**
  * Class: Image_Tag_Attributes
  */
-class Image_Tag_Attributes extends Image_Tag_Properties {
+class Image_Tag_Attributes extends Image_Tag_Properties_Abstract {
 
 	/**
 	 * @var string NAME
@@ -93,7 +93,7 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 
 			# Recursive is fun.
 			else if ( is_array( $item ) )
-				$item = self::trim( $item );
+				$item = static::trim( $item );
 
 		} );
 
@@ -277,9 +277,10 @@ class Image_Tag_Attributes extends Image_Tag_Properties {
 	protected function get_class_attribute_for_view() {
 		$classes = $this->_get( 'class' );                            // get array of classes
 		$classes = array_unique( $classes );                          // remove duplicates
-		$classes = array_map( array( __CLASS__, 'trim' ), $classes ); // trim items in array
-		$classes = array_filter( $classes );
-		return implode( ' ', $classes );
+		$classes = array_map( array( __CLASS__, 'trim' ), $classes ); // trim items
+		$classes = array_filter( $classes );                          // renive enpty items
+		$classes = implode( ' ', $classes );                          // implode
+		return $classes;
 	}
 
 	/**

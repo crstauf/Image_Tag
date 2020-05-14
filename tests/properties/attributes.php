@@ -93,7 +93,7 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 	/**
 	 * Test Image_Tag_Attributes::__toString().
 	 *
-	 * @covers Image_Tag_Attributes::__toString()
+	 * @covers ::__toString()
 	 * @group instance
 	 * @group magic
 	 * @group output
@@ -247,17 +247,14 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 	/**
 	 * @see Image_Tag_Properties_Test::test_set()
 	 *
-	 * @covers Image_Tag_Properties::set()
-	 * @covers Image_Tag_Properties::set_properties()
-	 * @covers Image_Tag_Properties::set_property()
-	 * @covers Image_Tag_Attributes::trim()
-	 * @covers Image_Tag_Attributes::explode_deep()
-	 * @covers Image_Tag_Attributes::set_class_attribute()
-	 * @covers Image_Tag_Attributes::set_array_attribute()
+	 * @covers ::trim()
+	 * @covers ::explode_deep()
+	 * @covers ::set_class_attribute()
+	 * @covers ::set_array_attribute()
 	 *
 	 * @dataProvider data_set
 	 */
-	function test_set( Image_Tag_Properties $instance, $set_properties, $value = null, $expected = null ) {
+	function test_set( Image_Tag_Properties_Abstract $instance, $set_properties, $value = null, $expected = null ) {
 		parent::test_set( $instance, $set_properties, $value, $expected );
 	}
 
@@ -325,6 +322,18 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 				'foo bar alpha beta',
 				'view',
 			),
+			'class array' => array(
+				$this->new_instance( array( 'class' => array(
+					'  foo ;',
+					array(
+						'bar; ',
+						'; zoo',
+					),
+				) ) ),
+				'class',
+				'foo bar zoo',
+				'view',
+			),
 			'sizes edit' => array(
 				$this->new_instance( array( 'sizes' => array( '( min-width: 800px ) 50vw,', ' 100vw' ) ) ),
 				'sizes',
@@ -355,18 +364,15 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 	/**
 	 * @see Image_Tag_Properties_Test::test_get()
 	 *
-	 * @covers Image_Tag_Properties::get()
-	 * @covers Image_Tag_Properties::get_properties()
-	 * @covers Image_Tag_Properties::get_property()
-	 * @covers Image_Tag_Attributes::get()
-	 * @covers Image_Tag_Attributes::trim()
-	 * @covers Image_Tag_Attributes::get_class_attribute_for_view()
-	 * @covers Image_Tag_Attributes::get_style_attribute_for_view()
-	 * @covers Image_Tag_Attributes::get_array_attribute_for_view()
+	 * @covers ::get()
+	 * @covers ::trim()
+	 * @covers ::get_class_attribute_for_view()
+	 * @covers ::get_style_attribute_for_view()
+	 * @covers ::get_array_attribute_for_view()
 	 *
 	 * @dataProvider data_get
 	 */
-	function test_get( Image_Tag_Properties $instance, $get_properties, $expected = null, $context = 'edit' ) {
+	function test_get( Image_Tag_Properties_Abstract $instance, $get_properties, $expected = null, $context = 'edit' ) {
 		parent::test_get( $instance, $get_properties, $expected, $context );
 	}
 

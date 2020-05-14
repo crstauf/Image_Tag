@@ -725,10 +725,9 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	*/
 
 	/**
-	 * Data provider for Image_Tag_Properties_Test::test_exists().
+	 * Data provider for Image_Tag_Properties_Test::test_get().
 	 *
-	 * @see Image_Tag_Properties_Test::test_exists()
-	 * @uses static::data_isset()
+	 * @see Image_Tag_Properties_Test::test_get()
 	 * @return array[]
 	 */
 	function data_get() {
