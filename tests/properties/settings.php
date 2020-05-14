@@ -84,7 +84,7 @@ class Image_Tag_Settings_Test extends Image_Tag_Properties_Tests {
 		) );
 
 		$this->assertSame( array(), $instance->before_output );
-		$this->assertSame( array(), $instance->after_output );
+		$this->assertSame( array(), $instance->after_output  );
 
 		# Test ::set_{position}_output_setting() functions.
 		$instance = $this->new_instance( null, array(
@@ -93,14 +93,14 @@ class Image_Tag_Settings_Test extends Image_Tag_Properties_Tests {
 		) );
 
 		$this->assertSame( array( 10 => array( __FUNCTION__ ) ), $instance->before_output );
-		$this->assertSame( array( 10 => array( __FUNCTION__ ) ), $instance->after_output );
+		$this->assertSame( array( 10 => array( __FUNCTION__ ) ), $instance->after_output  );
 
 		# Test ::add_to_{position}_output_setting() functions.
 		$instance->add_to( 'before_output', 'foo' );
 		$instance->add_to(  'after_output', 'bar' );
 
 		$this->assertSame( array( 10 => array( __FUNCTION__, 'foo' ) ), $instance->before_output );
-		$this->assertSame( array( 10 => array( __FUNCTION__, 'bar' ) ), $instance->after_output );
+		$this->assertSame( array( 10 => array( __FUNCTION__, 'bar' ) ), $instance->after_output  );
 
 		# Test ::add_output() function.
 		$instance->add_output( 'before', 'bar', 5 );
@@ -110,8 +110,10 @@ class Image_Tag_Settings_Test extends Image_Tag_Properties_Tests {
 		$this->assertSame( array( 5 => array( 'foo' ), 10 => array( __FUNCTION__, 'bar' ) ), $instance->after_output  );
 
 		# Test ::get_{position}_output_setting() functions.
-		$this->assertSame( "bar\n" . __FUNCTION__ . "\nfoo", $instance->get( 'before_output', 'view' ) );
-		$this->assertSame( "foo\n" . __FUNCTION__ . "\nbar", $instance->get(  'after_output', 'view' ) );
+		$this->assertSame( "bar\n" . __FUNCTION__ . "\nfoo", $instance->get( 'before_output' ) );
+		$this->assertSame( "foo\n" . __FUNCTION__ . "\nbar", $instance->get(  'after_output' ) );
+		$this->assertNull( $this->get_instance( array() )->get( 'before_output' ) );
+		$this->assertNull( $this->get_instance( array() )->get( 'after_output'  ) );
 
 		# Test adding multiple priorities.
 		$instance = $this->new_instance( null, array(
