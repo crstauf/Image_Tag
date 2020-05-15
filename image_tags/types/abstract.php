@@ -92,156 +92,133 @@ abstract class Image_Tag_Abstract {
 
 
 	/*
-	   ###    ######## ######## ########  #### ########  ##     ## ######## ########  ######
-	  ## ##      ##       ##    ##     ##  ##  ##     ## ##     ##    ##    ##       ##    ##
-	 ##   ##     ##       ##    ##     ##  ##  ##     ## ##     ##    ##    ##       ##
-	##     ##    ##       ##    ########   ##  ########  ##     ##    ##    ######    ######
-	#########    ##       ##    ##   ##    ##  ##     ## ##     ##    ##    ##             ##
-	##     ##    ##       ##    ##    ##   ##  ##     ## ##     ##    ##    ##       ##    ##
-	##     ##    ##       ##    ##     ## #### ########   #######     ##    ########  ######
+	########  ########   #######  ########  ######## ########  ######## #### ########  ######
+	##     ## ##     ## ##     ## ##     ## ##       ##     ##    ##     ##  ##       ##    ##
+	##     ## ##     ## ##     ## ##     ## ##       ##     ##    ##     ##  ##       ##
+	########  ########  ##     ## ########  ######   ########     ##     ##  ######    ######
+	##        ##   ##   ##     ## ##        ##       ##   ##      ##     ##  ##             ##
+	##        ##    ##  ##     ## ##        ##       ##    ##     ##     ##  ##       ##    ##
+	##        ##     ##  #######  ##        ######## ##     ##    ##    #### ########  ######
 	*/
 
 	/**
-	 * Add attributes.
+	 * Passthru parameters to specified property object and method.
 	 *
-	 * @param array $attributes
-	 * @uses Image_Tag_Attributes::add()
-	 * @return $this
-	 */
-	function add_attributes( array $attributes ) {
-		$this->attributes->add( $attributes );
-		return $this;
-	}
-
-	/**
-	 * Add attribute.
-	 *
-	 * @param string $attribute
-	 * @param mixed $value
-	 * @uses Image_Tag_Attributes::add()
-	 * @return $this
-	 */
-	function add_attribute( string $attribute, $value ) {
-		$this->attributes->add( $attribute, $value );
-		return $this;
-	}
-
-	/**
-	 * Set attributes.
-	 *
-	 * @param array $attributes
-	 * @uses Image_Tag_Attributes::set()
-	 * @return $this
-	 */
-	function set_attributes( array $attributes ) {
-		$this->attributes->set( $attributes );
-		return $this;
-	}
-
-	/**
-	 * Set attribute.
-	 *
-	 * @param string $attribute
-	 * @param mixed $value
-	 * @uses Image_Tag_Attributes::set()
-	 * @return $this
-	 */
-	function set_attribute( string $attribute, $value ) {
-		$this->attributes->set( $attribute, $value );
-		return $this;
-	}
-
-	/**
-	 * Check specified attributes are set.
-	 *
-	 * @param string[] $attributes Array of attribute names.
-	 * @uses Image_Tag_Attributes::isset()
-	 * @return bool
-	 */
-	function attributes_are_set( array $attributes ) {
-		return $this->attributes->isset( $attributes );
-	}
-
-	/**
-	 * Check specified attribute is set.
-	 *
-	 * @param string $attribute
-	 * @uses Image_Tag_Attributes::isset()
-	 * @return bool
-	 */
-	function attribute_isset( string $attribute ) {
-		return $this->attributes->isset( $attribute );
-	}
-
-	/**
-	 * Check specified attributes exist.
-	 *
-	 * @param string[] $attributes Array of attribute names.
-	 * @uses Image_Tag_Attributes::exists()
-	 * @return bool
-	 */
-	function attributes_exist( array $attributes ) {
-		return $this->attributes->exists( $attributes );
-	}
-
-	/**
-	 * Check specified attribute exists.
-	 *
-	 * @param string $attribute
-	 * @uses Image_Tag_Attributes::exist()
-	 * @return bool
-	 */
-	function attribute_exists( string $attribute ) {
-		return $this->attributes->exists( $attribute );
-	}
-
-	/**
-	 * Add values to specified attributes.
-	 *
-	 * @param array $attributes
-	 * @uses Image_Tag_Attributes::add_to()
-	 * @return $this
-	 */
-	function add_to_attributes( array $attributes ) {
-		$this->attributes->add_to( $attributes );
-		return $this;
-	}
-
-	/**
-	 * Add value to specified attribute.
-	 *
-	 * @param string $attribute
-	 * @param mixed $value
-	 * @uses Image_Tag_Attributes::add_to()
-	 * @return $this
-	 */
-	function add_to_attribute( string $attribute, $value ) {
-		$this->attributes->add_to( $attribute, $value );
-		return $this;
-	}
-
-	/**
-	 * Get attributes, by filter.
-	 *
-	 * @param null|array
-	 * @param string $context view|edit
-	 * @uses Image_Tag_Attributes::get()
+	 * @param string $property_type
+	 * @param string $method_name
+	 * @param array $params
 	 * @return mixed
 	 */
-	function get_attributes( array $filter = null, string $context = 'view' ) {
-		return $this->attributes->get( $filter, $context );
+	protected function access_property( string $property_type, string $method_name, ...$params ) {
+		switch ( $property_type ) {
+
+			case 'attribute':
+				$property_type = 'attributes';
+				break;
+
+			case 'setting':
+				$property_type = 'settings';
+				break;
+
+		}
+
+		if ( !in_array( $property_type, array( 'attributes', 'settings' ) ) ) {
+			trigger_error( sprintf( 'Properties of type <code>%s</code> do not exist.', $property_type ), E_USER_WARNING );
+			return;
+		}
+
+		return $this->$property_type->$method_name( ...$params );
 	}
 
 	/**
-	 * Get specified attribute.
+	 * Add properties.
 	 *
-	 * @param string $attribute
-	 * @param string $context view|edit
-	 * @uses Image_Tag_Attributes::get()
-	 * @return mixed
+	 * @param string $property_type
+	 * @param string|array $properties
+	 * @param mixed $value
+	 * @uses Image_Tag_Properties_Abstract::add()
+	 * @return $this
+	 *
+	 * @todo add more tests
 	 */
-	function get_attribute( string $attribute, string $context = 'view' ) {
-		return $this->attributes->get( $attribute, $context );
+	function add( string $property_type, $properties, $value = null ) {
+		$this->access_property( $property_type, 'add', $properties, $value );
+		return $this;
+	}
+
+	/**
+	 * Set properties.
+	 *
+	 * @param string $property_type
+	 * @param string|array $properties
+	 * @param mixed $value
+	 * @uses Image_Tag_Properties_Abstract::set()
+	 * @return $this
+	 *
+	 * @todo add more tests
+	 */
+	function set( string $property_type, $properties, $value = null ) {
+		$this->access_property( $property_type, 'set', $properties, $value );
+		return $this;
+	}
+
+	/**
+	 * Check specified properties are set.
+	 *
+	 * @param string $property_type
+	 * @param string|array $properties
+	 * @uses Image_Tag_Properties_Abstract::isset()
+	 * @return bool
+	 *
+	 * @todo add more tests
+	 */
+	function isset( string $property_type, $properties ) {
+		return $this->access_property( $property_type, 'isset', $properties );
+	}
+
+	/**
+	 * Check specified properties exist.
+	 *
+	 * @param string $property_type
+	 * @param string|string[] $properties Array of attribute names.
+	 * @uses Image_Tag_Properties_Abstract::exists()
+	 * @return bool
+	 *
+	 * @todo add more tests
+	 */
+	function exists( string $property_type, $properties ) {
+		return $this->access_property( $property_type, 'exists', $properties );
+	}
+
+	/**
+	 * Add values to specified properties.
+	 *
+	 * @param string $property_type
+	 * @param array $properties
+	 * @param mixed $value
+	 * @uses Image_Tag_Properties_Abstract::add_to()
+	 * @return $this
+	 *
+	 * @todo add more tests
+	 */
+	function add_to( string $property_type, $properties, $value = null ) {
+		$this->access_property( $property_type, 'add_to', $properties, $value );
+		return $this;
+	}
+
+	/**
+	 * Get properties, by filter.
+	 *
+	 * @param string $property_type
+	 * @param null|string|string[] $properties
+	 * @param string $context view|edit
+	 * @uses Image_Tag_Properties_Abstract::get()
+	 * @return mixed
+	 *
+	 * @todo add more tests
+	 */
+	function get( string $property_type, $properties = null, string $context = 'view' ) {
+		return $this->access_property( $property_type, 'get', $properties, $context );
 	}
 
 

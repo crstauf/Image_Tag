@@ -44,12 +44,9 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers ::add_attributes()
-	 * @covers ::add_attribute()
-	 * @covers ::set_attributes()
-	 * @covers ::set_attribute()
-	 * @covers ::add_to_attributes()
-	 * @covers ::add_to_attribute()
+	 * @covers ::add()
+	 * @covers ::set()
+	 * @covers ::add_to()
 	 *
 	 * @group instance
 	 * @group chaining
@@ -57,12 +54,9 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 	function test_chaining() {
 		$instance = $this->new_instance();
 
-		$this->assertSame( $instance, $instance->add_attributes( array( 'id' => __FUNCTION__ ) ) );
-		$this->assertSame( $instance, $instance->add_attribute( 'title', __FUNCTION__ ) );
-		$this->assertSame( $instance, $instance->set_attributes( array( 'id' => __FUNCTION__ ) ) );
-		$this->assertSame( $instance, $instance->set_attribute( 'id', __FUNCTION__ ) );
-		$this->assertSame( $instance, $instance->add_to_attributes( array( 'id' => __FUNCTION__ ) ) );
-		$this->assertSame( $instance, $instance->add_to_attribute( 'id', __FUNCTION__ ) );
+		$this->assertSame( $instance, $instance->add( 'attributes', 'add', array( 'id' => __FUNCTION__ ) ) );
+		$this->assertSame( $instance, $instance->set( 'attributes', 'set', array( 'id' => __FUNCTION__ ) ) );
+		$this->assertSame( $instance, $instance->add_to( 'attributes', 'add_to', array( 'id' => __FUNCTION__ ) ) );
 	}
 
 
@@ -173,22 +167,22 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 
 
 	/*
-	   ###    ######## ######## ########  #### ########  ##     ## ######## ########  ######
-	  ## ##      ##       ##    ##     ##  ##  ##     ## ##     ##    ##    ##       ##    ##
-	 ##   ##     ##       ##    ##     ##  ##  ##     ## ##     ##    ##    ##       ##
-	##     ##    ##       ##    ########   ##  ########  ##     ##    ##    ######    ######
-	#########    ##       ##    ##   ##    ##  ##     ## ##     ##    ##    ##             ##
-	##     ##    ##       ##    ##    ##   ##  ##     ## ##     ##    ##    ##       ##    ##
-	##     ##    ##       ##    ##     ## #### ########   #######     ##    ########  ######
+	########  ########   #######  ########  ######## ########  ######## #### ########  ######
+	##     ## ##     ## ##     ## ##     ## ##       ##     ##    ##     ##  ##       ##    ##
+	##     ## ##     ## ##     ## ##     ## ##       ##     ##    ##     ##  ##       ##
+	########  ########  ##     ## ########  ######   ########     ##     ##  ######    ######
+	##        ##   ##   ##     ## ##        ##       ##   ##      ##     ##  ##             ##
+	##        ##    ##  ##     ## ##        ##       ##    ##     ##     ##  ##       ##    ##
+	##        ##     ##  #######  ##        ######## ##     ##    ##    #### ########  ######
 	*/
 
 	/**
-	 * @covers ::add_attributes()
+	 * @covers ::add()
+	 * @covers ::access_property()
 	 *
 	 * @group properties
-	 * @group attributes
 	 */
-	function test_add_attributes() {
+	function test_add() {
 		$image = $this->new_instance();
 		$attributes = new Image_Tag_Attributes( array() );
 
@@ -199,36 +193,28 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 			'height' => 900,
 		);
 
-		$image->add_attributes( $add_attributes );
+		$image->add( 'attributes', $add_attributes );
 		$attributes->add( $add_attributes );
 
 		foreach ( $add_attributes as $attribute => $value )
 			$this->assertSame( $attributes->$attribute, $image->attributes->$attribute );
-	}
 
-	/**
-	 * @covers ::add_attribute()
-	 *
-	 * @group properties
-	 * @group attributes
-	 */
-	function test_add_attribute() {
 		$image = $this->new_instance();
 		$attributes = new Image_Tag_Attributes( array() );
 
-		$image->add_attribute( 'id', __FUNCTION__ );
+		$image->add( 'attribute', 'id', __FUNCTION__ );
 		$attributes->add( 'id', __FUNCTION__ );
 
 		$this->assertSame( $attributes->id, $image->attributes->id );
 	}
 
 	/**
-	 * @covers ::set_attributes()
+	 * @covers ::set()
+	 * @covers ::access_property()
 	 *
 	 * @group properties
-	 * @group attributes
 	 */
-	function test_set_attributes() {
+	function test_set() {
 		$image = $this->new_instance();
 		$attributes = new Image_Tag_Attributes( array() );
 
@@ -242,41 +228,33 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 			$this->assertSame( $attributes->$attribute, $image->attributes->$attribute );
 		}
 
-		$image->set_attributes( $set_attributes );
+		$image->set( 'attributes', $set_attributes );
 		$attributes->set( $set_attributes );
 
 		foreach ( $set_attributes as $attribute => $value ) {
 			$this->assertSame( $value, $image->attributes->$attribute );
 			$this->assertSame( $attributes->$attribute, $image->attributes->$attribute );
 		}
-	}
 
-	/**
-	 * @covers ::set_attribute()
-	 *
-	 * @group properties
-	 * @group attributes
-	 */
-	function test_set_attribute() {
 		$image = $this->new_instance( array( 'id' => uniqid( __FUNCTION__ ) ) );
 		$attributes = new Image_Tag_Attributes( array( 'id' => uniqid( __FUNCTION__ ) ) );
 
 		$this->assertNotEquals( __FUNCTION__, $image->attributes->id );
 		$this->assertNotEquals( __FUNCTION__, $attributes->id );
 
-		$image->set_attribute( 'id', __FUNCTION__ );
+		$image->set( 'attribute', 'id', __FUNCTION__ );
 		$attributes->set( 'id', __FUNCTION__ );
 
 		$this->assertSame( $attributes->id, $image->attributes->id );
 	}
 
 	/**
-	 * @covers ::attributes_are_set()
+	 * @covers ::isset()
+	 * @covers ::access_property()
 	 *
 	 * @group properties
-	 * @group attributes
 	 */
-	function test_attributes_are_set() {
+	function test_isset() {
 		$image = $this->new_instance( array(
 			'id' => __FUNCTION__,
 			'width' => 1600,
@@ -289,68 +267,52 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 			'height' => 900,
 		) );
 
-		$this->assertTrue( $image->attributes_are_set( array( 'id', 'width', 'height' ) ) );
-		$this->assertSame( $attributes->isset( array( 'id', 'width', 'height' ) ), $image->attributes_are_set( array( 'id', 'width', 'height' ) ) );
+		$this->assertTrue( $image->isset( 'attributes', array( 'id', 'width', 'height' ) ) );
+		$this->assertSame( $attributes->isset( array( 'id', 'width', 'height' ) ), $image->isset( 'attributes', array( 'id', 'width', 'height' ) ) );
 
-		$this->assertFalse( $image->attributes_are_set( array( 'id', 'title' ) ) );
-		$this->assertSame(  $attributes->isset( array( 'id', 'title' ) ), $image->attributes_are_set( array( 'id', 'title' ) ) );
-	}
+		$this->assertFalse( $image->isset( 'attributes', array( 'id', 'title' ) ) );
+		$this->assertSame(  $attributes->isset( array( 'id', 'title' ) ), $image->isset( 'attributes', array( 'id', 'title' ) ) );
 
-	/**
-	 * @covers ::attribute_isset()
-	 *
-	 * @group properties
-	 * @group attributes
-	 */
-	function test_attribute_isset() {
 		$image = $this->new_instance( array( 'id' => __FUNCTION__ ) );
 		$attributes = new Image_Tag_Attributes( array( 'id' => __FUNCTION__ ) );
 
-		$this->assertTrue( $image->attribute_isset( 'id' ) );
-		$this->assertSame( $attributes->isset( 'id' ), $image->attribute_isset( 'id' ) );
+		$this->assertTrue( $image->isset( 'attribute', 'id' ) );
+		$this->assertSame( $attributes->isset( 'id' ), $image->isset( 'attribute', 'id' ) );
 	}
 
 	/**
-	 * @covers ::attributes_exist()
+	 * @covers ::exists()
+	 * @covers ::access_property()
 	 *
 	 * @group properties
-	 * @group attributes
 	 */
 	function test_attributes_exist() {
 		$image = $this->new_instance();
 		$attributes = new Image_Tag_Attributes( array() );
 
-		$this->assertTrue( $image->attributes_exist( array( 'id', 'class', 'width' ) ) );
-		$this->assertSame( $attributes->exists( array( 'id', 'class', 'width' ) ), $image->attributes_exist( array( 'id', 'class', 'width' ) ) );
+		$this->assertTrue( $image->exists( 'attributes', array( 'id', 'class', 'width' ) ) );
+		$this->assertSame( $attributes->exists( array( 'id', 'class', 'width' ) ), $image->exists( 'attributes', array( 'id', 'class', 'width' ) ) );
 
-		$this->assertFalse( $image->attributes_exist( array( 'id', 'foo' ) ) );
-		$this->assertSame( $attributes->exists( array( 'id', 'foo' ) ), $image->attributes_exist( array( 'id', 'foo' ) ) );
-	}
+		$this->assertFalse( $image->exists( 'attributes', array( 'id', 'foo' ) ) );
+		$this->assertSame( $attributes->exists( array( 'id', 'foo' ) ), $image->exists( 'attributes', array( 'id', 'foo' ) ) );
 
-	/**
-	 * @covers ::attribute_exists()
-	 *
-	 * @group properties
-	 * @group attributes
-	 */
-	function test_attribute_exists() {
 		$image = $this->new_instance();
 		$attributes = new Image_Tag_Attributes( array() );
 
-		$this->assertTrue( $image->attribute_exists( 'id' ) );
-		$this->assertSame( $attributes->exists( 'id' ), $image->attribute_exists( 'id' ) );
+		$this->assertTrue( $image->exists( 'attribute', 'id' ) );
+		$this->assertSame( $attributes->exists( 'id' ), $image->exists( 'attribute', 'id' ) );
 
-		$this->assertFalse( $image->attribute_exists( 'foo' ) );
-		$this->assertSame( $attributes->exists( 'foo' ), $image->attribute_exists( 'foo' ) );
+		$this->assertFalse( $image->exists( 'attribute', 'foo' ) );
+		$this->assertSame( $attributes->exists( 'foo' ), $image->exists( 'attribute', 'foo' ) );
 	}
 
 	/**
-	 * @covers ::add_to_attributes()
+	 * @covers ::add_to()
+	 * @covers ::access_property()
 	 *
 	 * @group properties
-	 * @group attributes
 	 */
-	function test_add_to_attributes() {
+	function test_add_to() {
 		$image = $this->new_instance( array(
 			'id' => __FUNCTION__,
 			'class' => 'foo',
@@ -364,7 +326,7 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 		$this->assertSame( $attributes->id, $image->attributes->id );
 		$this->assertSame( $attributes->class, $image->attributes->class );
 
-		$image->add_to_attributes( array(
+		$image->add_to( 'attributes', array(
 			'id' => 'foo',
 			'class' => 'bar',
 		) );
@@ -376,33 +338,25 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 
 		$this->assertSame( $attributes->id, $image->attributes->id );
 		$this->assertSame( $attributes->class, $image->attributes->class );
-	}
 
-	/**
-	 * @covers ::add_to_attribute()
-	 *
-	 * @group properties
-	 * @group attributes
-	 */
-	function test_add_to_attribute() {
 		$image = $this->new_instance( array( 'id' => __FUNCTION__ ) );
 		$attributes = new Image_Tag_Attributes( array( 'id' => __FUNCTION__ ) );
 
 		$this->assertSame( $attributes->id, $image->attributes->id );
 
-		$image->add_to_attribute( 'id', 'bar' );
+		$image->add_to( 'attribute', 'id', 'bar' );
 		$attributes->add_to( 'id', 'bar' );
 
 		$this->assertSame( $attributes->id, $image->attributes->id );
 	}
 
 	/**
-	 * @covers ::get_attributes()
+	 * @covers ::get()
+	 * @covers ::access_property()
 	 *
 	 * @group properties
-	 * @group attributes
 	 */
-	function test_get_attributes() {
+	function test_get() {
 		$image = $this->new_instance( array(
 			'id' => __FUNCTION__,
 			'class' => array( 'foo', 'zoo' ),
@@ -414,26 +368,18 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 		) );
 
 		foreach ( array( 'edit', 'view' ) as $context ) {
-			$this->assertSame( $attributes->get( null, $context ), $image->get_attributes( null, $context ) );
-			$this->assertSame( $attributes->get( array( 'id', 'class', 'foo' ), $context ), $image->get_attributes( array( 'id', 'class', 'foo' ), $context ) );
+			$this->assertSame( $attributes->get( null, $context ), $image->get( 'attributes', null, $context ) );
+			$this->assertSame( $attributes->get( array( 'id', 'class', 'foo' ), $context ), $image->get( 'attributes', array( 'id', 'class', 'foo' ), $context ) );
 			$this->assertSame( 2, count( $attributes->get( array( 'id', 'class' ), $context ) ) );
 		}
-	}
 
-	/**
-	 * @covers ::get_attribute()
-	 *
-	 * @group properties
-	 * @group attributes
-	 */
-	function test_get_attribute() {
 		$image = $this->new_instance( array( 'id' => __FUNCTION__ ) );
 		$attributes = new Image_Tag_Attributes( array( 'id' => __FUNCTION__ ) );
 
 		$this->assertSame( $attributes->id, $image->attributes->id );
 
 		foreach ( array( 'edit', 'view' ) as $context )
-			$this->assertSame( $attributes->get( 'id', $context ), $image->get_attribute( 'id', $context ) );
+			$this->assertSame( $attributes->get( 'id', $context ), $image->get( 'attribute', 'id', $context ) );
 	}
 
 
