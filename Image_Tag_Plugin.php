@@ -65,16 +65,14 @@ class Image_Tag_Plugin {
 	 */
 	static function includes() {
 
-		# Abstracts.
-		require_once 'image_tags/Image_Tag_Abstract.php';
-		require_once 'image_tags/properties/abstract.php';
-
 		# Properties.
+		require_once 'image_tags/properties/abstract.php';
 		require_once 'image_tags/properties/attributes.php';
 		require_once 'image_tags/properties/settings.php';
 
 		# Types.
-		require_once 'image_tags/Image_Tag.php';
+		require_once 'image_tags/types/abstract.php';
+		require_once 'image_tags/types/base.php';
 
 	}
 

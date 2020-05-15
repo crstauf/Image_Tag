@@ -1,6 +1,6 @@
 <?php
 
-require_once 'abstract-properties-tests.php';
+require_once 'abstract-tests.php';
 
 /**
  * @coversDefaultClass Image_Tag_Attributes

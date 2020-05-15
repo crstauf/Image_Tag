@@ -1,6 +1,6 @@
 <?php
 
-require_once 'abstract-properties-base.php';
+require_once 'abstract-base.php';
 
 /**
  * Tests for descendants of Image_Tag_Properties.

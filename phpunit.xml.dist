@@ -26,14 +26,24 @@
 			<file>./tests/properties/settings.php</file>
 		</testsuite>
 
+		<testsuite name="types">
+			<file>./tests/types/base.php</file>
+		</testsuite>
+
 	</testsuites>
 
 	<filter>
 		<whitelist processUncoveredFilesFromWhitelist="true">
-			<file>image_tags/Image_Tag_Abstract.php</file>
+
+			<!-- properties -->
 			<file>image_tags/properties/abstract.php</file>
 			<file>image_tags/properties/attributes.php</file>
 			<file>image_tags/properties/settings.php</file>
+
+			<!-- types -->
+			<file>image_tags/types/abstract.php</file>
+			<file>image_tags/types/base.php</file>
+
 		</whitelist>
 	</filter>
 

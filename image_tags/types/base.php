@@ -33,3 +33,5 @@ class Image_Tag extends Image_Tag_Abstract {
 	}
 
 }
+
+?>

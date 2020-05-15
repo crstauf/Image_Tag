@@ -1,9 +1,9 @@
 <?php
 
 /**
- * @covers Image_Tag_Abstract
+ * @coversDefaultClass Image_Tag_Abstract
  */
-class Image_Tag_Abstract_Test extends WP_UnitTestCase {
+abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 
 
 	/*

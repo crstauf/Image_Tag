@@ -80,11 +80,16 @@ class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 		static::$included_files = get_included_files();
 
 		return array(
-			'abstract/image tag' => array( 'Image_Tag_Abstract.php', 'Image_Tag_Abstract' ),
-			'abstract/properties' => array( 'properties/abstract.php', 'Image_Tag_Properties_Abstract' ),
+
+			# Properties.
+			'abstract/properties'   => array( 'properties/abstract.php',   'Image_Tag_Properties_Abstract' ),
 			'properties/attributes' => array( 'properties/attributes.php', 'Image_Tag_Attributes' ),
-			'properties/settings' => array( 'properties/settings.php', 'Image_Tag_Settings' ),
-			'image tag' => array( null, 'Image_Tag' ),
+			'properties/settings'   => array( 'properties/settings.php',   'Image_Tag_Settings' ),
+
+			# Types.
+			'abstract/image tag' => array( 'types/abstract.php', 'Image_Tag_Abstract' ),
+			         'image tag' => array( 'types/base.php',     'Image_Tag' ),
+
 		);
 	}
 
