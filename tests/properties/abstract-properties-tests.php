@@ -32,10 +32,21 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 		$this->assertSame( static::DEFAULTS, constant( $this->class_name() . '::DEFAULTS' ) );
 	}
 
+
+	/*
+	 ######  ########    ###    ######## ####  ######
+	##    ##    ##      ## ##      ##     ##  ##    ##
+	##          ##     ##   ##     ##     ##  ##
+	 ######     ##    ##     ##    ##     ##  ##
+	      ##    ##    #########    ##     ##  ##
+	##    ##    ##    ##     ##    ##     ##  ##    ##
+	 ######     ##    ##     ##    ##    ####  ######
+	*/
+
 	/**
-	 * Data provider for Image_Tag_Properties_Test::test_function_name().
+	 * Data provider for Image_Tag_Properties_Base::test_function_name().
 	 *
-	 * @see Image_Tag_Properties_Test::test_function_name()
+	 * @see Image_Tag_Properties_Base::test_function_name()
 	 * @return array[]
 	 */
 	function data_function_name() {
@@ -317,9 +328,9 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	*/
 
 	/**
-	 * Data provider for Image_Tag_Properties_Test::test_add().
+	 * Data provider for Image_Tag_Properties_Base::test_add().
 	 *
-	 * @see Image_Tag_Properties_Test::test_add()
+	 * @see Image_Tag_Properties_Base::test_add()
 	 * @return array[]
 	 */
 	function data_add() {
@@ -380,9 +391,9 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	*/
 
 	/**
-	 * Data provider for Image_Tag_Properties_Test::test_set().
+	 * Data provider for Image_Tag_Properties_Base::test_set().
 	 *
-	 * @see Image_Tag_Properties_Test::test_set()
+	 * @see Image_Tag_Properties_Base::test_set()
 	 * @return array[]
 	 */
 	function data_set() {
@@ -418,9 +429,9 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	}
 
 	/**
-	 * Data provider for Image_Tag_Properties_Test::test_unset().
+	 * Data provider for Image_Tag_Properties_Base::test_unset().
 	 *
-	 * @see Image_Tag_Properties_Test::test_unset()
+	 * @see Image_Tag_Properties_Base::test_unset()
 	 * @return array[]
 	 */
 	function data_unset() {
@@ -478,9 +489,9 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	*/
 
 	/**
-	 * Data provider for Image_Tag_Properties_Test::test_isset().
+	 * Data provider for Image_Tag_Properties_Base::test_isset().
 	 *
-	 * @see Image_Tag_Properties_Test::test_isset()
+	 * @see Image_Tag_Properties_Base::test_isset()
 	 * @return array[]
 	 */
 	function data_isset() {
@@ -562,9 +573,9 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	}
 
 	/**
-	 * Data provider for Image_Tag_Properties_Test::test_exists().
+	 * Data provider for Image_Tag_Properties_Base::test_exists().
 	 *
-	 * @see Image_Tag_Properties_Test::test_exists()
+	 * @see Image_Tag_Properties_Base::test_exists()
 	 * @uses static::data_isset()
 	 * @return array[]
 	 */
@@ -592,9 +603,9 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	*/
 
 	/**
-	 * Data provider for Image_Tag_Properties_Test::test_add_to().
+	 * Data provider for Image_Tag_Properties_Base::test_add_to().
 	 *
-	 * @see Image_Tag_Properties_Test::test_add_to()
+	 * @see Image_Tag_Properties_Base::test_add_to()
 	 * @return array[]
 	 */
 	function data_add_to() {
@@ -725,9 +736,9 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	*/
 
 	/**
-	 * Data provider for Image_Tag_Properties_Test::test_get().
+	 * Data provider for Image_Tag_Properties_Base::test_get().
 	 *
-	 * @see Image_Tag_Properties_Test::test_get()
+	 * @see Image_Tag_Properties_Base::test_get()
 	 * @return array[]
 	 */
 	function data_get() {
@@ -800,9 +811,9 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	*/
 
 	/**
-	 * Data provider for Image_Tag_Properties::offsetExists().
+	 * Data provider for Image_Tag_Properties_Base::test_arrayAccess_exists().
 	 *
-	 * @see Image_Tag_Properties::offsetExists()
+	 * @see Image_Tag_Properties_Base::test_arrayAccess_exists()
 	 * @return array[]
 	 */
 	function data_arrayAccess_exists() {
@@ -835,7 +846,7 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	}
 
 	/**
-	 * Data provider for Image_Tag_Properties::offsetGet().
+	 * Data provider for Image_Tag_Properties_Base::test_arrayAccess_get().
 	 *
 	 * @see Image_Tag_Properties::offsetGet()
 	 * @return array[]
@@ -899,9 +910,9 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	}
 
 	/**
-	 * Data provider for Image_Tag_Properties::offsetUnset().
+	 * Data provider for Image_Tag_Properties_Base::test_arrayAccess_unset().
 	 *
-	 * @see Image_Tag_Properties::offsetUnset()
+	 * @see Image_Tag_Properties_Base::test_arrayAccess_unset()
 	 * @return array[]
 	 */
 	function data_arrayAccess_unset() {
@@ -937,3 +948,5 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	}
 
 }
+
+?>

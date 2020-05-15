@@ -17,6 +17,13 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 		return new $class_name( ...$params );
 	}
 
+	/**
+	 * Get or create an instance.
+	 *
+	 * @param array $params
+	 * @uses self::new_instance()
+	 * @return Image_Tag_Properties
+	 */
 	protected function get_instance( ...$params ) {
 		static $instance = null;
 
@@ -34,6 +41,8 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 *
 	 * @covers ::add()
 	 * @covers ::set()
+	 * @covers ::unset()
+	 * @covers ::add_to()
 	 * @group instance
 	 */
 	function test_chaining() {
@@ -72,7 +81,6 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	*/
 
 	/**
-	 * @param string $class_name
 	 * @param string $property
 	 * @param string $expected
 	 *

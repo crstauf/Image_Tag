@@ -125,7 +125,7 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 	}
 
 	/**
-	 * Data provider for Image_Tag_Properties_Test::test__set().
+	 * Data provider for Image_Tag_Properties_Tests::test__set().
 	 *
 	 * Set expected value to flattened original value.
 	 *
@@ -140,7 +140,7 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 	}
 
 	/**
-	 * Data provider for Image_TagProperties_Test::__get().
+	 * Data provider for Image_TagProperties_Tests::__get().
 	 *
 	 * Set expected value to flattened original value.
 	 *
@@ -166,12 +166,12 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 	*/
 
 	/**
-	 * Data provider for Image_Tag_Attribute_Test::test_set().
+	 * Data provider for Image_Tag_Attribute_Tests::test_set().
 	 *
 	 * Add attribute specific tests.
 	 *
 	 * @see self::test_set()
-	 * @uses Image_Tag_Properties_Test::data_set()
+	 * @uses Image_Tag_Properties_Tests::data_set()
 	 * @return array
 	 */
 	function data_set() {
@@ -245,7 +245,7 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 	}
 
 	/**
-	 * @see Image_Tag_Properties_Test::test_set()
+	 * @see Image_Tag_Properties_Tests::test_set()
 	 *
 	 * @covers ::trim()
 	 * @covers ::explode_deep()
@@ -275,7 +275,7 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 	 * Adjust test for use with attributes.
 	 *
 	 * @see Image_Tag_Properties_Test::test_add_to()
-	 * @uses Image_Tag_Properties_Test::data_add_to()
+	 * @uses Image_Tag_Properties_Tests::data_add_to()
 	 * @return array[]
 	 */
 	function data_add_to() {
