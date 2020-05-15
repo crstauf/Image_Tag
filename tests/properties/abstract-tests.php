@@ -17,6 +17,15 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	abstract protected function class_name();
 
 	/**
+	 * Test class is child of Image_Tag_Properties_Abstract.
+	 *
+	 * @group plugin
+	 */
+	function test_ancestry() {
+		$this->assertTrue( is_subclass_of( $this->get_instance(), Image_Tag_Properties_Abstract::class ) );
+	}
+
+	/**
 	 * Test Image_Tag_Properties::NAME constant value.
 	 *
 	 * @group constant
