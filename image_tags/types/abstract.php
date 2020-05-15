@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @todo add ArrayAccess for attributes
+ * @todo add Iterator for attributes
+ */
 abstract class Image_Tag_Abstract {
 
 	/**
@@ -39,6 +43,71 @@ abstract class Image_Tag_Abstract {
 	 */
 	function __get( string $key ) {
 		return $this->$key;
+	}
+
+
+	/*
+	   ###    ######## ######## ########  #### ########  ##     ## ######## ########  ######
+	  ## ##      ##       ##    ##     ##  ##  ##     ## ##     ##    ##    ##       ##    ##
+	 ##   ##     ##       ##    ##     ##  ##  ##     ## ##     ##    ##    ##       ##
+	##     ##    ##       ##    ########   ##  ########  ##     ##    ##    ######    ######
+	#########    ##       ##    ##   ##    ##  ##     ## ##     ##    ##    ##             ##
+	##     ##    ##       ##    ##    ##   ##  ##     ## ##     ##    ##    ##       ##    ##
+	##     ##    ##       ##    ##     ## #### ########   #######     ##    ########  ######
+	*/
+
+	function add_attributes( array $attributes ) {
+		$this->attributes->add( $attributes );
+		return $this;
+	}
+
+	function add_attribute( string $attribute, $value ) {
+		$this->attributes->add( $attribute, $value );
+		return $this;
+	}
+
+	function set_attributes( array $attributes ) {
+		$this->attributes->set( $attributes );
+		return $this;
+	}
+
+	function set_attribute( string $attribute, $value ) {
+		$this->attributes->set( $attribute, $value );
+		return $this;
+	}
+
+	function attributes_are_set( array $attributes ) {
+		return $this->attributes->isset( $attributes );
+	}
+
+	function attribute_isset( string $attribute ) {
+		return $this->attribute->isset( $attribute );
+	}
+
+	function attributes_exist( array $attributes ) {
+		return $this->attributes->exist( $attributes );
+	}
+
+	function attribute_exists( string $attribute ) {
+		return $this->attributes->exist( $attribute );
+	}
+
+	function add_to_attributes( array $attributes ) {
+		$this->attributes->add_to( $attributes );
+		return $this;
+	}
+
+	function add_to_attribute( string $attribute, $value ) {
+		$this->attributes->add_to( $attribute, $value );
+		return $this;
+	}
+
+	function get_attributes( $filter = null, string $context = 'view' ) {
+		return $this->attributes->get( $filter, $context );
+	}
+
+	function get_attribute( string $attribute, string $context = 'view' ) {
+		return $this->attributes->get( $attribute, $context );
 	}
 
 
