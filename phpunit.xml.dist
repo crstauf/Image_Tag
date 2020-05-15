@@ -9,6 +9,9 @@
 	forceCoversAnnotation="true"
 	beStrictAboutTestsThatDoNotTestAnything="true"
 	beStrictAboutOutputDuringTests="true"
+	beStrictAboutTodoAnnotatedTests="true"
+	processIsolation="false"
+	reverseDefectList="true"
 >
 
 	<testsuites>
@@ -27,7 +30,6 @@
 
 	<filter>
 		<whitelist processUncoveredFilesFromWhitelist="true">
-			<file>Image_Tag_Plugin.php</file>
 			<file>image_tags/Image_Tag_Abstract.php</file>
 			<file>image_tags/properties/abstract.php</file>
 			<file>image_tags/properties/attributes.php</file>

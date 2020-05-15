@@ -42,8 +42,6 @@ class Image_Tag_Plugin {
 
 	/**
 	 * Construct.
-	 *
-	 * @codeCoverageIgnore
 	 */
 	protected function __construct() {
 
@@ -57,8 +55,6 @@ class Image_Tag_Plugin {
 	 * - include files, hopefully after any processing and redirection
 	 *
 	 * @uses static::includes()
-	 *
-	 * @codeCoverageIgnore
 	 */
 	function action__template_redirect() {
 		static::includes();
@@ -66,8 +62,6 @@ class Image_Tag_Plugin {
 
 	/**
 	 * Include all the files.
-	 *
-	 * @codeCoverageIgnore
 	 */
 	static function includes() {
 

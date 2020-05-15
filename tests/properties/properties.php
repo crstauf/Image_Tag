@@ -3,29 +3,6 @@
 require_once 'abstract-properties-tests.php';
 
 /**
- * Class to test abstract Image_Tag_Properties_Abstract.
- */
-class Image_Tag_Properties extends Image_Tag_Properties_Abstract {
-
-	function set_fejwio_property( $value ) {
-		$this->_set( 'fejwio', $value );
-	}
-
-	function set_array_property( string $attribute, array $value ) {
-		$this->_set( $attribute, $value );
-	}
-
-	function get_fejwio_property_for_view() {
-		return __METHOD__;
-	}
-
-	function get_array_property_for_view() {
-		return range( 1, 5 );
-	}
-
-}
-
-/**
  * @coversDefaultClass Image_Tag_Properties
  */
 class Image_Tag_Properties_Test extends Image_Tag_Properties_Tests {
@@ -43,6 +20,13 @@ class Image_Tag_Properties_Test extends Image_Tag_Properties_Tests {
 		$this->assertSame( 'property', constant( $this->class_name() . '::NAME' ) );
 	}
 
+	/**
+	 * Data provider for Image_Tag_Properties_Tests::test_set().
+	 *
+	 * @see Image_Tag_Properties_Base::test_set()
+	 * @uses Image_Tag_Properties_Tests::data_set()
+	 * @return array[]
+	 */
 	function data_set() {
 		$data = parent::data_set();
 
@@ -62,9 +46,10 @@ class Image_Tag_Properties_Test extends Image_Tag_Properties_Tests {
 	}
 
 	/**
-	 * Data provider for Image_Tag_Properties_Test::test_get().
+	 * Data provider for Image_Tag_Properties_Tests::test_get().
 	 *
-	 * @uses Image_Tag_Properties_Test::data_get()
+	 * @see Image_Tag_Properties_Base::test_get()
+	 * @uses Image_Tag_Properties_Tests::data_get()
 	 * @return array[]
 	 */
 	function data_get() {
@@ -85,6 +70,29 @@ class Image_Tag_Properties_Test extends Image_Tag_Properties_Tests {
 		);
 
 		return $data;
+	}
+
+}
+
+/**
+ * Class to test abstract Image_Tag_Properties_Abstract.
+ */
+class Image_Tag_Properties extends Image_Tag_Properties_Abstract {
+
+	function set_fejwio_property( $value ) {
+		$this->_set( 'fejwio', $value );
+	}
+
+	function set_array_property( string $attribute, array $value ) {
+		$this->_set( $attribute, $value );
+	}
+
+	function get_fejwio_property_for_view() {
+		return __METHOD__;
+	}
+
+	function get_array_property_for_view() {
+		return range( 1, 5 );
 	}
 
 }

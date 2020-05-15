@@ -9,6 +9,9 @@ class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 	static $directory = null;
 	static $included_files = array();
 
+	/**
+	 * Test plugin info.
+	 */
 	function test_info() {
 		$data = get_plugin_data( dirname( __DIR__ ) . '/Image_Tag_Plugin.php', false, false );
 
@@ -43,6 +46,11 @@ class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 		$this->assertEquals( '7.1', $data['RequiresPHP'] );
 	}
 
+	/**
+	 * Test class constants.
+	 *
+	 * @group constant
+	 */
 	function test_constants() {
 		$this->assertSame( 2.0, Image_Tag_Plugin::VERSION );
 	}
@@ -72,10 +80,10 @@ class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 		static::$included_files = get_included_files();
 
 		return array(
-			'abstract image tag' => array( 'Image_Tag_Abstract.php', 'Image_Tag_Abstract' ),
-			'abstract properties' => array( 'properties/abstract.php', 'Image_Tag_Properties_Abstract' ),
-			'attributes' => array( 'properties/attributes.php', 'Image_Tag_Attributes' ),
-			'settings' => array( 'properties/settings.php', 'Image_Tag_Settings' ),
+			'abstract/image tag' => array( 'Image_Tag_Abstract.php', 'Image_Tag_Abstract' ),
+			'abstract/properties' => array( 'properties/abstract.php', 'Image_Tag_Properties_Abstract' ),
+			'properties/attributes' => array( 'properties/attributes.php', 'Image_Tag_Attributes' ),
+			'properties/settings' => array( 'properties/settings.php', 'Image_Tag_Settings' ),
 			'image tag' => array( null, 'Image_Tag' ),
 		);
 	}
