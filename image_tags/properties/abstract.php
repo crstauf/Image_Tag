@@ -260,11 +260,14 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess, Countable, 
 	 * Unset properties.
 	 *
 	 * @param string|array $properties
-	 * @todo define
 	 */
 	function unset( $properties ) {
-		foreach ( ( array ) $properties as $property )
+		foreach ( ( array ) $properties as $property ) {
 			unset( $this->properties[$property] );
+
+			if ( array_key_exists( $property, $this->defaults ) )
+				$this->properties[$property] = $this->defaults[$property];
+		}
 
 		return $this;
 	}

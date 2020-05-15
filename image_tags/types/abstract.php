@@ -36,13 +36,58 @@ abstract class Image_Tag_Abstract {
 	}
 
 	/**
+	 * Setter.
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 */
+	function __set( string $key, $value ) {
+		if ( in_array( $key, array_keys( get_object_vars( $this ) ) ) ) {
+			if ( is_subclass_of( $value, Image_Tag_Properties_Abstract::class ) )
+				$this->$key = $value;
+
+			return;
+		}
+
+		$this->attributes->$key = $value;
+	}
+
+	/**
 	 * Getter.
 	 *
 	 * @param string $key
 	 * @return mixed
 	 */
 	function __get( string $key ) {
-		return $this->$key;
+		if ( in_array( $key, array_keys( get_object_vars( $this ) ) ) )
+			return $this->$key;
+
+		return $this->attributes->$key;
+	}
+
+	/**
+	 * Check if isset.
+	 *
+	 * @param string $key
+	 * @return bool
+	 */
+	function __isset( string $key ) {
+		if ( in_array( $key, array_keys( get_object_vars( $this ) ) ) )
+			return isset( $this->$key );
+
+		return isset( $this->attributes->$key );
+	}
+
+	/**
+	 * Unsetter.
+	 *
+	 * @param string $key
+	 */
+	function __unset( string $key ) {
+		if ( in_array( $key, array_keys( get_object_vars( $this ) ) ) )
+			$this->$key = null;
+
+		unset( $this->attributes->$key );
 	}
 
 

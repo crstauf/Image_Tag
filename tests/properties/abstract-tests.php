@@ -308,18 +308,25 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 		return array(
 
 			'string' => array(
-				$this->new_instance( array( 'id' => uniqid( __FUNCTION__ ) ) ),
-				'id',
+				$this->new_instance( array( 'foo' => uniqid( __FUNCTION__ ) ) ),
+				'foo',
+			),
+
+			'string default' => array(
+				$this->new_instance( array(), array( 'foo' => __FUNCTION__ ) ),
+				'foo',
+				__FUNCTION__,
 			),
 
 			'array' => array(
-				$this->new_instance( array( 'id' => range( 1, 5 ) ) ),
-				'id',
+				$this->new_instance( array( 'foo' => range( 1, 5 ) ) ),
+				'foo',
 			),
 
-			'self' => array(
-				$this->new_instance( array(), array( 'id' => uniqid( __FUNCTION__ ) ) ),
-				'id',
+			'array default' => array(
+				$this->new_instance( array( 'foo' => range( 1, 5 ) ), array( 'foo' => array() ) ),
+				'foo',
+				array(),
 			),
 
 		);

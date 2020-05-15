@@ -208,11 +208,17 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data__unset
 	 */
-	function test__unset( Image_Tag_Properties_Abstract $instance, string $property ) {
+	function test__unset( Image_Tag_Properties_Abstract $instance, string $property, $expected = null ) {
 		$this->assertTrue( isset( $instance->$property ) );
 
 		unset( $instance->$property );
-		$this->assertFalse( isset( $instance->$property ) );
+
+		if ( is_null( $expected ) ) {
+			$this->assertFalse( isset( $instance->$property ) );
+			return;
+		}
+
+		$this->assertSame( $expected, $instance->$property );
 	}
 
 

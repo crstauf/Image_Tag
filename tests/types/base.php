@@ -7,6 +7,10 @@ require_once 'abstract.php';
  */
 class Image_Tag_Test extends Image_Tag_Test_Base {
 
+	protected function class_name() {
+		return Image_Tag::class;
+	}
+
 	/**
 	 * @covers ::get_type()
 	 *
