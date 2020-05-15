@@ -6,6 +6,9 @@
  */
 class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 
+	static $directory = null;
+	static $included_files = array();
+
 	function test_info() {
 		$data = get_plugin_data( dirname( __DIR__ ) . '/Image_Tag_Plugin.php', false, false );
 
@@ -59,26 +62,38 @@ class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers ::includes()
+	 * Data provider for Image_Tag_Plugin_Test::test_includes()
+	 *
+	 * @see self::test_includes()
+	 * @return array[]
 	 */
-	function test_includes() {
-		$includes_dir = trailingslashit( dirname( __DIR__ ) ) . 'image_tags/';
+	function data_includes() {
+		static::$directory = trailingslashit( dirname( __DIR__ ) ) . 'image_tags/';
+		static::$included_files = get_included_files();
 
-		# Abstracts.
-		$this->assertTrue( file_exists( $includes_dir . 'Image_Tag_Abstract.php' ) );
-		$this->assertTrue( class_exists( 'Image_Tag_Abstract' ) );
-		$this->assertTrue( file_exists( $includes_dir . 'properties/abstract.php' ) );
-		$this->assertTrue( class_exists( 'Image_Tag_Properties_Abstract' ) );
+		return array(
+			'abstract image tag' => array( 'Image_Tag_Abstract.php', 'Image_Tag_Abstract' ),
+			'abstract properties' => array( 'properties/abstract.php', 'Image_Tag_Properties_Abstract' ),
+			'attributes' => array( 'properties/attributes.php', 'Image_Tag_Attributes' ),
+			'settings' => array( 'properties/settings.php', 'Image_Tag_Settings' ),
+			'image tag' => array( null, 'Image_Tag' ),
+		);
+	}
 
-		# Properties.
-		$this->assertTrue( file_exists( $includes_dir . 'properties/attributes.php' ) );
-		$this->assertTrue( file_exists( $includes_dir . 'properties/settings.php' ) );
-		$this->assertTrue( class_exists( 'Image_Tag_Attributes' ) );
-		$this->assertTrue( class_exists( 'Image_Tag_Settings' ) );
+	/**
+	 * @param string $relative_filepath
+	 * @param string $class_name
+	 *
+	 * @covers ::includes()
+	 *
+	 * @dataProvider data_includes
+	 */
+	function test_includes( $relative_filepath, $class_name ) {
+		if ( !is_null( $relative_filepath ) )
+			$this->assertContains( static::$directory . $relative_filepath, static::$included_files );
 
-		# Types.
-		$this->assertTrue( file_exists( $includes_dir . 'Image_Tag.php' ) );
-		$this->assertTrue( class_exists( 'Image_Tag' ) );
+		if ( !is_null( $class_name ) )
+			$this->assertTrue( class_exists( $class_name ) );
 	}
 
 }
