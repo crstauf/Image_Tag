@@ -136,7 +136,7 @@ abstract class Image_Tag_Abstract {
 	 * @param string $property_type
 	 * @param string|array $properties
 	 * @param mixed $value
-	 * @uses Image_Tag_Properties_Abstract::add()
+	 * @uses static::access_property()
 	 * @return $this
 	 *
 	 * @todo add more tests
@@ -152,7 +152,7 @@ abstract class Image_Tag_Abstract {
 	 * @param string $property_type
 	 * @param string|array $properties
 	 * @param mixed $value
-	 * @uses Image_Tag_Properties_Abstract::set()
+	 * @uses static::access_property()
 	 * @return $this
 	 *
 	 * @todo add more tests
@@ -167,7 +167,7 @@ abstract class Image_Tag_Abstract {
 	 *
 	 * @param string $property_type
 	 * @param string|array $properties
-	 * @uses Image_Tag_Properties_Abstract::isset()
+	 * @uses static::access_property()
 	 * @return bool
 	 *
 	 * @todo add more tests
@@ -181,7 +181,7 @@ abstract class Image_Tag_Abstract {
 	 *
 	 * @param string $property_type
 	 * @param string|string[] $properties Array of attribute names.
-	 * @uses Image_Tag_Properties_Abstract::exists()
+	 * @uses static::access_property()
 	 * @return bool
 	 *
 	 * @todo add more tests
@@ -196,7 +196,7 @@ abstract class Image_Tag_Abstract {
 	 * @param string $property_type
 	 * @param array $properties
 	 * @param mixed $value
-	 * @uses Image_Tag_Properties_Abstract::add_to()
+	 * @uses static::access_property()
 	 * @return $this
 	 *
 	 * @todo add more tests
@@ -212,7 +212,7 @@ abstract class Image_Tag_Abstract {
 	 * @param string $property_type
 	 * @param null|string|string[] $properties
 	 * @param string $context view|edit
-	 * @uses Image_Tag_Properties_Abstract::get()
+	 * @uses static::access_property()
 	 * @return mixed
 	 *
 	 * @todo add more tests

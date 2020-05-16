@@ -367,6 +367,12 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 			),
 
 			array(
+				$this->new_instance(),
+				'foo',
+				range( 1, 5 ),
+			),
+
+			array(
 				$this->new_instance( array() ),
 				array(
 					'id' => __FUNCTION__,

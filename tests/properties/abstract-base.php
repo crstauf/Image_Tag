@@ -246,8 +246,11 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_add
 	 */
-	function test_add( Image_Tag_Properties_Abstract $instance, $add_properties, $value, $expected ) {
+	function test_add( Image_Tag_Properties_Abstract $instance, $add_properties, $value, $expected = null ) {
 		$instance->add( $add_properties, $value );
+
+		if ( is_null( $expected ) )
+			$expected = $value;
 
 		if ( is_string( $add_properties ) ) {
 			$this->assertSame( $expected, $instance->$add_properties );

@@ -290,12 +290,9 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess, Countable, 
 	 * @return bool
 	 */
 	function isset( $properties ) {
+		$properties = ( array ) $properties;
 
-		# Check single property.
-		if ( is_string( $properties ) )
-			return isset( $this->properties[$properties] );
-
-		# Check multiple properties.
+		# Check properties.
 		foreach ( $properties as $property )
 			if ( !isset( $this->properties[$property] ) )
 				return false;
@@ -310,12 +307,9 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess, Countable, 
 	 * @return bool
 	 */
 	function exists( $properties ) {
+		$properties = ( array ) $properties;
 
-		# Check single proeprty.
-		if ( is_string( $properties ) )
-			return array_key_exists( $properties, $this->properties );
-
-		# Check multiple properties.
+		# Check properties.
 		foreach ( $properties as $property )
 			if ( !array_key_exists( $property, $this->properties ) )
 				return false;
