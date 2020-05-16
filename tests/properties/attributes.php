@@ -260,6 +260,45 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 
 
 	/*
+	   ###    ########  ########
+	  ## ##   ##     ## ##     ##
+	 ##   ##  ##     ## ##     ##
+	##     ## ##     ## ##     ##
+	######### ##     ## ##     ##
+	##     ## ##     ## ##     ##
+	##     ## ########  ########
+	*/
+
+	/**
+	 * Data provider for Image_Tag_Properties_Base::test_add().
+	 *
+	 * Add tests specific to attributes.
+	 *
+	 * @see Image_Tag_Properties_Base::test_add()
+	 * @uses Image_Tag_Properties_Tests::data_add()
+	 * @return array[]
+	 */
+	function data_add() {
+		$data = parent::data_add();
+
+		$data['class string'] = array(
+			$this->new_instance(),
+			'class',
+			'foo bar elephant',
+			array( 'foo', 'bar', 'elephant' ),
+		);
+
+		$data['class array'] = array(
+			$this->new_instance(),
+			'class',
+			array( 'foo', 'bar' ),
+		);
+
+		return $data;
+	}
+
+
+	/*
 	   ###    ########  ########     ########  #######
 	  ## ##   ##     ## ##     ##       ##    ##     ##
 	 ##   ##  ##     ## ##     ##       ##    ##     ##

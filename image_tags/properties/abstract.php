@@ -150,7 +150,10 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess, Countable, 
 	 * @uses static::set_property()
 	 */
 	protected function add_property( string $property, $value ) {
-		if ( !$this->isset( $property ) )
+		if (
+			!$this->isset( $property )
+			|| array() === $this->properties[$property]
+		)
 			$this->set_property( $property, $value );
 	}
 
