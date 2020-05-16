@@ -83,7 +83,8 @@ class Image_Tag_Properties extends Image_Tag_Properties_Abstract {
 		$this->_set( 'fejwio', $value );
 	}
 
-	function set_array_property( string $attribute, array $value ) {
+	function set_array_property( string $attribute, $value ) {
+		$value = ( array ) $value;
 		$this->_set( $attribute, $value );
 	}
 

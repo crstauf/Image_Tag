@@ -6,6 +6,26 @@
 abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 
 	/**
+	 * Get property type.
+	 *
+	 * @param Image_Tag_Properties_Abstract $property
+	 * @return string
+	 */
+	static protected function property_type( Image_Tag_Properties_Abstract $property ) {
+		switch ( get_class( $property ) ) {
+
+			case 'Image_Tag_Attributes':
+				return 'attributes';
+
+			case 'Image_Tag_Settings':
+				return 'settings';
+
+		}
+
+		trigger_error( sprintf( 'Property type <code>%s</code> is unknown.', get_class( $property ) ), E_USER_WARNING );
+	}
+
+	/**
 	 * Get the class name to run tests against.
 	 *
 	 * @return string
@@ -54,8 +74,8 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 	function test_chaining() {
 		$instance = $this->new_instance();
 
-		$this->assertSame( $instance, $instance->add( 'attributes', 'add', array( 'id' => __FUNCTION__ ) ) );
-		$this->assertSame( $instance, $instance->set( 'attributes', 'set', array( 'id' => __FUNCTION__ ) ) );
+		$this->assertSame( $instance, $instance->add(    'attributes',    'add', array( 'id' => __FUNCTION__ ) ) );
+		$this->assertSame( $instance, $instance->set(    'attributes',    'set', array( 'id' => __FUNCTION__ ) ) );
 		$this->assertSame( $instance, $instance->add_to( 'attributes', 'add_to', array( 'id' => __FUNCTION__ ) ) );
 	}
 
@@ -177,35 +197,40 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 	*/
 
 	/**
+	 * @param Image_Tag_Abstract $instance
+	 * @param Image_Tag_Properties_Abstract $property
+	 * @param string|array $add_properties
+	 * @param mixed $value
+	 * @param mixed $expected
+	 *
 	 * @covers ::add()
 	 * @covers ::access_property()
-	 *
 	 * @group properties
+	 *
+	 * @dataProvider data_add
 	 */
-	function test_add() {
-		$image = $this->new_instance();
-		$attributes = new Image_Tag_Attributes( array() );
+	function test_add( Image_Tag_Abstract $instance, Image_Tag_Properties_Abstract $prop_obj, $add_properties, $value = null, $expected = null ) {
+		$property_type = static::property_type( $prop_obj );
 
-		$add_attributes = array(
-			'id' => __FUNCTION__,
-			'class' => 'foo bar',
-			'width' => 1600,
-			'height' => 900,
-		);
+		$instance->add( $property_type, $add_properties, $value );
+		$prop_obj->add( $add_properties, $value );
 
-		$image->add( 'attributes', $add_attributes );
-		$attributes->add( $add_attributes );
+		if ( is_null( $expected ) )
+			$expected = $value;
 
-		foreach ( $add_attributes as $attribute => $value )
-			$this->assertSame( $attributes->$attribute, $image->attributes->$attribute );
+		if ( is_string( $add_properties ) ) {
+			$this->assertSame( $expected, $instance->$property_type->$add_properties );
+			$this->assertSame( $prop_obj->$add_properties, $instance->$property_type->$add_properties );
+			return;
+		}
 
-		$image = $this->new_instance();
-		$attributes = new Image_Tag_Attributes( array() );
+		if ( is_null( $expected ) )
+			$expected = $add_properties;
 
-		$image->add( 'attribute', 'id', __FUNCTION__ );
-		$attributes->add( 'id', __FUNCTION__ );
-
-		$this->assertSame( $attributes->id, $image->attributes->id );
+		foreach ( array_keys( $add_properties ) as $property ) {
+			$this->assertSame( $expected[$property], $instance->$property_type->$property, sprintf( 'Failed asserting that %s property is expected value.', $property ) );
+			$this->assertSame( $prop_obj->$property, $instance->$property_type->$property );
+		}
 	}
 
 	/**

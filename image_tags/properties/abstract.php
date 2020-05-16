@@ -52,6 +52,10 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess, Countable, 
 	/**
 	 * Construct.
 	 *
+	 * "Set the defaults first": this has to be done first so that the default values
+	 * are evaluated through the override functions. Once the defaults are set, then
+	 * store that in "defaults" property, and evaluate and store the actual properties.
+	 *
 	 * @param array|self $properties
 	 * @param array $defaults
 	 * @uses static::get()
@@ -61,8 +65,15 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess, Countable, 
 		if ( is_a( $properties, static::class ) )
 			$properties = $properties->get( null, 'edit' );
 
-		$this->defaults = wp_parse_args( $defaults, static::DEFAULTS );
-		$this->set( wp_parse_args( $properties, $this->defaults ) );
+		# Set defaults first.
+		$defaults = wp_parse_args( $defaults, static::DEFAULTS );
+		$this->set( $defaults );
+
+		# Store evaluated defaults.
+		$this->defaults = wp_parse_args( $this->properties, $defaults );
+
+		# Override defaults with evaluated properties.
+		$this->set( $properties );
 	}
 
 	/**
@@ -151,10 +162,12 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess, Countable, 
 	 */
 	protected function add_property( string $property, $value ) {
 		if (
-			!$this->isset( $property )
-			|| array() === $this->properties[$property]
+			$this->isset( $property )
+			&& array() !== $this->properties[$property]
 		)
-			$this->set_property( $property, $value );
+			return;
+
+		$this->set_property( $property, $value );
 	}
 
 	/**

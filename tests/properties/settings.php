@@ -79,8 +79,8 @@ class Image_Tag_Settings_Test extends Image_Tag_Properties_Tests {
 	 */
 	function test_output() {
 		$instance = $this->new_instance( null, array(
-			'before_output' => null,
-			'after_output' => null,
+			'before_output' => array(),
+			 'after_output' => array(),
 		) );
 
 		$this->assertSame( array(), $instance->before_output );
@@ -89,7 +89,7 @@ class Image_Tag_Settings_Test extends Image_Tag_Properties_Tests {
 		# Test ::set_{position}_output_setting() functions.
 		$instance = $this->new_instance( null, array(
 			'before_output' => __FUNCTION__,
-			'after_output' => __FUNCTION__,
+			 'after_output' => __FUNCTION__,
 		) );
 
 		$this->assertSame( array( 10 => array( __FUNCTION__ ) ), $instance->before_output );
