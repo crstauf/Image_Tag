@@ -64,13 +64,13 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 	function test_order() {
 		$this->assertSame( array(
 			'id',
-			'class',
 			'src',
 			'data-src',
 			'srcset',
 			'data-srcset',
 			'sizes',
 			'data-sizes',
+			'class',
 			'width',
 			'height',
 			'title',
@@ -114,8 +114,8 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 		$instance = $this->new_instance( $attributes, $defaults );
 
 		$expected = 'id="' . esc_attr( __FUNCTION__ ) . '" ' .
-			'class="foo bar" ' .
 			'sizes="( max-width: 800px ) 50vw, 100vw" ' .
+			'class="foo bar" ' .
 			'width="1600" ' .
 			'height="900" ' .
 			'alt="" ' .

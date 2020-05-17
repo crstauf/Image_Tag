@@ -39,13 +39,13 @@ class Image_Tag_Attributes extends Image_Tag_Properties_Abstract {
 	 */
 	const ORDER = array(
 		'id',
-		'class',
 		'src',
 		'data-src',
 		'srcset',
 		'data-srcset',
 		'sizes',
 		'data-sizes',
+		'class',
 		'width',
 		'height',
 		'title',
@@ -175,7 +175,7 @@ class Image_Tag_Attributes extends Image_Tag_Properties_Abstract {
 		# Add remaining attributes.
 		$diff = array_diff_key( $attributes, array_flip( static::ORDER ) );
 		foreach ( $diff as $attribute => $value )
-			$array[$attribute] = sprintf( '%s="%s"', $attribute, esc_attr( $value ) );
+			$array[$attribute] = sprintf( '%s="%s"', $attribute, esc_attr( $this->get( $attribute ) ) );
 
 		# Apply filters.
 		$array  = apply_filters( 'image_tag/attributes/output/array', $array, $this );
@@ -263,9 +263,21 @@ class Image_Tag_Attributes extends Image_Tag_Properties_Abstract {
 	 * @param string $context view|edit
 	 * @uses Image_Tag_Properties::get()
 	 * @return string|array
+	 *
+	 * @todo add test for 'edit' context and filter
 	 */
 	function get( $attributes = null, string $context = 'view' ) {
-		return parent::get( $attributes, $context );
+		$value = parent::get( $attributes, $context );
+
+		if ( 'edit' === $context )
+			return $value;
+
+		if ( !is_array( $value ) )
+			return $value;
+
+		return array_filter( $value, function( $item ) {
+			return !is_null( $item );
+		} );
 	}
 
 	/**
@@ -273,13 +285,20 @@ class Image_Tag_Attributes extends Image_Tag_Properties_Abstract {
 	 *
 	 * @uses static::_get()
 	 * @return string
+	 *
+	 * @todo add test for returning null
 	 */
 	protected function get_class_attribute_for_view() {
-		$classes = $this->_get( 'class' );                            // get array of classes
+		$classes = $this->_get( 'class' );
+
+		if ( empty( $classes ) )
+			return null;
+
 		$classes = array_unique( $classes );                          // remove duplicates
 		$classes = array_map( array( __CLASS__, 'trim' ), $classes ); // trim items
 		$classes = array_filter( $classes );                          // renive enpty items
 		$classes = implode( ' ', $classes );                          // implode
+
 		return $classes;
 	}
 
@@ -299,9 +318,15 @@ class Image_Tag_Attributes extends Image_Tag_Properties_Abstract {
 	 * @param string $attribute
 	 * @param string $glue
 	 * @return string
+	 *
+	 * @todo add test for returning null
 	 */
 	protected function get_array_attribute_for_view( string $attribute, string $glue = ', ' ) {
 		$value = $this->_get( $attribute );
+
+		if ( empty( $value ) )
+			return null;
+
 		$value = array_map( array( __CLASS__, 'trim' ), $value );
 		return implode( $glue, $value );
 	}

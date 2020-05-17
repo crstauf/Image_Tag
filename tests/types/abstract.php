@@ -116,12 +116,16 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 	 * @group magic
 	 */
 	function test__get() {
-		$instance = $this->get_instance( array( 'id' => __FUNCTION__ ) );
+		$instance = $this->get_instance( array(
+			'id' => __FUNCTION__,
+			'class' => array( 'foo', 'bar' ),
+		) );
 
 		$this->assertInstanceOf( Image_Tag_Attributes::class, $instance->attributes );
 		$this->assertInstanceOf( Image_Tag_Settings::class,   $instance->settings );
 
 		$this->assertSame( __FUNCTION__, $instance->id );
+		$this->assertSame( array( 'foo', 'bar' ), $instance->class );
 	}
 
 	/**
@@ -153,6 +157,9 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 			'class' => 'foo bar',
 		) );
 
+		$this->assertTrue( isset( $instance->id ) );
+		$this->assertTrue( isset( $instance->class ) );
+
 		/**
 		 * Test unset attribute property.
 		 *
@@ -167,6 +174,62 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 		$this->assertInstanceOf( Image_Tag_Attributes::class, $instance->attributes );
 		unset( $instance->attributes );
 		$this->assertNull( $instance->attributes );
+	}
+
+	/**
+	 * Data provider for Image_Tag_Abstract::test__toString().
+	 *
+	 * @see static::test__toString()
+	 * @return array[]
+	 */
+	function data__toString() {
+		return array(
+
+			'id' => array(
+				$this->new_instance( array( 'id' => __FUNCTION__ ) ),
+				'warning',
+			),
+
+			'class' => array(
+				$this->new_instance( array( 'class' => 'foo bar' ) ),
+				'warning',
+			),
+
+			'src' => array(
+				$this->new_instance( array(
+					'id' => __FUNCTION__,
+					'class' => 'bar foo',
+					'src' => 'https://source.unsplash.com/1000x1000',
+				) ),
+				'<img ' .
+					'id="' . esc_attr( __FUNCTION__ ) . '" ' .
+					'src="' . esc_attr( 'https://source.unsplash.com/1000x1000' ) . '" ' .
+					'sizes="100vw" ' .
+					'class="bar foo" ' .
+					'alt="" ' .
+				'/>',
+			),
+
+		);
+	}
+
+	/**
+	 * @covers ::__toString()
+	 *
+	 * @group instance
+	 * @group magic
+	 * @group output
+	 *
+	 * @dataProvider data__toString
+	 */
+	function test__toString( Image_Tag_Abstract $instance, string $expected ) {
+		if ( 'warning' === $expected ) {
+			$this->expectOutputRegex( '/^\sWarning: .+?->__toString\(\).+?trigger_error\(.*$/s' );
+			$this->assertNull( $instance->__toString() );
+			return;
+		}
+
+		$this->assertSame( $expected, $instance->__toString() );
 	}
 
 

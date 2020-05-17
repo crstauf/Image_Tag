@@ -89,6 +89,32 @@ abstract class Image_Tag_Abstract {
 		unset( $this->attributes->$key );
 	}
 
+	/**
+	 * To string.
+	 *
+	 * @uses static::check_valid()
+	 * @uses Image_Tag_Attributes::__toString()
+	 * @return string
+	 */
+	function __toString() {
+		$errors = $this->check_valid();
+
+		if ( is_wp_error( $errors ) ) {
+			foreach ( $errors->get_error_messages() as $message )
+				trigger_error( $message, E_USER_WARNING );
+
+			return null;
+		}
+
+		$array = array(
+			'<img',
+			$this->attributes->__toString(),
+			'/>',
+		);
+
+		return implode( ' ', $array );
+	}
+
 
 	/*
 	##     ##    ###    ##       #### ########     ###    ######## ####  #######  ##    ##
