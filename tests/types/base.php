@@ -12,84 +12,43 @@ class Image_Tag_Test extends Image_Tag_Test_Base {
 	}
 
 	/**
-	 * Data provider for Image_Tag_Test_Base::test_add().
-	 *
-	 * @see Image_Tag_Test_Base::test_add()
-	 * @return array[]
-	 */
-	function data_add() {
-		return array(
-
-			'string' => array(
-				$this->new_instance( array() ),
-				new Image_Tag_Attributes( array() ),
-				'id',
-				__FUNCTION__,
-			),
-
-			'array' => array(
-				$this->new_instance(),
-				new Image_Tag_Attributes( array() ),
-				'class',
-				array( 'foo', 'bar' ),
-			),
-
-			'multiple' => array(
-				$this->new_instance(),
-				new Image_Tag_Attributes( array() ),
-				array(
-					'id' => __FUNCTION__,
-					'class' => array( 'foo', 'bar' ),
-					'width' => 1600,
-					'height' => 900,
-				),
-			),
-
-			'multiple with class string' => array(
-				$this->new_instance(),
-				new Image_Tag_Attributes( array() ),
-				array(
-					'id' => __FUNCTION__,
-					'class' => 'foo bar',
-					'width' => 1600,
-					'height' => 900,
-				),
-				array(
-					'id' => __FUNCTION__,
-					'class' => array( 'foo', 'bar' ),
-					'width' => 1600,
-					'height' => 900,
-				),
-			),
-
-		);
-	}
-
-	/**
 	 * @covers ::get_type()
-	 *
-	 * @todo define
 	 */
 	function test_get_type() {
-
+		$this->assertSame( 'base', $this->new_instance()->get_type() );
 	}
 
 	/**
 	 * @covers ::is_type()
-	 *
-	 * @todo define
 	 */
 	function test_is_type() {
+		$instance = $this->new_instance();
 
+		$this->assertTrue( $instance->is_type( 'base' ) );
+		$this->assertTrue( $instance->is_type( array( 'external', 'base' ) ) );
+
+		$this->assertFalse( $instance->is_type( 'external' ) );
+		$this->assertFalse( $instance->is_type( 'local' ) );
 	}
 
 	/**
+	 * @covers ::is_valid()
 	 * @covers ::check_valid()
-	 *
-	 * @todo define
 	 */
-	function test_check_valid() {
+	function test_is_valid() {
+		$instance = $this->new_instance();
 
+		$this->assertFalse( $instance->is_valid( 'base' ) );
+		$this->assertFalse( $instance->is_valid() );
+
+		$instance->attributes->set( 'src', 'https://source.unsplash.com/1000x1000' );
+
+		$this->assertTrue( $instance->is_valid( array( 'foobar', 'base' ) ) );
+		$this->assertTrue( $instance->is_valid( 'base' ) );
+		$this->assertTrue( $instance->is_valid() );
+
+		$this->assertFalse( $instance->is_valid( array( 'foo', 'bar' ) ) );
+		$this->assertFalse( $instance->is_valid( 'foobar' ) );
 	}
 
 }

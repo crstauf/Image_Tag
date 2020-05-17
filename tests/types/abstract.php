@@ -182,26 +182,28 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 
 	/**
 	 * @covers ::get_type()
+	 *
+	 * @group instance
+	 * @group validation
 	 */
 	abstract function test_get_type();
 
 	/**
 	 * @covers ::add_attributes()
+	 *
+	 * @group instance
+	 * @group validation
 	 */
 	abstract function test_is_type();
 
 	/**
 	 * @covers ::check_valid()
-	 */
-	abstract function test_check_valid();
-
-	/**
 	 * @covers ::is_valid()
 	 *
-	 * @todo define
+	 * @group instance
+	 * @group validation
 	 */
-	function test_is_valid() {
-	}
+	abstract function test_is_valid();
 
 }
 

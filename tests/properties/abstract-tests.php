@@ -134,8 +134,6 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 	 *
 	 * @see Image_Tag_Properties_Base::test__set()
 	 * @return array[]
-	 *
-	 * @todo add tests that override existing values
 	 */
 	function data__set() {
 		return array(
@@ -180,6 +178,18 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 				$this->get_instance(),
 				'foo',
 				array_fill( 0, 5, ( object ) range( 15, 20 ) ),
+			),
+
+			'override string' => array(
+				$this->get_instance( array( 'foo' => uniqid() ) ),
+				'foo',
+				__FUNCTION__,
+			),
+
+			'override array' => array(
+				$this->get_instance( array( 'foo' => range( 1, 5 ) ) ),
+				'foo',
+				range( 6, 10 ),
 			),
 
 		);

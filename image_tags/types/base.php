@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class: Image_Tag
+ */
 class Image_Tag extends Image_Tag_Abstract {
 
 
@@ -17,19 +20,31 @@ class Image_Tag extends Image_Tag_Abstract {
 
 	}
 
+	/**
+	 * Get tag type.
+	 *
+	 * @return string
+	 */
 	function get_type() {
-		return 'external';
+		return 'base';
 	}
 
-	function is_type( $test_types ) {
-		return !empty( array_intersect( ( array ) $test_types, array(
-			'base',
-			'remote',
-			'external',
-		) ) );
-	}
+	/**
+	 * Check tag is valid.
+	 *
+	 * @uses Image_Tag_Attributes::get()
+	 * @return WP_Error|true
+	 */
+	protected function check_valid() {
+		$errors = new WP_Error;
 
-	function check_valid() {
+		if ( empty( $this->attributes->get( 'src' ) ) )
+			$errors->add( 'required_src', 'The <code>src</code> attribute is required.' );
+
+		if ( $errors->has_errors() )
+			return $errors;
+
+		return true;
 	}
 
 }

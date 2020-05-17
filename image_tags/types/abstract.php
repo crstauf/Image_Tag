@@ -1,8 +1,7 @@
 <?php
 
 /**
- * @todo add ArrayAccess for attributes
- * @todo add Iterator for attributes
+ * Class: Image_Tag_Abstract
  */
 abstract class Image_Tag_Abstract {
 
@@ -101,23 +100,47 @@ abstract class Image_Tag_Abstract {
 	   ###    ##     ## ######## #### ########  ##     ##    ##    ####  #######  ##    ##
 	*/
 
+	/**
+	 * Get tag type.
+	 *
+	 * @return string
+	 */
 	abstract function get_type();
-	abstract function is_type( $test_types );
+
+	/**
+	 * Check if tag is one of specified types.
+	 *
+	 * @param string|array $test_types
+	 * @uses static::get_type()
+	 * @return bool
+	 */
+	function is_type( $test_types ) {
+		return in_array( $this->get_type(), ( array ) $test_types );
+	}
+
+	/**
+	 * Perform validation checks.
+	 *
+	 * @return WP_Error|true
+	 */
 	abstract protected function check_valid();
 
 	/**
 	 * Check if image tag is valid.
 	 *
-	 * @param string|array $types
-	 * @uses self::check_valid()
-	 * @uses self::is_type()
+	 * @param null|string|array $types
+	 * @uses static::is_type()
+	 * @uses static::check_valid()
 	 * @return bool
 	 */
-	function is_valid( $types ) {
-		return (
-			!is_wp_error( $this->check_valid() )
-			&& $this->is_type( $types )
-		);
+	function is_valid( $types = null ) {
+		if (
+			!is_null( $types )
+			&& !$this->is_type( $types )
+		)
+			return false;
+
+		return true === $this->check_valid();
 	}
 
 }
