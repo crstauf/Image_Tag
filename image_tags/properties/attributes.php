@@ -146,36 +146,38 @@ class Image_Tag_Attributes extends Image_Tag_Properties_Abstract {
 	*/
 
 	/**
+	 * Getter.
+	 *
+	 * @param string $property
+	 * @uses static::get_property()
+	 * @return mixed
+	 */
+	function __get( string $property ) {
+		if ( in_array( $property, array( 'properties', 'defaults' ) ) )
+			return $this->$property;
+
+		return $this->get_property( $property, 'edit' );
+	}
+
+	/**
 	 * To string.
 	 *
 	 * @uses static::get()
-	 * @uses static::force()
 	 * @return string
 	 */
 	function __toString() {
-
-		# Get attributes.
-		$attributes = $this->get( null, 'edit' );
-
-		# Remove empty values, except empty string.
-		$attributes = array_filter( $attributes, function( $value ) {
-			return (
-				!empty( $value )
-				|| '' === $value
-			);
-		} );
-
+		$attributes = $this->get( null, 'view' );
 		$array = array();
 
 		# Add attributes to string in specified order.
 		foreach ( static::ORDER as $attribute )
 			if ( isset( $attributes[$attribute] ) )
-				$array[$attribute] = sprintf( '%s="%s"', $attribute, esc_attr( $this->get( $attribute ) ) );
+				$array[$attribute] = sprintf( '%s="%s"', $attribute, esc_attr( $attributes[$attribute] ) );
 
 		# Add remaining attributes.
 		$diff = array_diff_key( $attributes, array_flip( static::ORDER ) );
 		foreach ( $diff as $attribute => $value )
-			$array[$attribute] = sprintf( '%s="%s"', $attribute, esc_attr( $this->get( $attribute ) ) );
+			$array[$attribute] = sprintf( '%s="%s"', $attribute, esc_attr( $attributes[$attribute] ) );
 
 		# Apply filters.
 		$array  = apply_filters( 'image_tag/attributes/output/array', $array, $this );
@@ -259,25 +261,78 @@ class Image_Tag_Attributes extends Image_Tag_Properties_Abstract {
 	/**
 	 * Get attributes.
 	 *
-	 * @param string|array $keys
+	 * @param string|array $attributes
 	 * @param string $context view|edit
 	 * @uses Image_Tag_Properties::get()
 	 * @return string|array
-	 *
-	 * @todo add test for 'edit' context and filter
 	 */
-	function get( $attributes = null, string $context = 'view' ) {
-		$value = parent::get( $attributes, $context );
+	function get( $attributes = null, string $context = 'edit' ) {
+		$value = is_string( $attributes )
+			? $this->get_property( $attributes, $context )
+			: $this->get_properties( $attributes, $context );
 
+		# Return attributes immediately.
 		if ( 'edit' === $context )
 			return $value;
 
-		if ( !is_array( $value ) )
+		# If not a list of attributes, no processing to do.
+		if ( is_string( $attributes ) )
 			return $value;
 
+		# Remove null and empty arrays from attributes.
 		return array_filter( $value, function( $item ) {
-			return !is_null( $item );
+			return (
+				!is_null( $item )
+				&& array() !== $item
+			);
 		} );
+	}
+
+	/**
+	 * Get attributes.
+	 *
+	 * @param string|array $keys
+	 * @return array
+	 */
+	protected function get_properties( array $keys = null, string $context = 'edit' ) {
+		if ( is_null( $keys ) )
+			$keys = array_keys( $this->properties );
+
+		$attributes = array();
+
+		foreach ( $keys as $key )
+			$attributes[$key] = $this->get_property( $key, $context );
+
+		return $attributes;
+	}
+
+	/**
+	 * Get attribute.
+	 */
+	function get_property( string $attribute, string $context = 'edit' ) {
+		$value = parent::get_property( $attribute );
+
+		# If edit context or null, return.
+		if (
+			is_null( $value )
+			|| 'edit' === $context
+		)
+			return $value;
+
+		$format = sprintf( 'get_%%s_%s_for_view', static::NAME );
+
+		# Override by property name.
+		$method_name = sprintf( $format, static::function_name( $attribute ) );
+		if ( method_exists( $this, $method_name ) )
+			return call_user_func( array( $this, $method_name ) );
+
+		# Override by type of property's value.
+		$method_name = sprintf( $format, gettype( $this->properties[$attribute] ) );
+		if ( method_exists( $this, $method_name ) )
+			return call_user_func( array( $this, $method_name ), $attribute );
+
+		# No overrides; return direct value.
+		return $value;
 	}
 
 	/**

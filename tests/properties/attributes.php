@@ -121,7 +121,7 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 			'alt="" ' .
 			'data-preloaded="1"';
 
-		$this->assertsame( $expected, $instance->__toString() );
+		$this->assertSame( $expected, $instance->__toString() );
 	}
 
 	/**
@@ -347,20 +347,28 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 	 * @return array[]
 	 */
 	function data_get() {
-		$data  = parent::data_get();
+		return array_merge( array(
 
-		$data = array(
+			'class empty' => array(
+				$this->new_instance( array( 'id' => __FUNCTION__ ) ),
+				'class',
+				null,
+				'view',
+			),
+
 			'class edit' => array(
 				$this->new_instance( array( 'class' => ' foo   bar alpha beta ' ) ),
 				'class',
 				array( 'foo', 'bar', 'alpha', 'beta' ),
 			),
+
 			'class view' => array(
 				$this->new_instance( array( 'class' => ' foo   bar alpha beta ' ) ),
 				'class',
 				'foo bar alpha beta',
 				'view',
 			),
+
 			'class array' => array(
 				$this->new_instance( array( 'class' => array(
 					'  foo ;',
@@ -373,46 +381,88 @@ class Image_Tag_Attributes_Test extends Image_Tag_Properties_Tests {
 				'foo bar zoo',
 				'view',
 			),
+
 			'sizes edit' => array(
 				$this->new_instance( array( 'sizes' => array( '( min-width: 800px ) 50vw,', ' 100vw' ) ) ),
 				'sizes',
 				array( '( min-width: 800px ) 50vw', '100vw' ),
 			),
+
 			'sizes view' => array(
 				$this->new_instance( array( 'sizes' => array( '( min-width: 800px ) 50vw,', ' 100vw' ) ) ),
 				'sizes',
 				'( min-width: 800px ) 50vw, 100vw',
 				'view',
 			),
+
 			'style edit' => array(
 				$this->new_instance( array( 'style' => 'width: 200px;' ) ),
 				'style',
 				array( 'width: 200px' ),
 			),
+
 			'style view' => array(
 				$this->new_instance( array( 'style' => 'width: 200px;' ) ),
 				'style',
 				'width: 200px',
 				'view',
 			),
-		);
 
-		return $data;
+			'null view' => array(
+				$this->get_instance( array(
+					'id' => __FUNCTION__,
+					'class' => array( 'foo', 'bar' ),
+				) ),
+				null,
+				array(
+					'id' => __FUNCTION__,
+					'alt' => '',
+					'sizes' => '100vw',
+					'class' => 'foo bar',
+				),
+				'view',
+			),
+
+		), parent::data_get() );
 	}
 
 	/**
-	 * @see Image_Tag_Properties_Test::test_get()
+	 * @param Image_Tag_Properties_Abstract $instance
+	 * @param string|array $get_properties
+	 * @param mixed $expected
+	 * @param string $context
+	 * @see static::test_get()
 	 *
 	 * @covers ::get()
 	 * @covers ::trim()
+	 * @covers ::get_properties()
+	 * @covers ::get_property()
 	 * @covers ::get_class_attribute_for_view()
 	 * @covers ::get_style_attribute_for_view()
 	 * @covers ::get_array_attribute_for_view()
+	 * @covers Image_Tag_Properties_Abstract::_get()
+	 * @group instance
+	 * @group get
 	 *
 	 * @dataProvider data_get
 	 */
-	function test_get( Image_Tag_Properties_Abstract $instance, $get_properties, $expected = null, $context = 'edit' ) {
-		parent::test_get( $instance, $get_properties, $expected, $context );
+	function test_get( Image_Tag_Properties_Abstract $instance, $get_properties, $expected, $context = 'edit' ) {
+		if ( is_string( $get_properties ) ) {
+			$this->assertSame( $expected, $instance->get( $get_properties, $context ) );
+			return;
+		}
+
+		if ( is_null( $get_properties ) ) {
+			$this->assertSame( $expected, $instance->get( null, $context ) );
+			return;
+		}
+
+		$actual = array();
+
+		foreach ( $get_properties as $property )
+			$actual[$property] = $instance->get( $property, $context );
+
+		$this->assertSame( $expected, $actual );
 	}
 
 }

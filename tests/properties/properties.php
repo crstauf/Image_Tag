@@ -45,33 +45,6 @@ class Image_Tag_Properties_Test extends Image_Tag_Properties_Tests {
 		return $data;
 	}
 
-	/**
-	 * Data provider for Image_Tag_Properties_Tests::test_get().
-	 *
-	 * @see Image_Tag_Properties_Base::test_get()
-	 * @uses Image_Tag_Properties_Tests::data_get()
-	 * @return array[]
-	 */
-	function data_get() {
-		$data = parent::data_get();
-
-		$data['override by name'] = array(
-			$this->get_instance( array( 'fejwio' => __FUNCTION__ ) ),
-			'fejwio',
-			'Image_Tag_Properties::get_fejwio_property_for_view',
-			'view',
-		);
-
-		$data['override by type'] = array(
-			$this->get_instance( null, array( 'fejwkls' => array() ) ),
-			'fejwkls',
-			range( 1, 5 ),
-			'view',
-		);
-
-		return $data;
-	}
-
 }
 
 /**
@@ -81,19 +54,6 @@ class Image_Tag_Properties extends Image_Tag_Properties_Abstract {
 
 	function set_fejwio_property( $value ) {
 		$this->_set( 'fejwio', $value );
-	}
-
-	function set_array_property( string $attribute, $value ) {
-		$value = ( array ) $value;
-		$this->_set( $attribute, $value );
-	}
-
-	function get_fejwio_property_for_view() {
-		return __METHOD__;
-	}
-
-	function get_array_property_for_view() {
-		return range( 1, 5 );
 	}
 
 }

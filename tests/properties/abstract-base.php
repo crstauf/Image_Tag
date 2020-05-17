@@ -118,7 +118,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 */
 	function test__construct( $properties, array $defaults, array $expected ) {
 		$instance = $this->new_instance( $properties, $defaults );
-		$this->assertSame( $expected, $instance->get( null, 'edit' ) );
+		$this->assertSame( $expected, $instance->get( null ) );
 	}
 
 	/**
@@ -323,7 +323,7 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 * @dataProvider data_unset
 	 */
 	function test_unset( Image_Tag_Properties_Abstract $instance, $unset_properties ) {
-		$properties = $instance->get( null, 'edit' );
+		$properties = $instance->get( null );
 
 		# Check properties are set.
 		foreach ( ( array ) $unset_properties as $property )
@@ -458,7 +458,6 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 * @param Image_Tag_Properties_Abstract $instance
 	 * @param string|array $get_properties
 	 * @param mixed $expected
-	 * @param string $context
 	 *
 	 * @covers ::get()
 	 * @covers ::get_properties()
@@ -469,21 +468,21 @@ abstract class Image_Tag_Properties_Base extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_get
 	 */
-	function test_get( Image_Tag_Properties_Abstract $instance, $get_properties, $expected, $context = 'edit' ) {
+	function test_get( Image_Tag_Properties_Abstract $instance, $get_properties, $expected ) {
 		if ( is_string( $get_properties ) ) {
-			$this->assertSame( $expected, $instance->get( $get_properties, $context ) );
+			$this->assertSame( $expected, $instance->get( $get_properties ) );
 			return;
 		}
 
 		if ( is_null( $get_properties ) ) {
-			$this->assertSame( $expected, $instance->get( null, $context ) );
+			$this->assertSame( $expected, $instance->get( null ) );
 			return;
 		}
 
 		$actual = array();
 
 		foreach ( $get_properties as $property )
-			$actual[$property] = $instance->get( $property, $context );
+			$actual[$property] = $instance->get( $property );
 
 		$this->assertSame( $expected, $actual );
 	}

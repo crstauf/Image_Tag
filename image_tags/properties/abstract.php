@@ -63,7 +63,7 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess, Countable, 
 	 */
 	function __construct( $properties = array(), array $defaults = array() ) {
 		if ( is_a( $properties, static::class ) )
-			$properties = $properties->get( null, 'edit' );
+			$properties = $properties->get( null );
 
 		# Set defaults first.
 		$defaults = wp_parse_args( $defaults, static::DEFAULTS );
@@ -98,7 +98,7 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess, Countable, 
 		if ( in_array( $property, array( 'properties', 'defaults' ) ) )
 			return $this->$property;
 
-		return $this->get_property( $property, 'edit' );
+		return $this->get_property( $property );
 	}
 
 	/**
@@ -381,7 +381,7 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess, Countable, 
 	 * @uses static::set_property()
 	 */
 	protected function add_to_property( string $property, $add_value ) {
-		$value = $this->get_property( $property, 'edit' );
+		$value = $this->get_property( $property );
 
 		# If property is empty, set.
 		if ( empty( $value ) ) {
@@ -424,7 +424,7 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess, Countable, 
 	 * @uses static::set_property()
 	 */
 	protected function add_to_string_property( string $property, string $add_value ) {
-		$value = $this->get_property( $property, 'edit' );
+		$value = $this->get_property( $property );
 		$this->set_property( $property, $value . $add_value );
 	}
 
@@ -437,7 +437,7 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess, Countable, 
 	 * @uses static::set_property()
 	 */
 	protected function add_to_integer_property( string $property, int $add_value ) {
-		$value = $this->get_property( $property, 'edit' );
+		$value = $this->get_property( $property );
 		$this->set_property( $property, $value + $add_value );
 	}
 
@@ -450,7 +450,7 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess, Countable, 
 	 * @uses static::set_property()
 	 */
 	protected function add_to_float_property( string $property, float $add_value ) {
-		$value = $this->get_property( $property, 'edit' );
+		$value = $this->get_property( $property );
 		$this->set_property( $property, $value + $add_value );
 	}
 
@@ -474,7 +474,7 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess, Countable, 
 	 * @uses static::set_property()
 	 */
 	protected function add_to_array_property( string $property, $add_values ) {
-		$value = $this->get_property( $property, 'edit' );
+		$value = $this->get_property( $property );
 
 		if ( is_string( $add_values ) ) {
 			$value[] = $add_values;
@@ -502,32 +502,30 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess, Countable, 
 	 * Get properties.
 	 *
 	 * @param null|string|array $properties
-	 * @param string $context
 	 * @uses static::get_property()
 	 * @uses static::get_properties()
 	 * @return string|array
 	 */
-	function get( $properties = null, string $context = 'view' ) {
+	function get( $properties = null ) {
 		return is_string( $properties )
-			? $this->get_property( $properties, $context )
-			: $this->get_properties( $context, $properties );
+			? $this->get_property( $properties )
+			: $this->get_properties( $properties );
 	}
 
 	/**
 	 * Get properties.
 	 *
-	 * @param string $context
 	 * @param string|array $keys
 	 * @return array
 	 */
-	protected function get_properties( string $context = 'view', array $keys = null ) {
+	protected function get_properties( array $keys = null ) {
 		if ( is_null( $keys ) )
 			$keys = array_keys( $this->properties );
 
 		$properties = array();
 
 		foreach ( $keys as $key )
-			$properties[$key] = $this->get_property( $key, $context );
+			$properties[$key] = $this->get_property( $key );
 
 		return $properties;
 	}
@@ -536,28 +534,11 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess, Countable, 
 	 * Get property.
 	 *
 	 * @param string $property
-	 * @param string $context
 	 * @return string
 	 */
-	protected function get_property( string $property, string $context = 'view' ) {
+	protected function get_property( string $property ) {
 		if ( !$this->isset( $property ) )
 			return null;
-
-		# If edit context, return raw.
-		if ( 'edit' === $context )
-			return $this->_get( $property );
-
-		$format = sprintf( 'get_%%s_%s_for_view', static::NAME );
-
-		# Override by property name.
-		$method_name = sprintf( $format, static::function_name( $property ) );
-		if ( method_exists( $this, $method_name ) )
-			return call_user_func( array( $this, $method_name ) );
-
-		# Override by type of property's value.
-		$method_name = sprintf( $format, gettype( $this->properties[$property] ) );
-		if ( method_exists( $this, $method_name ) )
-			return call_user_func( array( $this, $method_name ), $property );
 
 		# No overrides; get directly.
 		return $this->_get( $property );

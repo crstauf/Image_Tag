@@ -26,6 +26,17 @@ class Image_Tag_Settings_Test extends Image_Tag_Properties_Tests {
 		$this->assertSame( 'setting', constant( $this->class_name() . '::NAME' ) );
 	}
 
+
+	/*
+	##     ##    ###     ######   ####  ######
+	###   ###   ## ##   ##    ##   ##  ##    ##
+	#### ####  ##   ##  ##         ##  ##
+	## ### ## ##     ## ##   ####  ##  ##
+	##     ## ######### ##    ##   ##  ##
+	##     ## ##     ## ##    ##   ##  ##    ##
+	##     ## ##     ##  ######   ####  ######
+	*/
+
 	/**
 	 * Data provider for Image_Tag_Settings_Test::test__get().
 	 *
@@ -66,6 +77,97 @@ class Image_Tag_Settings_Test extends Image_Tag_Properties_Tests {
 
 		parent::test__get( $property, $value, $expected = null );
 	}
+
+
+	/*
+	 ######   ######## ########
+	##    ##  ##          ##
+	##        ##          ##
+	##   #### ######      ##
+	##    ##  ##          ##
+	##    ##  ##          ##
+	 ######   ########    ##
+	*/
+
+	/**
+	 * Data provider for Image_Tag_Settings_Test::test_get().
+	 *
+	 * @see static::test_get()
+	 * @uses Image_Tag_Properties_Tests::data_get()
+	 * @return array[]
+	 */
+	function data_get() {
+		return array_merge( array(
+
+			'string view' => array(
+				$this->get_instance( array(
+					'foo' => __FUNCTION__,
+				) ),
+				'foo',
+				__FUNCTION__,
+				'view',
+			),
+
+			'null view' => array(
+				$this->get_instance( array(
+					'foo' => 'foobar',
+					'bar' => 'barfoo',
+				) ),
+				null,
+				array(
+					'foo' => 'foobar',
+					'bar' => 'barfoo',
+				),
+				'view',
+			),
+
+		), parent::data_get() );
+	}
+
+	/**
+	 * @param Image_Tag_Properties_Abstract $instance
+	 * @param string|array $get_properties
+	 * @param mixed $expected
+	 * @param string $context
+	 *
+	 * @covers ::get()
+	 * @covers ::get_properties()
+	 * @covers ::get_property()
+	 * @covers ::_get()
+	 * @group instance
+	 * @group get
+	 *
+	 * @dataProvider data_get
+	 */
+	function test_get( Image_Tag_Properties_Abstract $instance, $get_properties, $expected, $context = 'edit' ) {
+		if ( is_string( $get_properties ) ) {
+			$this->assertSame( $expected, $instance->get( $get_properties, $context ) );
+			return;
+		}
+
+		if ( is_null( $get_properties ) ) {
+			$this->assertSame( $expected, $instance->get( null, $context ) );
+			return;
+		}
+
+		$actual = array();
+
+		foreach ( $get_properties as $property )
+			$actual[$property] = $instance->get( $property, $context );
+
+		$this->assertSame( $expected, $actual );
+	}
+
+
+	/*
+	 #######  ##     ## ######## ########  ##     ## ########
+	##     ## ##     ##    ##    ##     ## ##     ##    ##
+	##     ## ##     ##    ##    ##     ## ##     ##    ##
+	##     ## ##     ##    ##    ########  ##     ##    ##
+	##     ## ##     ##    ##    ##        ##     ##    ##
+	##     ## ##     ##    ##    ##        ##     ##    ##
+	 #######   #######     ##    ##         #######     ##
+	*/
 
 	/**
 	 * @covers ::set_before_output_setting()
@@ -110,10 +212,10 @@ class Image_Tag_Settings_Test extends Image_Tag_Properties_Tests {
 		$this->assertSame( array( 5 => array( 'foo' ), 10 => array( __FUNCTION__, 'bar' ) ), $instance->after_output  );
 
 		# Test ::get_{position}_output_setting() functions.
-		$this->assertSame( "bar\n" . __FUNCTION__ . "\nfoo", $instance->get( 'before_output' ) );
-		$this->assertSame( "foo\n" . __FUNCTION__ . "\nbar", $instance->get(  'after_output' ) );
-		$this->assertNull( $this->get_instance( array() )->get( 'before_output' ) );
-		$this->assertNull( $this->get_instance( array() )->get( 'after_output'  ) );
+		$this->assertSame( "bar\n" . __FUNCTION__ . "\nfoo", $instance->get( 'before_output', 'view' ) );
+		$this->assertSame( "foo\n" . __FUNCTION__ . "\nbar", $instance->get(  'after_output', 'view' ) );
+		$this->assertNull( $this->get_instance( array() )->get( 'before_output', 'view' ) );
+		$this->assertNull( $this->get_instance( array() )->get(  'after_output', 'view' ) );
 
 		# Test adding multiple priorities.
 		$instance = $this->new_instance( null, array(

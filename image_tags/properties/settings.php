@@ -8,6 +8,17 @@ class Image_Tag_Settings extends Image_Tag_Properties_Abstract {
 		'after_output' => array(),
 	);
 
+
+	/*
+	##     ##    ###     ######   ####  ######
+	###   ###   ## ##   ##    ##   ##  ##    ##
+	#### ####  ##   ##  ##         ##  ##
+	## ### ## ##     ## ##   ####  ##  ##
+	##     ## ######### ##    ##   ##  ##
+	##     ## ##     ## ##    ##   ##  ##    ##
+	##     ## ##     ##  ######   ####  ######
+	*/
+
 	/**
 	 * Getter.
 	 *
@@ -20,6 +31,91 @@ class Image_Tag_Settings extends Image_Tag_Properties_Abstract {
 			return $this->properties;
 
 		return parent::__get( $setting );
+	}
+
+
+	/*
+	 ######   ######## ########
+	##    ##  ##          ##
+	##        ##          ##
+	##   #### ######      ##
+	##    ##  ##          ##
+	##    ##  ##          ##
+	 ######   ########    ##
+	*/
+
+	/**
+	 * Get settings.
+	 *
+	 * @param string|array $settings
+	 * @param string $context view|edit
+	 * @uses Image_Tag_Properties::get()
+	 * @return string|array
+	 *
+	 * @todo add test for 'edit' context and filter
+	 */
+	function get( $settings = null, string $context = 'edit' ) {
+		$value = is_string( $settings )
+			? $this->get_property( $settings, $context )
+			: $this->get_properties( $settings, $context );
+
+		# Return attributes immediately.
+		if ( 'edit' === $context )
+			return $value;
+
+		# If not a list of settings, no processing to do.
+		if ( is_string( $settings ) )
+			return $value;
+
+		# Remove null and empty arrays from attributes.
+		return array_filter( $value, function( $item ) {
+			return (
+				!is_null( $item )
+				&& array() !== $item
+			);
+		} );
+	}
+
+	/**
+	 * Get settings.
+	 *
+	 * @param string|array $keys
+	 * @return array
+	 */
+	protected function get_properties( array $keys = null, string $context = 'edit' ) {
+		if ( is_null( $keys ) )
+			$keys = array_keys( $this->properties );
+
+		$settings = array();
+
+		foreach ( $keys as $key )
+			$settings[$key] = $this->get_property( $key, $context );
+
+		return $settings;
+	}
+
+	/**
+	 * Get setting.
+	 */
+	function get_property( string $setting, string $context = 'edit' ) {
+		$value = parent::get_property( $setting );
+
+		# If edit context or null, return.
+		if (
+			is_null( $value )
+			|| 'edit' === $context
+		)
+			return $value;
+
+		$format = sprintf( 'get_%%s_%s_for_view', static::NAME );
+
+		# Override by property name.
+		$method_name = sprintf( $format, static::function_name( $setting ) );
+		if ( method_exists( $this, $method_name ) )
+			return call_user_func( array( $this, $method_name ) );
+
+		# No overrides; return direct value.
+		return $value;
 	}
 
 

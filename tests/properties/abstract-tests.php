@@ -821,13 +821,6 @@ abstract class Image_Tag_Properties_Tests extends Image_Tag_Properties_Base {
 				$this->get_instance()->properties,
 			),
 
-			'view' => array(
-				$this->get_instance( array( 'foo' => __FUNCTION__ ) ),
-				'foo',
-				__FUNCTION__,
-				'view',
-			),
-
 		);
 	}
 
