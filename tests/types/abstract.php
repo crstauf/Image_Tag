@@ -224,7 +224,7 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 	 */
 	function test__toString( Image_Tag_Abstract $instance, string $expected ) {
 		if ( 'warning' === $expected ) {
-			$this->expectOutputRegex( '/^\sWarning: .+?->__toString\(\).+?trigger_error\(.*$/s' );
+			$this->expectOutputRegex( '/^\sWarning: .+?\/image_tag\/.*$/s' );
 			$this->assertNull( $instance->__toString() );
 			return;
 		}
