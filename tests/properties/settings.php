@@ -212,8 +212,8 @@ class Image_Tag_Settings_Test extends Image_Tag_Properties_Tests {
 		$this->assertSame( array( 5 => array( 'foo' ), 10 => array( __FUNCTION__, 'bar' ) ), $instance->after_output  );
 
 		# Test ::get_{position}_output_setting() functions.
-		$this->assertSame( "bar\n" . __FUNCTION__ . "\nfoo", $instance->get( 'before_output', 'view' ) );
-		$this->assertSame( "foo\n" . __FUNCTION__ . "\nbar", $instance->get(  'after_output', 'view' ) );
+		$this->assertSame( "\nbar\n" . __FUNCTION__ . "\nfoo\n", $instance->get( 'before_output', 'view' ) );
+		$this->assertSame( "\nfoo\n" . __FUNCTION__ . "\nbar\n", $instance->get(  'after_output', 'view' ) );
 		$this->assertNull( $this->get_instance( array() )->get( 'before_output', 'view' ) );
 		$this->assertNull( $this->get_instance( array() )->get(  'after_output', 'view' ) );
 
@@ -254,6 +254,29 @@ class Image_Tag_Settings_Test extends Image_Tag_Properties_Tests {
 			'foo' => __FUNCTION__, // test priority is changed to 10
 		) ) );
 		$this->assertSame( array( 5 => array( 'foo', 'bar' ), 10 => array( __FUNCTION__, __FUNCTION__ ) ), $instance->before_output );
+
+		# Test added to image tag output.
+		$image = new Image_Tag( array( 'src' => 'https://source.unsplash.com/1000x1000' ), array(
+			'before_output' => 'before output',
+			 'after_output' =>  'after output',
+		) );
+
+		$image->settings->add_output( 'before', 'bar' . __FUNCTION__, 5 );
+		$image->settings->add_output(  'after', 'foo' . __FUNCTION__, 5 );
+
+		$this->assertSame(
+			"\n" .
+			'bar' . __FUNCTION__ . "\n" .
+			'before output' . "\n" .
+			'<img ' .
+				'src="' . esc_attr( 'https://source.unsplash.com/1000x1000' ) . '" ' .
+				'sizes="100vw" ' .
+				'alt="" ' .
+			'/>' .
+			"\n" .
+			'foo' . __FUNCTION__ . "\n" .
+			'after output' . "\n",
+		$image->__toString() );
 	}
 
 }

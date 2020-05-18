@@ -214,8 +214,10 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers ::__toString()
+	 * @param Image_Tag_Abstract $instance
+	 * @param string $expected
 	 *
+	 * @covers ::__toString()
 	 * @group instance
 	 * @group magic
 	 * @group output
@@ -267,6 +269,24 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 	 * @group validation
 	 */
 	abstract function test_is_valid();
+
+
+	/*
+	##     ## ######## ######## ########
+	##     ##    ##       ##    ##     ##
+	##     ##    ##       ##    ##     ##
+	#########    ##       ##    ########
+	##     ##    ##       ##    ##
+	##     ##    ##       ##    ##
+	##     ##    ##       ##    ##
+	*/
+
+	/**
+	 * @covers ::http()
+	 * @group instance
+	 * @group external-http
+	 */
+	abstract function test_http();
 
 }
 

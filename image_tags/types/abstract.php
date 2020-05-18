@@ -6,6 +6,11 @@
 abstract class Image_Tag_Abstract {
 
 	/**
+	 * @var string Encoded transparent gif.
+	 */
+	const BLANK = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+
+	/**
 	 * @var null|Image_Tag_Attributes $attributes
 	 * @var null|Image_Tag_Settings $settings
 	 */
@@ -94,6 +99,7 @@ abstract class Image_Tag_Abstract {
 	 *
 	 * @uses static::check_valid()
 	 * @uses Image_Tag_Attributes::__toString()
+	 * @uses Image_Tag_Settings::get()
 	 * @return string
 	 */
 	function __toString() {
@@ -112,7 +118,12 @@ abstract class Image_Tag_Abstract {
 			'/>',
 		);
 
-		return implode( ' ', $array );
+		$string =
+			$this->settings->get( 'before_output', 'view' ) .
+			trim( implode( ' ', array_filter( $array ) ) ) .
+			$this->settings->get( 'after_output', 'view' );
+
+		return $string;
 	}
 
 
@@ -167,6 +178,77 @@ abstract class Image_Tag_Abstract {
 			return false;
 
 		return true === $this->check_valid();
+	}
+
+
+	/*
+	######## ########    ###    ######## ##     ## ########  ########  ######
+	##       ##         ## ##      ##    ##     ## ##     ## ##       ##    ##
+	##       ##        ##   ##     ##    ##     ## ##     ## ##       ##
+	######   ######   ##     ##    ##    ##     ## ########  ######    ######
+	##       ##       #########    ##    ##     ## ##   ##   ##             ##
+	##       ##       ##     ##    ##    ##     ## ##    ##  ##       ##    ##
+	##       ######## ##     ##    ##     #######  ##     ## ########  ######
+	*/
+
+	/**
+	 * Request image via HTTP GET.
+	 *
+	 * @param bool $fresh Flag to refresh cached value.
+	 * @uses wp_remote_get()
+	 * @return WP_Error|array
+	 */
+	function http( bool $fresh = false ) {
+		static $responses = array();
+
+		$src = $this->attributes->src;
+
+		if (
+			!$fresh
+			&& isset( $responses[$src] )
+		)
+			return $responses[$src];
+
+		$responses[$src] = wp_remote_get( $src );
+
+		return $responses[$src];
+	}
+
+	/**
+	 * Adjust atributes and settings to lazyload.
+	 *
+	 * @param null|array|Image_Tag_Attributes $attributes
+	 * @param null|array|Image_Tag_Settings $settings
+	 * @return Image_Tag_Abstract
+	 *
+	 * @todo define
+	 */
+	function lazyload( $attributes = null, $settings = null ) {
+
+	}
+
+	/**
+	 * Adjust atributes and settings to add noscript version.
+	 *
+	 * @param null|array|Image_Tag_Attributes $attributes
+	 * @param null|array|Image_Tag_Settings $settings
+	 * @return Image_Tag_Abstract
+	 *
+	 * @todo define
+	 */
+	function noscript( $attributes = null, $settings = null ) {
+
+	}
+
+	/**
+	 * Convert into another image tag type.
+	 *
+	 * @return Image_Tag_Abstract
+	 *
+	 * @todo define
+	 */
+	function into() {
+
 	}
 
 }

@@ -283,7 +283,7 @@ class Image_Tag_Settings extends Image_Tag_Properties_Abstract {
 			$array[] = $item;
 		} );
 
-		return implode( "\n", $array );
+		return "\n" . trim( implode( "\n", array_filter( $array ) ) ) . "\n";
 	}
 
 }

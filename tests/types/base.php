@@ -12,6 +12,24 @@ class Image_Tag_Test extends Image_Tag_Test_Base {
 	}
 
 	/**
+	 * @group constant
+	 */
+	function test_constant_blank() {
+		$this->assertSame( 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==', constant( $this->class_name() . '::BLANK' ) );
+	}
+
+
+	/*
+	##     ##    ###    ##       #### ########     ###    ######## ####  #######  ##    ##
+	##     ##   ## ##   ##        ##  ##     ##   ## ##      ##     ##  ##     ## ###   ##
+	##     ##  ##   ##  ##        ##  ##     ##  ##   ##     ##     ##  ##     ## ####  ##
+	##     ## ##     ## ##        ##  ##     ## ##     ##    ##     ##  ##     ## ## ## ##
+	 ##   ##  ######### ##        ##  ##     ## #########    ##     ##  ##     ## ##  ####
+	  ## ##   ##     ## ##        ##  ##     ## ##     ##    ##     ##  ##     ## ##   ###
+	   ###    ##     ## ######## #### ########  ##     ##    ##    ####  #######  ##    ##
+	*/
+
+	/**
 	 * @covers ::get_type()
 	 */
 	function test_get_type() {
@@ -51,4 +69,34 @@ class Image_Tag_Test extends Image_Tag_Test_Base {
 		$this->assertFalse( $instance->is_valid( 'foobar' ) );
 	}
 
+
+	/*
+	######## ########    ###    ######## ##     ## ########  ########  ######
+	##       ##         ## ##      ##    ##     ## ##     ## ##       ##    ##
+	##       ##        ##   ##     ##    ##     ## ##     ## ##       ##
+	######   ######   ##     ##    ##    ##     ## ########  ######    ######
+	##       ##       #########    ##    ##     ## ##   ##   ##             ##
+	##       ##       ##     ##    ##    ##     ## ##    ##  ##       ##    ##
+	##       ######## ##     ##    ##     #######  ##     ## ########  ######
+	*/
+
+	/**
+	 * @covers ::http()
+	 * @group instance
+	 * @group external-http
+	 */
+	function test_http() {
+		$instance = $this->new_instance( array( 'src' => 'https://source.unsplash.com/WLUHO9A_xik/1x1' ) );
+		$response = wp_remote_get( 'https://source.unsplash.com/WLUHO9A_xik/1x1' );
+
+		if ( is_wp_error( $response ) )
+			$this->fail( $response->get_error_message() );
+
+		$this->assertSame( '1054000', wp_remote_retrieve_header( $response, 'content-length' ) );
+		$this->assertSame( 'image/jpeg', wp_remote_retrieve_header( $response, 'content-type' ) );
+		$this->assertSame( '3b5a685596c9e862dba90ae80ec369769dd1afe4', wp_remote_retrieve_header( $response, 'x-imgix-id' ) );
+	}
+
 }
+
+?>

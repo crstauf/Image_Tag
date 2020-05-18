@@ -25,7 +25,7 @@ require_once $_tests_dir . '/includes/functions.php';
 function _manually_load_plugin() {
 	require dirname( dirname( __FILE__ ) ) . '/Image_Tag_Plugin.php';
 	Image_Tag_Plugin::includes();
-	switch_theme( 'twentynineteen' );
+	switch_theme( 'twentynineteen' );;
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
