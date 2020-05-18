@@ -209,7 +209,7 @@ abstract class Image_Tag_Abstract {
 		)
 			return $responses[$src];
 
-		$responses[$src] = wp_remote_get( $src );
+		$responses[$src] = wp_safe_remote_get( $src );
 
 		return $responses[$src];
 	}
