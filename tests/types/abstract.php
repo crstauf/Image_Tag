@@ -272,21 +272,73 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 
 
 	/*
-	##     ## ######## ######## ########
-	##     ##    ##       ##    ##     ##
-	##     ##    ##       ##    ##     ##
-	#########    ##       ##    ########
-	##     ##    ##       ##    ##
-	##     ##    ##       ##    ##
-	##     ##    ##       ##    ##
+	######## ########    ###    ######## ##     ## ########  ########  ######
+	##       ##         ## ##      ##    ##     ## ##     ## ##       ##    ##
+	##       ##        ##   ##     ##    ##     ## ##     ## ##       ##
+	######   ######   ##     ##    ##    ##     ## ########  ######    ######
+	##       ##       #########    ##    ##     ## ##   ##   ##             ##
+	##       ##       ##     ##    ##    ##     ## ##    ##  ##       ##    ##
+	##       ######## ##     ##    ##     #######  ##     ## ########  ######
 	*/
 
 	/**
 	 * @covers ::http()
 	 * @group instance
+	 * @group feature
 	 * @group external-http
 	 */
 	abstract function test_http();
+
+	/**
+	 * @covers ::lazyload()
+	 * @group instance
+	 * @group feature
+	 */
+	function test_lazyload() {
+		$instance = $this->new_instance( array( 'src' => 'https://source.unsplash.com/1000x1000' ) );
+
+		$this->assertSame( 'https://source.unsplash.com/1000x1000', $instance->src );
+		$this->assertEmpty( $instance->attributes->get( 'data-src' ) );
+		$this->assertEmpty( $instance->attributes->get( 'data-sizes' ) );
+		$this->assertEmpty( $instance->attributes->get( 'data-srcset' ) );
+		$this->assertNotContains( 'lazyload', $instance->class );
+		$this->assertNotContains( 'hide-if-no-js', $instance->class );
+		$this->assertEmpty( $instance->settings->get( 'lazyload' ) );
+
+		if ( !is_null( $instance->settings->get( 'after_output', 'view' ) ) )
+			$this->assertStringNotContainsString( '<noscript>', $instance->settings->get( 'after_output', 'view' ) );
+		else
+			$this->assertNull( $instance->settings->get( 'after_output', 'view' ) );
+
+		$lazyload = $instance->lazyload();
+
+		$this->assertSame( Image_Tag::BLANK, $lazyload->src );
+		$this->assertContains( 'lazyload', $lazyload->class );
+		$this->assertContains( 'hide-if-no-js', $lazyload->class );
+		$this->assertEmpty( $lazyload->sizes );
+		$this->assertSame( $instance->src, $lazyload->attributes->get( 'data-src' ) );
+		$this->assertNotEmpty( $lazyload->attributes->get( 'data-sizes' ) );
+		$this->assertNotEmpty( $lazyload->settings->get( 'lazyload' ) );
+
+		$instance = $this->new_instance( array( 'src' => 'https://source.unsplash.com/1000x1000' ) );
+
+		$expected = $this->new_instance( array(
+			'src' => Image_Tag::BLANK,
+			'class' => array( 'lazyload', 'hide-if-no-js' ),
+			'sizes' => array(),
+			'data-src' => 'https://source.unsplash.com/1000x1000',
+			'data-sizes' => array( 'auto' ),
+		), array(
+			'lazyload' => array(
+				'noscript' => true,
+				'noscript_priority' => -10,
+				'sizes_auto' => true,
+			),
+		) );
+
+		$this->assertEquals( $expected, $instance->lazyload() );
+		$this->assertEquals( $expected->__toString(), $instance->lazyload()->__toString() );
+	}
 
 }
 

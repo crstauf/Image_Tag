@@ -126,6 +126,18 @@ abstract class Image_Tag_Abstract {
 		return $string;
 	}
 
+	/**
+	 * Cloner.
+	 *
+	 * @uses static::__construct()
+	 * @return Image_Tag_Abstract
+	 *
+	 * @todo add tests
+	 */
+	function __clone() {
+		return static::__construct( $this->attributes, $this->settings );
+	}
+
 
 	/*
 	##     ##    ###    ##       #### ########     ###    ######## ####  #######  ##    ##
@@ -217,14 +229,43 @@ abstract class Image_Tag_Abstract {
 	/**
 	 * Adjust atributes and settings to lazyload.
 	 *
-	 * @param null|array|Image_Tag_Attributes $attributes
-	 * @param null|array|Image_Tag_Settings $settings
+	 * @param null|array $set_attributes
+	 * @param null|array $set_settings
 	 * @return Image_Tag_Abstract
 	 *
 	 * @todo define
 	 */
-	function lazyload( $attributes = null, $settings = null ) {
+	function lazyload( array $set_attributes = array(), array $set_settings = array() ) {
+		$lazyload = clone $this;
 
+		$set_attributes = wp_parse_args( $set_attributes, array(
+			'sizes' => array(),
+			'data-src' => null,
+			'data-srcset' => array(),
+		) );
+
+		$set_settings = wp_parse_args( $set_settings, array(
+			'lazyload' => array(
+				'noscript' => true,
+				'noscript_priority' => -10,
+				'sizes_auto' => true,
+			),
+		) );
+
+		if (
+			$this->sizes === $this->attributes::DEFAULTS['sizes']
+			&& $set_settings['lazyload']['sizes_auto']
+		)
+			$set_attributes['data-sizes'] = 'auto';
+
+		$lazyload->attributes->set( $set_attributes );
+		$lazyload->settings->set( $set_settings );
+
+		$lazyload->src = Image_Tag::BLANK;
+		$lazyload->attributes->add( 'data-src', $this->src );
+		$lazyload->attributes->add_to( 'class', 'lazyload hide-if-no-js' );
+
+		return $lazyload;
 	}
 
 	/**
