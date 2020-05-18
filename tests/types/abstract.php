@@ -177,7 +177,7 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Data provider for Image_Tag_Abstract::test__toString().
+	 * Data provider for Image_Tag_Test_Base::test__toString().
 	 *
 	 * @see static::test__toString()
 	 * @return array[]
@@ -290,14 +290,75 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 	abstract function test_http();
 
 	/**
+	 * Data provider for Image_Tag_Test_Base::test_lazyload().
+	 *
+	 * @see static::test_lazyload()
+	 * @return array[]
+	 */
+	function data_lazyload() {
+		$data = array();
+
+		$data['src'] = array();
+		$data['src'][0] = $this->new_instance( array( 'src' => 'https://source.unsplash.com/1000x1000' ) );
+		$data['src'][1] = $this->new_instance( array(
+			'src' => Image_Tag::BLANK,
+			'class' => array( 'lazyload', 'hide-if-no-js' ),
+			'sizes' => array(),
+			'data-src' => 'https://source.unsplash.com/1000x1000',
+			'data-sizes' => array( 'auto' ),
+		), array(
+			'lazyload' => array(
+				'noscript' => true,
+				'noscript_priority' => -10,
+				'sizes_auto' => true,
+			),
+		) );
+
+		$data['srcset'] = array();
+		$data['srcset'][0] = $this->new_instance( array(
+			'src' => 'https://source.unsplash.com/300x300',
+			'srcset' => array(
+				'https://source.unsplash.com/300x300 300w',
+				'https://source.unsplash.com/600x600 600w',
+				'https://source.unsplash.com/1000x1000 1000w',
+			),
+		) );
+		$data['srcset'][1] = $this->new_instance( array(
+			'src' => Image_Tag::BLANK,
+			'class' => array( 'lazyload', 'hide-if-no-js' ),
+			'sizes' => array(),
+			'data-src' => 'https://source.unsplash.com/300x300',
+			'data-sizes' => array( 'auto' ),
+			'data-srcset' => array(
+				'https://source.unsplash.com/300x300 300w',
+				'https://source.unsplash.com/600x600 600w',
+				'https://source.unsplash.com/1000x1000 1000w',
+			),
+		), array(
+			'lazyload' => array(
+				'noscript' => true,
+				'noscript_priority' => -10,
+				'sizes_auto' => true,
+			),
+		) );
+
+		return $data;
+	}
+
+	/**
+	 * @param Image_Tag_Abstract $instance
+	 * @param Image_Tag_Abstract $expected
+	 *
 	 * @covers ::lazyload()
 	 * @group instance
 	 * @group feature
+	 *
+	 * @dataProvider data_lazyload
+	 *
+	 * @todo add test for noscript
 	 */
-	function test_lazyload() {
-		$instance = $this->new_instance( array( 'src' => 'https://source.unsplash.com/1000x1000' ) );
-
-		$this->assertSame( 'https://source.unsplash.com/1000x1000', $instance->src );
+	function test_lazyload( Image_Tag_Abstract $instance, Image_Tag_Abstract $expected ) {
+		$this->assertNotEquals( $expected->src, $instance->src );
 		$this->assertEmpty( $instance->attributes->get( 'data-src' ) );
 		$this->assertEmpty( $instance->attributes->get( 'data-sizes' ) );
 		$this->assertEmpty( $instance->attributes->get( 'data-srcset' ) );
@@ -313,31 +374,15 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 		$lazyload = $instance->lazyload();
 
 		$this->assertSame( Image_Tag::BLANK, $lazyload->src );
-		$this->assertContains( 'lazyload', $lazyload->class );
-		$this->assertContains( 'hide-if-no-js', $lazyload->class );
-		$this->assertEmpty( $lazyload->sizes );
+		$this->assertSame( $expected->class, $lazyload->class );
+		$this->assertSame( $expected->sizes, $lazyload->sizes );
 		$this->assertSame( $instance->src, $lazyload->attributes->get( 'data-src' ) );
-		$this->assertNotEmpty( $lazyload->attributes->get( 'data-sizes' ) );
-		$this->assertNotEmpty( $lazyload->settings->get( 'lazyload' ) );
+		$this->assertSame( $expected->attributes->get( 'data-src' ), $lazyload->attributes->get( 'data-src' ) );
+		$this->assertSame( $expected->attributes->get( 'data-sizes' ), $lazyload->attributes->get( 'data-sizes' ) );
+		$this->assertSame( $expected->attributes->get( 'data-srcset' ), $lazyload->attributes->get( 'data-srcset' ) );
+		$this->assertSame( $expected->attributes->get( 'lazyload' ), $lazyload->attributes->get( 'lazyload' ) );
 
-		$instance = $this->new_instance( array( 'src' => 'https://source.unsplash.com/1000x1000' ) );
-
-		$expected = $this->new_instance( array(
-			'src' => Image_Tag::BLANK,
-			'class' => array( 'lazyload', 'hide-if-no-js' ),
-			'sizes' => array(),
-			'data-src' => 'https://source.unsplash.com/1000x1000',
-			'data-sizes' => array( 'auto' ),
-		), array(
-			'lazyload' => array(
-				'noscript' => true,
-				'noscript_priority' => -10,
-				'sizes_auto' => true,
-			),
-		) );
-
-		$this->assertEquals( $expected, $instance->lazyload() );
-		$this->assertEquals( $expected->__toString(), $instance->lazyload()->__toString() );
+		$this->assertSame( $expected->__toString(), $lazyload->__toString() );
 	}
 
 }
