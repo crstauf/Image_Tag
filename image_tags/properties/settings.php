@@ -189,6 +189,9 @@ class Image_Tag_Settings extends Image_Tag_Properties_Abstract {
 	 * @param int $priority
 	 * @uses static::get_property()
 	 * @uses static::_set()
+	 * @return $this
+	 *
+	 * @todo add test for chaining
 	 */
 	function add_output( string $position, $add_values, int $priority = 10 ) {
 
@@ -240,6 +243,8 @@ class Image_Tag_Settings extends Image_Tag_Properties_Abstract {
 		ksort( $value, SORT_NUMERIC );
 
 		$this->_set( $position . '_output', $value );
+
+		return $this;
 	}
 
 	/**
