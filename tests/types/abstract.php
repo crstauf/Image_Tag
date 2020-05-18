@@ -386,17 +386,22 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers ::noscript()
-	 * @group instance
-	 * @group feature
+	 * Data provider for Image_Tag_Test_Base::test_noscript().
+	 *
+	 * @see static::test_noscript()
+	 * @return array[]
 	 */
-	function test_noscript() {
-		$instance = $this->new_instance( array( 'src' => 'https://source.unsplash.com/1000x1000' ) );
-		$noscript = $instance->noscript();
+	function data_noscript() {
+		$instance = $this->get_instance( array( 'src' => 'https://source.unsplash.com/1000x1000' ) );
 
-		$expected = $this->new_instance( array(
+		$data = array();
+
+		# Test defaults.
+		$data['defaults'] = array();
+		$data['defaults'][0] = $instance->noscript();
+		$data['defaults'][1] = $this->new_instance( array(
 			'src' => 'https://source.unsplash.com/1000x1000',
-			'class' => 'no-js',
+			'class' => array( 1 => 'no-js' ),
 		), array(
 			'before_output' => array(
 				20 => array( '<noscript>' ),
@@ -410,13 +415,16 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 			),
 		) );
 
-		$this->assertEquals( $expected, $noscript );
-		$this->assertSame( $expected->__toString(), $noscript->__toString() );
+		# Test adding output outside of noscript tags.
+		$data['outside'] = array();
 
-		$noscript->settings->add_output( 'before', 'before open' );
-		$noscript->settings->add_output(  'after', 'after close' );
+		$noscript = $instance->noscript();
+		$noscript->settings
+			->add_output( 'before', 'before open' )
+			->add_output(  'after', 'after close' );
 
-		$expected = $this->new_instance( array(
+		$data['outside'][0] = $noscript;
+		$data['outside'][1] =  $this->new_instance( array(
 			'src' => 'https://source.unsplash.com/1000x1000',
 			'class' => 'no-js',
 		), array(
@@ -434,13 +442,16 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 			),
 		) );
 
-		$this->assertEquals( $expected, $noscript );
-		$this->assertSame( $expected->__toString(), $noscript->__toString() );
+		# Test adding output inside of noscript tags.
+		$data['inside'] = array();
 
-		$noscript->settings->add_output( 'before', 'after open',  25 );
-		$noscript->settings->add_output(  'after', 'before close', 5 );
+		$noscript = clone $noscript;
+		$noscript->settings
+			->add_output( 'before', 'after open',  25 )
+			->add_output(  'after', 'before close', 5 );
 
-		$expected = $this->new_instance( array(
+		$data['inside'][0] = $noscript;
+		$data['inside'][1] = $this->new_instance( array(
 			'src' => 'https://source.unsplash.com/1000x1000',
 			'class' => 'no-js',
 		), array(
@@ -460,8 +471,8 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 			),
 		) );
 
-		$this->assertEquals( $expected, $noscript );
-		$this->assertSame( $expected->__toString(), $noscript->__toString() );
+		# Test adjusting position of noscript tags.
+		$data['positions'] = array();
 
 		$noscript = $instance->noscript( array(), array(
 			'noscript' => array(
@@ -470,7 +481,8 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 			),
 		) );
 
-		$expected = $this->new_instance( array(
+		$data['positions'][0] = $noscript;
+		$data['positions'][1] = $this->new_instance( array(
 			'src' => 'https://source.unsplash.com/1000x1000',
 			'class' => 'no-js',
 		), array(
@@ -486,13 +498,16 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 			),
 		) );
 
-		$this->assertEquals( $expected, $noscript );
-		$this->assertSame( $expected->__toString(), $noscript->__toString() );
+		# Test adding output after noscript tags in adjust positions.
+		$data['positions after'] = array();
 
-		$noscript->settings->add_output( 'before', 'after open' );
-		$noscript->settings->add_output(  'after', 'after close' );
+		$noscript = clone $noscript;
+		$noscript->settings
+			->add_output( 'before', 'after open'  )
+			->add_output(  'after', 'after close' );
 
-		$expected = $this->new_instance( array(
+		$data['positions after'][0] = $noscript;
+		$data['positions after'][1] = $this->new_instance( array(
 			'src' => 'https://source.unsplash.com/1000x1000',
 			'class' => 'no-js',
 		), array(
@@ -514,6 +529,20 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 			),
 		) );
 
+		return $data;
+	}
+
+	/**
+	 * @param Image_Tag_Abstract $noscript
+	 * @param Image_Tag_Abstract $expected
+	 *
+	 * @covers ::noscript()
+	 * @group instance
+	 * @group feature
+	 *
+	 * @dataProvider data_noscript
+	 */
+	function test_noscript( Image_Tag_Abstract $noscript, Image_Tag_Abstract $expected ) {
 		$this->assertEquals( $expected, $noscript );
 		$this->assertSame( $expected->__toString(), $noscript->__toString() );
 	}
