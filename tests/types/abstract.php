@@ -385,6 +385,139 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 		$this->assertSame( $expected->__toString(), $lazyload->__toString() );
 	}
 
+	/**
+	 * @covers ::noscript()
+	 * @group instance
+	 * @group feature
+	 */
+	function test_noscript() {
+		$instance = $this->new_instance( array( 'src' => 'https://source.unsplash.com/1000x1000' ) );
+		$noscript = $instance->noscript();
+
+		$expected = $this->new_instance( array(
+			'src' => 'https://source.unsplash.com/1000x1000',
+			'class' => 'no-js',
+		), array(
+			'before_output' => array(
+				20 => array( '<noscript>' ),
+			),
+			'after_output' => array(
+				0 => array( '</noscript>' ),
+			),
+			'noscript' => array(
+				'before_position' => 20,
+				 'after_position' => 0,
+			),
+		) );
+
+		$this->assertEquals( $expected, $noscript );
+		$this->assertSame( $expected->__toString(), $noscript->__toString() );
+
+		$noscript->settings->add_output( 'before', 'before open' );
+		$noscript->settings->add_output(  'after', 'after close' );
+
+		$expected = $this->new_instance( array(
+			'src' => 'https://source.unsplash.com/1000x1000',
+			'class' => 'no-js',
+		), array(
+			'before_output' => array(
+				20 => array( '<noscript>' ),
+				10 => array( 'before open' ),
+			),
+			'after_output' => array(
+				 0 => array( '</noscript>' ),
+				10 => array( 'after close' ),
+			),
+			'noscript' => array(
+				'before_position' => 20,
+				 'after_position' => 0,
+			),
+		) );
+
+		$this->assertEquals( $expected, $noscript );
+		$this->assertSame( $expected->__toString(), $noscript->__toString() );
+
+		$noscript->settings->add_output( 'before', 'after open',  25 );
+		$noscript->settings->add_output(  'after', 'before close', 5 );
+
+		$expected = $this->new_instance( array(
+			'src' => 'https://source.unsplash.com/1000x1000',
+			'class' => 'no-js',
+		), array(
+			'before_output' => array(
+				20 => array( '<noscript>' ),
+				10 => array( 'before open' ),
+				25 => array( 'after open' ),
+			),
+			'after_output' => array(
+				 0 => array( '</noscript>' ),
+				10 => array( 'after close' ),
+				 5 => array( 'before close' ),
+			),
+			'noscript' => array(
+				'before_position' => 20,
+				 'after_position' =>  0,
+			),
+		) );
+
+		$this->assertEquals( $expected, $noscript );
+		$this->assertSame( $expected->__toString(), $noscript->__toString() );
+
+		$noscript = $instance->noscript( array(), array(
+			'noscript' => array(
+				'before_position' => 10,
+				 'after_position' => 10,
+			),
+		) );
+
+		$expected = $this->new_instance( array(
+			'src' => 'https://source.unsplash.com/1000x1000',
+			'class' => 'no-js',
+		), array(
+			'before_output' => array(
+				10 => array( '<noscript>' ),
+			),
+			'after_output' => array(
+				10 => array( '</noscript>' ),
+			),
+			'noscript' => array(
+				'before_position' => 10,
+				 'after_position' => 10,
+			),
+		) );
+
+		$this->assertEquals( $expected, $noscript );
+		$this->assertSame( $expected->__toString(), $noscript->__toString() );
+
+		$noscript->settings->add_output( 'before', 'after open' );
+		$noscript->settings->add_output(  'after', 'after close' );
+
+		$expected = $this->new_instance( array(
+			'src' => 'https://source.unsplash.com/1000x1000',
+			'class' => 'no-js',
+		), array(
+			'before_output' => array(
+				10 => array(
+					'<noscript>',
+					'after open',
+				),
+			),
+			'after_output' => array(
+				10 => array(
+					'</noscript>',
+					'after close',
+				),
+			),
+			'noscript' => array(
+				'before_position' => 10,
+				 'after_position' => 10,
+			),
+		) );
+
+		$this->assertEquals( $expected, $noscript );
+		$this->assertSame( $expected->__toString(), $noscript->__toString() );
+	}
+
 }
 
 ?>

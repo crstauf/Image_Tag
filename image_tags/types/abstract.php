@@ -229,8 +229,8 @@ abstract class Image_Tag_Abstract {
 	/**
 	 * Adjust atributes and settings to lazyload.
 	 *
-	 * @param null|array $set_attributes
-	 * @param null|array $set_settings
+	 * @param array $set_attributes
+	 * @param array $set_settings
 	 * @return Image_Tag_Abstract
 	 *
 	 * @todo add noscript
@@ -275,14 +275,38 @@ abstract class Image_Tag_Abstract {
 	/**
 	 * Adjust atributes and settings to add noscript version.
 	 *
-	 * @param null|array|Image_Tag_Attributes $attributes
-	 * @param null|array|Image_Tag_Settings $settings
+	 * @param array $attributes
+	 * @param array $settings
 	 * @return Image_Tag_Abstract
-	 *
-	 * @todo define
 	 */
-	function noscript( $attributes = null, $settings = null ) {
+	function noscript( array $set_attributes = array(), array $set_settings = array() ) {
+		$noscript = clone $this;
 
+		$set_settings = wp_parse_args( $set_settings, array(
+			'noscript' => array(
+				'before_position' => 20,
+				'after_position' => 0,
+			),
+		) );
+
+		$noscript->attributes->set( $set_attributes );
+		$noscript->settings->set( $set_settings );
+
+		$classes = $noscript->class;
+		$classes[] = 'no-js';
+		$classes = array_filter( $classes, function( $class ) {
+			return !in_array( $class, array(
+				'lazyload',
+				'hide-if-no-js',
+			) );
+		} );
+
+		$noscript->attributes->set( 'class', $classes );
+
+		$noscript->settings->add_output( 'before',  '<noscript>', $noscript->settings->noscript['before_position'] );
+		$noscript->settings->add_output(  'after', '</noscript>', $noscript->settings->noscript[ 'after_position'] );
+
+		return $noscript;
 	}
 
 	/**

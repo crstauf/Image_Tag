@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Abstract class: Image_Tag_Properties_Abstract
+ *
+ * @todo add remove_from()
+ */
 abstract class Image_Tag_Properties_Abstract implements ArrayAccess, Countable, Iterator {
 
 	/**
