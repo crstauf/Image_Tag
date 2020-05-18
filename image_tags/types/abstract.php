@@ -233,7 +233,7 @@ abstract class Image_Tag_Abstract {
 	 * @param array $set_settings
 	 * @return Image_Tag_Abstract
 	 *
-	 * @todo add noscript
+	 * @todo figure out how to store noscript image tag object directly (without __toString())
 	 */
 	function lazyload( array $set_attributes = array(), array $set_settings = array() ) {
 		$lazyload = clone $this;
@@ -248,12 +248,16 @@ abstract class Image_Tag_Abstract {
 		$set_attributes['sizes']  = array();
 		$set_attributes['srcset'] = array();
 
-		$set_settings = wp_parse_args( $set_settings, array(
-			'lazyload' => array(
-				'noscript' => true,
-				'noscript_priority' => -10,
-				'sizes_auto' => true,
-			),
+		if ( !array_key_exists( 'lazyload', $set_settings ) )
+			$set_settings['lazyload'] = array();
+
+		if ( !empty( $this->settings->get( 'lazyload' ) ) )
+			$set_settings['lazyload'] = wp_parse_args( $set_settings['lazyload'], $this->settings->get( 'lazyload' ) );
+
+		$set_settings['lazyload'] = wp_parse_args( $set_settings['lazyload'], array(
+			'noscript' => true,
+			'noscript_priority' => -10,
+			'sizes_auto' => true,
 		) );
 
 		if (
@@ -268,6 +272,18 @@ abstract class Image_Tag_Abstract {
 		$lazyload->attributes->add( 'data-src',    $this->src );
 		$lazyload->attributes->add( 'data-srcset', $this->srcset );
 		$lazyload->attributes->add_to( 'class', 'lazyload hide-if-no-js' );
+
+		$lazyload_settings = $lazyload->settings->get( 'lazyload' );
+
+		if (
+			!empty( $lazyload_settings )
+			&& $lazyload_settings['noscript']
+		)
+			$lazyload->settings->add_output(
+				'after',
+				$this->noscript( array( 'loading' => 'lazy' ) )->__toString(),
+				$lazyload_settings['noscript_priority']
+			);
 
 		return $lazyload;
 	}

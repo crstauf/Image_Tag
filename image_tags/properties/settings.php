@@ -228,7 +228,7 @@ class Image_Tag_Settings extends Image_Tag_Properties_Abstract {
 				$value[$priority] = array();
 
 			# Add string to array.
-			if ( is_string( $add_value ) ) {
+			if ( !is_array( $add_value ) ) {
 				$value[$priority][] = $add_value;
 				continue;
 			}
