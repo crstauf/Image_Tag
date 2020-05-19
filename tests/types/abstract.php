@@ -81,10 +81,13 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 	 * @group magic
 	 */
 	function test__construct() {
-		$instance = $this->get_instance();
+		$instance = $this->get_instance( array( 'id' => __FUNCTION__ ), array( 'foo' => __METHOD__ ) );
 
 		$this->assertInstanceOf( Image_Tag_Attributes::class, $instance->attributes );
 		$this->assertInstanceOf( Image_Tag_Settings::class,   $instance->settings   );
+
+		$this->assertSame( __FUNCTION__, $instance->attributes->id );
+		$this->assertSame( __METHOD__, $instance->settings->foo );
 	}
 
 	/**
@@ -232,6 +235,29 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 		}
 
 		$this->assertSame( $expected, $instance->__toString() );
+	}
+
+	/**
+	 * @covers ::__clone()
+	 * @group instance
+	 * @group magic
+	 */
+	function test__clone() {
+		$instance = $this->new_instance( array( 'id' => __FUNCTION__ ), array( 'foo' => __FUNCTION__ ) );
+		$clone = clone $instance;
+
+		$this->assertEquals( $instance, $clone );
+		$this->assertNotSame( $instance, $clone );
+
+		$this->assertEquals( $instance->attributes, $clone->attributes );
+		$this->assertNotSame( $instance->attributes, $clone->attributes );
+
+		$this->assertEquals( $instance->settings, $clone->settings );
+		$this->assertNotSame( $instance->settings, $clone->settings );
+
+		$clone->id = 'foo';
+		$this->assertSame( __FUNCTION__, $instance->id );
+		$this->assertSame( 'foo', $clone->id );
 	}
 
 
