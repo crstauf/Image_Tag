@@ -20,6 +20,65 @@ class Image_Tag_Test extends Image_Tag_Test_Base {
 
 
 	/*
+	 ######  ########    ###    ######## ####  ######
+	##    ##    ##      ## ##      ##     ##  ##    ##
+	##          ##     ##   ##     ##     ##  ##
+	 ######     ##    ##     ##    ##     ##  ##
+	      ##    ##    #########    ##     ##  ##
+	##    ##    ##    ##     ##    ##     ##  ##    ##
+	 ######     ##    ##     ##    ##    ####  ######
+	*/
+
+	/**
+	 * Data provider for Image_Tag_Test::test_create().
+	 *
+	 * @see static::test_create()
+	 * @return array[]
+	 */
+	function data_create() {
+		return array(
+
+			'fail' => array(
+				'warning',
+				'source.unsplash.com',
+			),
+
+			'base' => array(
+				$this->new_instance( array( 'src' => 'https://source.unsplash.com/1000x1000' ) ),
+				'https://source.unsplash.com/1000x1000',
+			),
+
+		);
+	}
+
+	/**
+	 * @param string|Image_Tag_Abstract
+	 * @param array $params
+	 *
+	 * @covers ::create()
+	 * @group static
+	 *
+	 * @dataProvider data_create
+	 */
+	function test_create( $expected, ...$params ) {
+		$params = array_replace( array(
+			null,
+			null,
+			array(),
+		), $params );
+
+		if ( 'warning' === $expected ) {
+			$instance = @Image_Tag::create( $params[1], $params[2] );
+			$this->assertEquals( new Image_Tag( $params[1], $params[2] ), $instance );
+			$this->expectException( PHPUnit\Framework\Error\Error::class );
+		}
+
+		$instance = Image_Tag::create( ...$params );
+		$this->assertEquals( $expected, $instance );
+	}
+
+
+	/*
 	##     ##    ###    ##       #### ########     ###    ######## ####  #######  ##    ##
 	##     ##   ## ##   ##        ##  ##     ##   ## ##      ##     ##  ##     ## ###   ##
 	##     ##  ##   ##  ##        ##  ##     ##  ##   ##     ##     ##  ##     ## ####  ##
