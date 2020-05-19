@@ -184,7 +184,7 @@ abstract class Image_Tag_Abstract {
 	 */
 	function is_valid( $types = null ) {
 		if (
-			!is_null( $types )
+			   !is_null( $types )
 			&& !$this->is_type( $types )
 		)
 			return false;
@@ -207,13 +207,19 @@ abstract class Image_Tag_Abstract {
 	 * Request image via HTTP GET.
 	 *
 	 * @param bool $fresh Flag to refresh cached value.
-	 * @uses wp_remote_get()
+	 * @uses wp_safe_remote_get()
 	 * @return WP_Error|array
 	 */
 	function http( bool $fresh = false ) {
 		static $responses = array();
 
-		$src = $this->attributes->src;
+		$src = $this->attributes->get( 'src' );
+
+		if ( 
+			empty( $src )
+			|| !wp_http_validate_url( $src )
+		)
+			return new WP_Error( 'required_src', 'Image URL is required to perform HTTP GET request.' );
 
 		if (
 			!$fresh
