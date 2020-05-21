@@ -92,8 +92,6 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 	 *
 	 * @group instance
 	 * @group magic
-	 *
-	 * @todo add tests
 	 */
 	function test__construct() {
 		parent::test__construct();
