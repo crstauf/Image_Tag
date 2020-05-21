@@ -224,6 +224,47 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 		$this->markTestIncomplete();
 	}
 
+	/**
+	 * @covers ::into()
+	 * @group instance
+	 * @group into
+	 */
+	function test_into() {
+		$instance = Image_Tag::create( 'https://source.unsplash.com/1000x1000' );
+		$into = $instance->into( 'joeschmoe' );
+		$expected = Image_Tag::create( 'joeschmoe' );
+
+		$this->assertEquals( $expected, $into );
+		$this->assertEquals( $expected->__toString(), $into->__toString() );
+
+		$gender = array_rand( array( 'male', 'female' ) );
+		$instance = Image_Tag::create( 'https://source.unsplash.com/1000x1000', array(), array(
+			'gender' => $gender,
+		) );
+		$into = $instance->into( 'joeschmoe' );
+		$expected = Image_Tag::create( 'joeschmoe', array(), array(
+			'gender' => $gender,
+		) );
+
+		$this->assertEquals( $expected, $into );
+		$this->assertEquals( $expected->__toString(), $into->__toString() );
+
+		$instance = Image_Tag::create( 'https://source.unsplash.com/1000x1000' );
+		$into = $instance->into( 'joeschmoe', array(
+			'id' => __FUNCTION__,
+		), array(
+			'seed' => __FUNCTION__,
+		) );
+		$expected = Image_Tag::create( 'joeschmoe', array(
+			'id' => __FUNCTION__,
+		), array(
+			'seed' => __FUNCTION__,
+		) );
+
+		$this->assertEquals( $expected, $into );
+		$this->assertEquals( $expected->__toString(), $into->__toString() );
+	}
+
 }
 
 ?>

@@ -648,6 +648,13 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 		$this->assertSame( $expected->__toString(), $noscript->__toString() );
 	}
 
+	/**
+	 * @covers ::into()
+	 * @group instance
+	 * @group into
+	 */
+	abstract function test_into();
+
 }
 
 ?>

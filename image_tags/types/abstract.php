@@ -352,12 +352,25 @@ abstract class Image_Tag_Abstract {
 	/**
 	 * Convert into another image tag type.
 	 *
+	 * @param string $type Type to convert into.
+	 * @param array|Image_Tag_Attributes $attributes
+	 * @param array|Image_Tag_Settings $settings
 	 * @return Image_Tag_Abstract
 	 *
 	 * @todo define
 	 */
-	function into() {
+	function into( string $type, $attributes = array(), $settings = array() ) {
 
+		if ( is_array( $attributes ) )
+			$attributes = wp_parse_args( $attributes, $this->attributes->get() );
+
+		if ( is_array( $settings ) )
+			$settings = wp_parse_args( $settings, $this->settings->get() );
+
+		$into = Image_Tag::create( $type, $attributes, $settings );
+		$into->attributes->set( 'src', null );
+
+		return $into;
 	}
 
 }

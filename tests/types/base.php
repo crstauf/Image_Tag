@@ -207,6 +207,11 @@ class Image_Tag_Test extends Image_Tag_Test_Base {
 		$this->assertEquals( $count, did_action( 'http_api_debug' ) );
 	}
 
+	/**
+	 * @doesNotPerformAssertions
+	 */
+	function test_into() {}
+
 }
 
 ?>
