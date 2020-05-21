@@ -27,7 +27,7 @@ class Image_Tag_Test extends Image_Tag_Test_Base {
 	function data_constant_types() {
 		return array(
 			array(
-				'base',
+				array( 'base' ),
 			),
 		);
 	}

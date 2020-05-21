@@ -76,11 +76,13 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_constant_types
 	 */
-	function test_constant_types() {
+	function test_constant_types( array $expected ) {
 		$constant = constant( $this->class_name() . '::TYPES' );
 
 		$this->assertIsArray( $constant );
 		$this->assertNotEmpty( $constant );
+
+		$this->assertSame( $expected, $constant );
 	}
 
 	/*

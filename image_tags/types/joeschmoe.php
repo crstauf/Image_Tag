@@ -10,6 +10,7 @@ class Image_Tag_JoeSchmoe extends Image_Tag_Abstract {
 		'avatar',
 		'person',
 		'external',
+		'remote',
 	);
 
 	/**
@@ -92,7 +93,7 @@ class Image_Tag_JoeSchmoe extends Image_Tag_Abstract {
 	 * @return null|string
 	 */
 	function __toString() {
-		if ( empty( $this->attributes->get( 'src' ) ) )
+		if ( !wp_http_validate_url( $this->attributes->get( 'src' ) ) )
 			$this->attributes->set( 'src', $this->generate_src() );
 
 		return parent::__toString();
@@ -109,7 +110,14 @@ class Image_Tag_JoeSchmoe extends Image_Tag_Abstract {
 	   ###    ##     ## ######## #### ########  ##     ##    ##    ####  #######  ##    ##
 	*/
 
-	function check_valid() {
+	/**
+	 * Check tag is valid to print.
+	 *
+	 * @uses Image_Tag_Attributes::get()
+	 * @uses static::generate_src()
+	 * @return WP_Error|true
+	 */
+	protected function check_valid() {
 		$errors = new WP_Error;
 
  		if (

@@ -20,10 +20,13 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 	function data_constant_types() {
 		return array(
 			array(
-				'joeschmoe',
-				'avatar',
-				'person',
-				'external',
+				array(
+					'joeschmoe',
+					'avatar',
+					'person',
+					'external',
+					'remote',
+				),
 			),
 		);
 	}
@@ -53,8 +56,24 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 	 ######     ##    ##     ##    ##    ####  ######
 	*/
 
+	/**
+	 * @covers Imagee_Tag::create()
+	 */
 	function data_create() {
-		$this->markTestIncomplete();
+		return array(
+			'joeschmoe' => array(
+				$this->new_instance(),
+				'joeschmoe',
+			),
+			'avatar' => array(
+				$this->new_instance(),
+				'avatar',
+			),
+			'person' => array(
+				$this->new_instance(),
+				'person',
+			),
+		);
 	}
 
 
@@ -78,8 +97,17 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 	 */
 	function test__construct() {
 		parent::test__construct();
+
+		$instance = $this->new_instance( array(), array( 'gender' => 'lgbtq' ) );
+		$this->assertNull( $instance->settings->gender );
 	}
 
+	/**
+	 * Data providerf or Image_Tag_JoeSchmoe_Test::test__toString().
+	 *
+	 * @see static::test__toString()
+	 * @return array[]
+	 */
 	function data__toString() {
 		return array(
 			'alt source' => array(
@@ -142,16 +170,40 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 	   ###    ##     ## ######## #### ########  ##     ##    ##    ####  #######  ##    ##
 	*/
 
+	/**
+	 * @covers ::get_type()
+	 *
+	 * @group instance
+	 * @group validation
+	 */
 	function test_get_type() {
 		$this->assertSame( 'joeschmoe', $this->new_instance()->get_type() );
 	}
 
+	/**
+	 * @covers ::is_type()
+	 *
+	 * @group instance
+	 * @group validation
+	 */
 	function test_is_type() {
-		$this->markTestIncomplete();
+		$instance = $this->new_instance();
+
+		$this->assertTrue( $instance->is_type( 'joeschmoe' ) );
+		$this->assertTrue( $instance->is_type( 'avatar' ) );
+		$this->assertTrue( $instance->is_type( 'person' ) );
 	}
 
+	/**
+	 * @covers ::is_valid()
+	 * @covers ::check_valid()
+	 *
+	 * @group instance
+	 * @group validation
+	 */
 	function test_is_valid() {
-		$this->markTestIncomplete();
+		$instance = $this->new_instance();
+		$this->assertTrue( $instance->is_valid() );
 	}
 
 
@@ -165,6 +217,11 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 	##       ######## ##     ##    ##     #######  ##     ## ########  ######
 	*/
 
+	/**
+	 * @covers ::http()
+	 * @group instance
+	 * @group external-http
+	 */
 	function test_http() {
 		$this->markTestIncomplete();
 	}
