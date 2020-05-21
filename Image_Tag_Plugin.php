@@ -73,6 +73,7 @@ class Image_Tag_Plugin {
 		# Types.
 		require_once 'image_tags/types/abstract.php';
 		require_once 'image_tags/types/base.php';
+		require_once 'image_tags/types/joeschmoe.php';
 
 	}
 

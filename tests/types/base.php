@@ -18,6 +18,20 @@ class Image_Tag_Test extends Image_Tag_Test_Base {
 		$this->assertSame( 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==', constant( $this->class_name() . '::BLANK' ) );
 	}
 
+	/**
+	 * Data provider for Image_Tag_Test_Base::test_constant_types().
+	 *
+	 * @see Image_Tag_Test_Base::test_constant_types()
+	 * @return array[]
+	 */
+	function data_constant_types() {
+		return array(
+			array(
+				'base',
+			),
+		);
+	}
+
 
 	/*
 	 ######  ########    ###    ######## ####  ######
@@ -30,9 +44,9 @@ class Image_Tag_Test extends Image_Tag_Test_Base {
 	*/
 
 	/**
-	 * Data provider for Image_Tag_Test::test_create().
+	 * Data provider for Image_Tag_Test_Base::test_create().
 	 *
-	 * @see static::test_create()
+	 * @see Image_Tag_Test_Base::test_create()
 	 * @return array[]
 	 */
 	function data_create() {
@@ -51,30 +65,52 @@ class Image_Tag_Test extends Image_Tag_Test_Base {
 		);
 	}
 
+
+	/*
+	##     ##    ###     ######   ####  ######
+	###   ###   ## ##   ##    ##   ##  ##    ##
+	#### ####  ##   ##  ##         ##  ##
+	## ### ## ##     ## ##   ####  ##  ##
+	##     ## ######### ##    ##   ##  ##
+	##     ## ##     ## ##    ##   ##  ##    ##
+	##     ## ##     ##  ######   ####  ######
+	*/
+
 	/**
-	 * @param string|Image_Tag_Abstract
-	 * @param array $params
+	 * Data provider for Image_Tag_Test_Base::test__toString().
 	 *
-	 * @covers ::create()
-	 * @group static
-	 *
-	 * @dataProvider data_create
+	 * @see static::test__toString()
+	 * @return array[]
 	 */
-	function test_create( $expected, ...$params ) {
-		$params = array_replace( array(
-			null,
-			null,
-			array(),
-		), $params );
+	function data__toString() {
+		return array(
 
-		if ( 'warning' === $expected ) {
-			$instance = @Image_Tag::create( $params[1], $params[2] );
-			$this->assertEquals( new Image_Tag( $params[1], $params[2] ), $instance );
-			$this->expectException( PHPUnit\Framework\Error\Error::class );
-		}
+			'id' => array(
+				$this->new_instance( array( 'id' => __FUNCTION__ ) ),
+				'warning',
+			),
 
-		$instance = Image_Tag::create( ...$params );
-		$this->assertEquals( $expected, $instance );
+			'class' => array(
+				$this->new_instance( array( 'class' => 'foo bar' ) ),
+				'warning',
+			),
+
+			'src' => array(
+				$this->new_instance( array(
+					'id' => __FUNCTION__,
+					'class' => 'bar foo',
+					'src' => 'https://source.unsplash.com/1000x1000',
+				) ),
+				'<img ' .
+					'id="' . esc_attr( __FUNCTION__ ) . '" ' .
+					'src="' . esc_attr( 'https://source.unsplash.com/1000x1000' ) . '" ' .
+					'sizes="100vw" ' .
+					'class="bar foo" ' .
+					'alt="" ' .
+				'/>',
+			),
+
+		);
 	}
 
 

@@ -63,6 +63,70 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 		return $instance;
 	}
 
+	/**
+	 * Data provider for Image_Tag_Test_Base::test_constant_types().
+	 *
+	 * @see static::test_constant_types()
+	 * @return array[]
+	 */
+	abstract function data_constant_types();
+
+	/**
+	 * @group constant
+	 *
+	 * @dataProvider data_constant_types
+	 */
+	function test_constant_types() {
+		$constant = constant( $this->class_name() . '::TYPES' );
+
+		$this->assertIsArray( $constant );
+		$this->assertNotEmpty( $constant );
+	}
+
+	/*
+	 ######  ########    ###    ######## ####  ######
+	##    ##    ##      ## ##      ##     ##  ##    ##
+	##          ##     ##   ##     ##     ##  ##
+	 ######     ##    ##     ##    ##     ##  ##
+	      ##    ##    #########    ##     ##  ##
+	##    ##    ##    ##     ##    ##     ##  ##    ##
+	 ######     ##    ##     ##    ##    ####  ######
+	*/
+
+	/**
+	 * Data provider for Image_Tag_Test_Base::test_create().
+	 *
+	 * @see Image_Tag_Test_Base::test_create()
+	 * @return array[]
+	 */
+	abstract function data_create();
+
+	/**
+	 * @param string|Image_Tag_Abstract
+	 * @param array $params
+	 *
+	 * @covers Image_Tag::create()
+	 * @group static
+	 *
+	 * @dataProvider data_create
+	 */
+	function test_create( $expected, ...$params ) {
+		$params = array_replace( array(
+			null,
+			null,
+			array(),
+		), $params );
+
+		if ( 'warning' === $expected ) {
+			$instance = @Image_Tag::create( $params[1], $params[2] );
+			$this->assertEquals( new Image_Tag( $params[1], $params[2] ), $instance );
+			$this->expectException( PHPUnit\Framework\Error\Error::class );
+		}
+
+		$instance = Image_Tag::create( ...$params );
+		$this->assertEquals( $expected, $instance );
+	}
+
 
 	/*
 	##     ##    ###     ######   ####  ######
@@ -185,36 +249,7 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 	 * @see static::test__toString()
 	 * @return array[]
 	 */
-	function data__toString() {
-		return array(
-
-			'id' => array(
-				$this->new_instance( array( 'id' => __FUNCTION__ ) ),
-				'warning',
-			),
-
-			'class' => array(
-				$this->new_instance( array( 'class' => 'foo bar' ) ),
-				'warning',
-			),
-
-			'src' => array(
-				$this->new_instance( array(
-					'id' => __FUNCTION__,
-					'class' => 'bar foo',
-					'src' => 'https://source.unsplash.com/1000x1000',
-				) ),
-				'<img ' .
-					'id="' . esc_attr( __FUNCTION__ ) . '" ' .
-					'src="' . esc_attr( 'https://source.unsplash.com/1000x1000' ) . '" ' .
-					'sizes="100vw" ' .
-					'class="bar foo" ' .
-					'alt="" ' .
-				'/>',
-			),
-
-		);
-	}
+	abstract function data__toString();
 
 	/**
 	 * @param Image_Tag_Abstract $instance

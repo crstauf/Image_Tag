@@ -28,6 +28,7 @@
 
 		<testsuite name="types">
 			<file>./tests/types/base.php</file>
+			<file>./tests/types/joeschmoe.php</file>
 		</testsuite>
 
 	</testsuites>
@@ -49,6 +50,7 @@
 			<!-- types -->
 			<file>image_tags/types/abstract.php</file>
 			<file>image_tags/types/base.php</file>
+			<file>image_tags/types/joeschmoe.php</file>
 
 		</whitelist>
 	</filter>

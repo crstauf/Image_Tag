@@ -87,8 +87,9 @@ class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 			'properties/settings'   => array( 'properties/settings.php',   'Image_Tag_Settings' ),
 
 			# Types.
-			'abstract/image tag' => array( 'types/abstract.php', 'Image_Tag_Abstract' ),
-			         'image tag' => array( 'types/base.php',     'Image_Tag' ),
+			'abstracts/image tag' => array( 'types/abstract.php', 'Image_Tag_Abstract' ),
+			'types/base' => array( 'types/base.php', 'Image_Tag' ),
+			'types/joeschmoe' => array( 'types/joeschmoe.php', 'Image_Tag_JoeSchmoe' ),
 
 		);
 	}

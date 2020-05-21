@@ -6,6 +6,11 @@
 abstract class Image_Tag_Abstract {
 
 	/**
+	 * @var string[] Image tag types, ex: array( 'base' ).
+	 */
+	const TYPES = array();
+
+	/**
 	 * @var string Encoded transparent gif.
 	 */
 	const BLANK = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
@@ -150,29 +155,55 @@ abstract class Image_Tag_Abstract {
 	*/
 
 	/**
-	 * Get tag type.
+	 * Get image tag types.
 	 *
+	 * @return string[]
+	 *
+	 * @todo add tests
+	 */
+	protected function get_types() {
+		return static::TYPES;
+	}
+
+	/**
+	 * Get primary image tag type.
+	 *
+	 * @uses static::get_types()
 	 * @return string
 	 */
-	abstract function get_type();
+	function get_type() {
+		return $this->get_types()[0];
+	}
 
 	/**
 	 * Check if tag is one of specified types.
 	 *
 	 * @param string|array $test_types
-	 * @uses static::get_type()
+	 * @uses static::get_types()
 	 * @return bool
 	 */
 	function is_type( $test_types ) {
-		return in_array( $this->get_type(), ( array ) $test_types );
+		return !empty( array_intersect( $this->get_types(), ( array ) $test_types ) );
 	}
 
 	/**
 	 * Perform validation checks.
 	 *
-	 * @return WP_Error|true
-	 */
-	abstract protected function check_valid();
+	 *
+ 	 * @uses Image_Tag_Attributes::get()
+ 	 * @return WP_Error|true
+ 	 */
+ 	protected function check_valid() {
+ 		$errors = new WP_Error;
+
+ 		if ( empty( $this->attributes->get( 'src' ) ) )
+ 			$errors->add( 'required_src', 'The <code>src</code> attribute is required.' );
+
+ 		if ( $errors->has_errors() )
+ 			return $errors;
+
+ 		return true;
+ 	}
 
 	/**
 	 * Check if image tag is valid.
@@ -215,7 +246,7 @@ abstract class Image_Tag_Abstract {
 
 		$src = $this->attributes->get( 'src' );
 
-		if ( 
+		if (
 			empty( $src )
 			|| !wp_http_validate_url( $src )
 		)
