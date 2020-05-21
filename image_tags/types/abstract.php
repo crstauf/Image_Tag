@@ -353,13 +353,15 @@ abstract class Image_Tag_Abstract {
 	 * Convert into another image tag type.
 	 *
 	 * @param string $type Type to convert into.
-	 * @param array|Image_Tag_Attributes $attributes
-	 * @param array|Image_Tag_Settings $settings
+	 * @param null|array|Image_Tag_Attributes $attributes
+	 * @param null|array|Image_Tag_Settings $settings
 	 * @return Image_Tag_Abstract
-	 *
-	 * @todo define
 	 */
-	function into( string $type, $attributes = array(), $settings = array() ) {
+	function into( string $type, $attributes = null, $settings = null ) {
+		if ( in_array( $type, static::TYPES ) ) {
+			trigger_error( sprintf( 'Cannot convert <code>%s</code> image tag into itself.', $this->get_type() ) );
+			return $this;
+		}
 
 		if ( is_array( $attributes ) )
 			$attributes = wp_parse_args( $attributes, $this->attributes->get() );

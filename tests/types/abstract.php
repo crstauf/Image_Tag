@@ -649,11 +649,41 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Data provider for Image_Tag_Test_Base::test_into().
+	 *
+	 * @see static::test_into()
+	 * @return array[]
+	 */
+	abstract function data_into();
+
+	/**
+	 * This should test the conversion from another image type into this image type.
+	 * If testing Image_Tag_JoeSchmoe, should cover conversion into Image_Tag_JoeSchmoe, not from.
+	 *
 	 * @covers ::into()
 	 * @group instance
 	 * @group into
+	 *
+	 * @dataProvider data_into()
 	 */
-	abstract function test_into();
+	function test_into( Image_Tag_Abstract $instance, $into_params, Image_Tag_Abstract $expected ) {
+
+		# Test self conversion attempt.
+		if ( $instance === $expected ) {
+			$into = @$instance->into( 'joeschmoe', ...$into_params );
+			$this->assertSame( $expected, $into );
+
+			$this->expectException( PHPUnit\Framework\Error\Error::class );
+			$into = $instance->into( 'joeschmoe', ...$into_params );
+
+			return;
+		}
+
+		$into = $instance->into( 'joeschmoe', ...$into_params );
+
+		$this->assertEquals( $expected, $into );
+		$this->assertEquals( $expected->__toString(), $into->__toString() );
+	}
 
 }
 

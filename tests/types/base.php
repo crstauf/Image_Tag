@@ -208,9 +208,14 @@ class Image_Tag_Test extends Image_Tag_Test_Base {
 	}
 
 	/**
-	 * @doesNotPerformAssertions
+	 * @doesNotPerformAssertions Conversion into base type is not expected.
 	 */
-	function test_into() {}
+	function data_into() {}
+
+	/**
+	 * @doesNotPerformAssertions Conversion into base type is not expected.
+	 */
+	function test_into( Image_Tag_Abstract $instance, $into_params, Image_Tag_Abstract $expected ) {}
 
 }
 

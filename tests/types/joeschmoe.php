@@ -225,44 +225,42 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 	}
 
 	/**
-	 * @covers ::into()
-	 * @group instance
-	 * @group into
+	 * Data provider for Image_Tag_JoeSchmoe_Test::test_into().
+	 *
+	 * @see static::test_into()
+	 * @return array[]
 	 */
-	function test_into() {
-		$instance = Image_Tag::create( 'https://source.unsplash.com/1000x1000' );
-		$into = $instance->into( 'joeschmoe' );
-		$expected = Image_Tag::create( 'joeschmoe' );
+	function data_into() {
+		$data = array();
 
-		$this->assertEquals( $expected, $into );
-		$this->assertEquals( $expected->__toString(), $into->__toString() );
+		$data['direct'] = array(
+			Image_Tag::create( 'https://source.unsplash.com/1000x1000' ),
+			array( null, null ),
+			Image_Tag::create( 'joeschmoe' ),
+		);
 
 		$gender = array_rand( array( 'male', 'female' ) );
-		$instance = Image_Tag::create( 'https://source.unsplash.com/1000x1000', array(), array(
-			'gender' => $gender,
-		) );
-		$into = $instance->into( 'joeschmoe' );
-		$expected = Image_Tag::create( 'joeschmoe', array(), array(
-			'gender' => $gender,
-		) );
+		$data['gender'] = array(
+			Image_Tag::create( 'https://source.unsplash.com/1000x1000', array(), array( 'gender' => $gender ) ),
+			array( null, null ),
+			Image_Tag::create( 'joeschmoe', array(), array( 'gender' => $gender ) ),
+		);
 
-		$this->assertEquals( $expected, $into );
-		$this->assertEquals( $expected->__toString(), $into->__toString() );
+		$params = array( array( 'id' => __FUNCTION__ ), array( 'seed' => __FUNCTION__ ) );
+		$data['params'] = array(
+			Image_Tag::create( 'https://source.unsplash.com/1000x1000' ),
+			$params,
+			Image_Tag::create( 'joeschmoe', ...$params ),
+		);
 
-		$instance = Image_Tag::create( 'https://source.unsplash.com/1000x1000' );
-		$into = $instance->into( 'joeschmoe', array(
-			'id' => __FUNCTION__,
-		), array(
-			'seed' => __FUNCTION__,
-		) );
-		$expected = Image_Tag::create( 'joeschmoe', array(
-			'id' => __FUNCTION__,
-		), array(
-			'seed' => __FUNCTION__,
-		) );
+		$instance = Image_Tag::create( 'joeschmoe' );
+		$data['self'] = array(
+			$instance,
+			array( null, null ),
+			$instance,
+		);
 
-		$this->assertEquals( $expected, $into );
-		$this->assertEquals( $expected->__toString(), $into->__toString() );
+		return $data;
 	}
 
 }
