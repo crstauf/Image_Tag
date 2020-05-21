@@ -68,8 +68,67 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 	##     ## ##     ##  ######   ####  ######
 	*/
 
+	/**
+	 * @covers ::__construct()
+	 *
+	 * @group instance
+	 * @group magic
+	 *
+	 * @todo add tests
+	 */
+	function test__construct() {
+		parent::test__construct();
+	}
+
 	function data__toString() {
-		$this->markTestIncomplete();
+		return array(
+			'alt source' => array(
+				$this->new_instance(),
+				'<img src="https://joeschmoe.crstauf.workers.dev/" sizes="100vw" alt="" />',
+			),
+			'male' => array(
+				$this->new_instance( array(), array( 'gender' => 'male' ) ),
+				'<img src="https://joeschmoe.crstauf.workers.dev/male/" sizes="100vw" alt="" />',
+			),
+			'female' => array(
+				$this->new_instance( array(), array( 'gender' => 'female' ) ),
+				'<img src="https://joeschmoe.crstauf.workers.dev/female/" sizes="100vw" alt="" />',
+			),
+			'male name' => array(
+				$this->new_instance( array(), array( 'gender' => 'male', 'seed' => 'josh' ) ),
+				'<img src="https://joeschmoe.crstauf.workers.dev/male/josh" sizes="100vw" alt="" />',
+			),
+			'female name' => array(
+				$this->new_instance( array(), array( 'gender' => 'female', 'seed' => 'josephine' ) ),
+				'<img src="https://joeschmoe.crstauf.workers.dev/female/josephine" sizes="100vw" alt="" />',
+			),
+			'primary source' => array(
+				$this->new_instance( array(), array( 'source' => 'primary' ) ),
+				'<img src="https://joeschmoe.io/api/v1/" sizes="100vw" alt="" />',
+			),
+			'lgbtq' => array(
+				$this->new_instance( array(), array( 'gender' => uniqid(), 'seed' => 'alex' ) ),
+				'<img src="https://joeschmoe.crstauf.workers.dev/alex" sizes="100vw" alt="" />',
+			),
+		);
+	}
+
+	/**
+	 * @param Image_Tag_Abstract $instance
+	 * @param string $expected
+	 *
+	 * @covers ::__toString()
+	 * @covers ::generate_src()
+	 * @covers ::get_url()
+	 *
+	 * @group instance
+	 * @group magic
+	 * @group output
+	 *
+	 * @dataProvider data__toString
+	 */
+	function test__toString( Image_Tag_Abstract $instance, string $expected ) {
+		parent::test__toString( $instance, $expected );
 	}
 
 

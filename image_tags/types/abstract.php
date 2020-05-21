@@ -155,35 +155,22 @@ abstract class Image_Tag_Abstract {
 	*/
 
 	/**
-	 * Get image tag types.
-	 *
-	 * @return string[]
-	 *
-	 * @todo add tests
-	 */
-	protected function get_types() {
-		return static::TYPES;
-	}
-
-	/**
 	 * Get primary image tag type.
 	 *
-	 * @uses static::get_types()
 	 * @return string
 	 */
 	function get_type() {
-		return $this->get_types()[0];
+		return static::TYPES[0];
 	}
 
 	/**
 	 * Check if tag is one of specified types.
 	 *
 	 * @param string|array $test_types
-	 * @uses static::get_types()
 	 * @return bool
 	 */
 	function is_type( $test_types ) {
-		return !empty( array_intersect( $this->get_types(), ( array ) $test_types ) );
+		return !empty( array_intersect( static::TYPES, ( array ) $test_types ) );
 	}
 
 	/**

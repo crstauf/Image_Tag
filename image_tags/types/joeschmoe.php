@@ -2,6 +2,9 @@
 
 class Image_Tag_JoeSchmoe extends Image_Tag_Abstract {
 
+	/**
+	 * @var string[]
+	 */
 	const TYPES = array(
 		'joeschmoe', // primary type
 		'avatar',
@@ -19,11 +22,25 @@ class Image_Tag_JoeSchmoe extends Image_Tag_Abstract {
 	 */
 	const ALT_URL = 'https://joeschmoe.crstauf.workers.dev/';
 
+	/**
+	 * Get base URL.
+	 *
+	 * @return string
+	 */
 	protected function get_url() {
-		return static::ALT_URL;
+		return 'primary' === $this->settings->get( 'source' )
+			? static::PRIMARY_URL
+			: static::ALT_URL;
 	}
 
-	function generate_src() {
+	/**
+	 * Generate source from settings.
+	 *
+	 * @uses static::get_url()
+	 * @uses Image_Tag_Settings::get()
+	 * @return string
+	 */
+	protected function generate_src() {
 		$src = $this->get_url();
 
 		$gender = $this->settings->get( 'gender', 'view' );
@@ -57,13 +74,14 @@ class Image_Tag_JoeSchmoe extends Image_Tag_Abstract {
 	 */
 	function __construct( $attributes = null, $settings = null ) {
 		$this->attributes = new Image_Tag_Attributes( $attributes );
-		$this->settings   = new Image_Tag_Settings( $settings, array( 'joeschmoe' => array(
+		$this->settings   = new Image_Tag_Settings( $settings, array(
+			'source' => 'alt',
 			'gender' => null,
 			'seed' => null,
-		) ) );
+		) );
 
-		if ( !in_array( $this->settings->joeschmoe['gender'], array( null, 'male', 'female' ) ) )
-			$this->settings['joeschmoe']['gender'] = null;
+		if ( !in_array( $this->settings->gender, array( null, 'male', 'female' ) ) )
+			$this->settings->gender = null;
 	}
 
 	/**
