@@ -31,20 +31,6 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 		);
 	}
 
-	/**
-	 * @group constant
-	 */
-	function test_constant_primary_url() {
-		$this->assertSame( 'https://joeschmoe.io/api/v1/', constant( $this->class_name() . '::PRIMARY_URL' ) );
-	}
-
-	/**
-	 * @group constant
-	 */
-	function test_constant_alt_url() {
-		$this->assertSame( 'https://joeschmoe.crstauf.workers.dev/', constant( $this->class_name() . '::ALT_URL' ) );
-	}
-
 
 	/*
 	 ######  ########    ###    ######## ####  ######
@@ -139,24 +125,6 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 		);
 	}
 
-	/**
-	 * @param Image_Tag_Abstract $instance
-	 * @param string $expected
-	 *
-	 * @covers ::__toString()
-	 * @covers ::generate_src()
-	 * @covers ::get_url()
-	 *
-	 * @group instance
-	 * @group magic
-	 * @group output
-	 *
-	 * @dataProvider data__toString
-	 */
-	function test__toString( Image_Tag_Abstract $instance, string $expected ) {
-		parent::test__toString( $instance, $expected );
-	}
-
 
 	/*
 	##     ##    ###    ##       #### ########     ###    ######## ####  #######  ##    ##
@@ -221,6 +189,16 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 	 * @group external-http
 	 */
 	function test_http() {
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * Data provider for Image_Tag_Test_Base::test_lazyload().
+	 *
+	 * @see Image_Tag_Test_Base::test_lazyload()
+	 * @return array[]
+	 */
+	function data_lazyload() {
 		$this->markTestIncomplete();
 	}
 

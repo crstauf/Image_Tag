@@ -309,14 +309,11 @@ class Image_Tag_Attributes extends Image_Tag_Properties_Abstract {
 	/**
 	 * Get attribute.
 	 */
-	function get_property( string $attribute, string $context = 'edit' ) {
+	protected function get_property( string $attribute, string $context = 'edit' ) {
 		$value = parent::get_property( $attribute );
 
 		# If edit context or null, return.
-		if (
-			is_null( $value )
-			|| 'edit' === $context
-		)
+		if ( 'edit' === $context )
 			return $value;
 
 		$format = sprintf( 'get_%%s_%s_for_view', static::NAME );

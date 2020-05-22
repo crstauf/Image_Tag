@@ -40,8 +40,8 @@ abstract class Image_Tag_Abstract {
 	 * @param null|array|Image_Tag_Settings $settings
 	 */
 	function __construct( $attributes = null, $settings = null ) {
-		$this->attributes = new Image_Tag_Attributes( $attributes );
-		$this->settings   = new Image_Tag_Settings( $settings );
+		$this->attributes = new Image_Tag_Attributes( $attributes, null, $this );
+		$this->settings   = new Image_Tag_Settings(     $settings, null, $this );
 	}
 
 	/**
@@ -183,7 +183,7 @@ abstract class Image_Tag_Abstract {
  	protected function check_valid() {
  		$errors = new WP_Error;
 
- 		if ( empty( $this->attributes->get( 'src' ) ) )
+ 		if ( empty( $this->attributes->get( 'src', 'view' ) ) )
  			$errors->add( 'required_src', 'The <code>src</code> attribute is required.' );
 
  		if ( $errors->has_errors() )

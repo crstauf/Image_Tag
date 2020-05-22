@@ -86,6 +86,9 @@ class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 			'properties/attributes' => array( 'properties/attributes.php', 'Image_Tag_Attributes' ),
 			'properties/settings'   => array( 'properties/settings.php',   'Image_Tag_Settings' ),
 
+			'properties/joeschmoe/attributes' => array( 'properties/joeschmoe.php', 'Image_Tag_JoeSchmoe_Attributes' ),
+			'properties/joeschmoe/settings'   => array( 'properties/joeschmoe.php', 'Image_Tag_JoeSchmoe_Settings' ),
+
 			# Types.
 			'abstracts/image tag' => array( 'types/abstract.php', 'Image_Tag_Abstract' ),
 			'types/base' => array( 'types/base.php', 'Image_Tag' ),

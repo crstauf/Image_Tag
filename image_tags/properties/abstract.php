@@ -17,9 +17,11 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess, Countable, 
 	/**
 	 * @var null|array $properties
 	 * @var null|array $defaults
+	 * @var Image_Tag_Abstract $image_tag
 	 */
 	protected $properties = array();
 	protected $defaults   = array();
+	protected $image_tag  = null;
 
 
 	/*
@@ -63,12 +65,15 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess, Countable, 
 	 *
 	 * @param array|self $properties
 	 * @param array $defaults
+	 * @param Image_Tag_Abstract $image_tag
 	 * @uses static::get()
 	 * @uses static::set()
 	 */
-	function __construct( $properties = array(), array $defaults = array() ) {
+	function __construct( $properties = array(), $defaults = array(), Image_Tag_Abstract $image_tag = null ) {
 		if ( is_a( $properties, static::class ) )
 			$properties = $properties->get( null );
+
+		$this->image_tag = &$image_tag;
 
 		# Set defaults first.
 		$defaults = wp_parse_args( $defaults, static::DEFAULTS );
@@ -125,6 +130,20 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess, Countable, 
 	 */
 	function __unset( string $property ) {
 		$this->unset( $property );
+	}
+
+	/**
+	 * Debug info.
+	 *
+	 * @return array
+	 */
+	function __debugInfo() {
+		return array(
+			'properties' => $this->properties,
+			'defaults' => $this->defaults,
+			'DEFAULTS' => static::DEFAULTS,
+			'image_tag' => is_null( $this->image_tag ) ? null : get_class( $this->image_tag ),
+		);
 	}
 
 
@@ -238,10 +257,8 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess, Countable, 
 
 		# Override by property name.
 		$method_name = sprintf( $format, static::function_name( $property ) );
-		if ( method_exists( $this, $method_name ) ) {
-			call_user_func( array( $this, $method_name ), $value );
-			return;
-		}
+		if ( method_exists( $this, $method_name ) )
+			return call_user_func( array( $this, $method_name ), $value );
 
 		# Override by property type.
 		$types = array();
@@ -257,10 +274,8 @@ abstract class Image_Tag_Properties_Abstract implements ArrayAccess, Countable, 
 		foreach ( $types as $type ) {
 			$method_name = sprintf( $format, $type );
 
-			if ( method_exists( $this, $method_name ) ) {
-				call_user_func( array( $this, $method_name ), $property, $value );
-				return;
-			}
+			if ( method_exists( $this, $method_name ) )
+				return call_user_func( array( $this, $method_name ), $property, $value );
 		}
 
 		# Set directly.

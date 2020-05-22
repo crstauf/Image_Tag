@@ -69,6 +69,7 @@ class Image_Tag_Plugin {
 		require_once 'image_tags/properties/abstract.php';
 		require_once 'image_tags/properties/attributes.php';
 		require_once 'image_tags/properties/settings.php';
+		require_once 'image_tags/properties/joeschmoe.php';
 
 		# Types.
 		require_once 'image_tags/types/abstract.php';
