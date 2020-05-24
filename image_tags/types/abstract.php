@@ -124,9 +124,9 @@ abstract class Image_Tag_Abstract {
 		);
 
 		$string =
-			$this->settings->get( 'before_output', 'view' ) .
+			$this->settings->get_output( 'before' ) .
 			trim( implode( ' ', array_filter( $array ) ) ) .
-			$this->settings->get( 'after_output', 'view' );
+			$this->settings->get_output( 'after' );
 
 		return $string;
 	}

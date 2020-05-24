@@ -192,7 +192,7 @@ class Image_Tag_Test extends Image_Tag_Test_Base {
 		$this->assertEquals( ++$count, did_action( 'http_api_debug' ) );
 		$this->assertSame( '1054000', wp_remote_retrieve_header( $response, 'content-length' ) );
 		$this->assertSame( 'image/jpeg', wp_remote_retrieve_header( $response, 'content-type' ) );
-		$this->assertSame( '3b5a685596c9e862dba90ae80ec369769dd1afe4', wp_remote_retrieve_header( $response, 'x-imgix-id' ) );
+		$this->assertSame( '81fa2e45b06ed579f48a80af08225aa57fd5de7f', wp_remote_retrieve_header( $response, 'x-imgix-id' ) );
 
 		# Call again to confirm pulled from cache.
 		$instance->http();

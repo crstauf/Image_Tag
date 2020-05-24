@@ -28,7 +28,10 @@ class Image_Tag_JoeSchmoe_Attributes extends Image_Tag_Attributes {
 	 * @return string
 	 */
 	protected function get_url() {
-		return 'primary' === $this->image_tag->settings->source
+		if ( is_null( $this->image_tag ) )
+			return static::ALT_URL;
+
+		return 'primary' === $this->image_tag->settings->get( 'source' )
 			? static::PRIMARY_URL
 			: static::ALT_URL;
 	}
@@ -45,6 +48,9 @@ class Image_Tag_JoeSchmoe_Attributes extends Image_Tag_Attributes {
 			return $this->get( 'src' );
 
 		$src = $this->get_url();
+
+		if ( is_null( $this->image_tag ) )
+			return $src;
 
 		$gender = $this->image_tag->settings->get( 'gender', 'view' );
 		$seed   = $this->image_tag->settings->get(   'seed', 'view' );

@@ -378,10 +378,10 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 		$this->assertNotContains( 'lazyload', $instance->class );
 		$this->assertNotContains( 'hide-if-no-js', $instance->class );
 
-		if ( !is_null( $instance->settings->get( 'after_output', 'view' ) ) )
-			$this->assertStringNotContainsString( '<noscript>', $instance->settings->get( 'after_output', 'view' ) );
+		if ( !is_null( $instance->settings->get_output( 'after' ) ) )
+			$this->assertStringNotContainsString( '<noscript>', $instance->settings->get_output( 'after' ) );
 		else
-			$this->assertNull( $instance->settings->get( 'after_output', 'view' ) );
+			$this->assertNull( $instance->settings->get_output( 'after' ) );
 
 		$lazyload = $instance->lazyload();
 
