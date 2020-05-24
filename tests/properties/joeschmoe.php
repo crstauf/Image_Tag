@@ -80,7 +80,72 @@ class Image_Tag_JoeSchmoe_Attribute_Test extends Image_Tag_Attributes_Test {
 			'class' => 'foo bar',
 		);
 
+		$image_tag = Image_Tag::create( 'joeschmoe', array(), array(
+			'source' => 'primary',
+		) );
+		$data['primary source'] = array(
+			$image_tag->attributes,
+			'src',
+			'https://joeschmoe.io/api/v1/',
+			'view',
+		);
+
+		$gender = array_rand( array( 'male' => 1, 'female' => 1 ) );
+		$image_tag = Image_Tag::create( 'joeschmoe', array(), array(
+			'gender' => $gender,
+		) );
+		$data['gender'] = array(
+			$image_tag->attributes,
+			'src',
+			'https://joeschmoe.crstauf.workers.dev/' . $gender . '/',
+			'view',
+		);
+
+		$image_tag = Image_Tag::create( 'joeschmoe', array(), array(
+			'seed' => __FUNCTION__,
+		) );
+		$data['seed'] = array(
+			$image_tag->attributes,
+			'src',
+			'https://joeschmoe.crstauf.workers.dev/' . __FUNCTION__ . '/',
+			'view',
+		);
+
+		$image_tag = Image_Tag::create( 'joeschmoe', array( 'src' => 'https://joeschmoe.io/joe' ) );
+		$data['preset'] = array(
+			$image_tag->attributes,
+			'src',
+			'https://joeschmoe.io/joe',
+			'view',
+		);
+
 		return $data;
+	}
+
+	/**
+	 * @param Image_Tag_Properties_Abstract $instance
+	 * @param string|array $get_properties
+	 * @param mixed $expected
+	 * @param string $context
+	 * @see static::test_get()
+	 *
+	 * @covers ::get()
+	 * @covers ::trim()
+	 * @covers ::get_properties()
+	 * @covers ::get_property()
+	 * @covers ::get_class_attribute_for_view()
+	 * @covers ::get_style_attribute_for_view()
+	 * @covers ::get_array_attribute_for_view()
+	 * @covers Image_Tag_Properties_Abstract::_get()
+	 * @covers ::get_url()
+	 * @covers ::get_src_attribute_for_view()
+	 * @group instance
+	 * @group get
+	 *
+	 * @dataProvider data_get
+	 */
+	function test_get( Image_Tag_Properties_Abstract $instance, $get_properties, $expected, $context = 'edit' ) {
+		parent::test_get( $instance, $get_properties, $expected, $context );
 	}
 
 }
@@ -102,6 +167,45 @@ class Image_Tag_JoeSchmoe_Settings_Test extends Image_Tag_Settings_Test {
 
 	protected function class_name() {
 		return Image_Tag_JoeSchmoe_Settings::class;
+	}
+
+	/**
+	 * Data provider for Image_Tag_Properties_Base::test_set().
+	 *
+	 * @see Image_Tag_Properties_Base::test_set()
+	 * @uses Image_Tag_Settings_Test::data_set()
+	 * @return array[]
+	 */
+	function data_set() {
+		$data = parent::data_set();
+
+		$data['gender'] = array(
+			$this->new_instance(),
+			'gender',
+			'male',
+		);
+
+		return $data;
+	}
+
+	/**
+	 * @param Image_Tag_Properties_Abstract $instance
+	 * @param string|array $set_properties
+	 * @param mixed $value
+	 * @param mixed $expected
+	 *
+	 * @covers ::set()
+	 * @covers ::set_property()
+	 * @covers ::set_properties()
+	 * @covers ::_set()
+	 * @covers ::set_gender_setting()
+	 * @group instance
+	 * @group set
+	 *
+	 * @dataProvider data_set
+	 */
+	function test_set( Image_Tag_Properties_Abstract $instance, $set_properties, $value = null, $expected = null ) {
+		parent::test_set( $instance, $set_properties, $value, $expected );
 	}
 
 }

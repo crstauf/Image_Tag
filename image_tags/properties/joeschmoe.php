@@ -59,7 +59,7 @@ class Image_Tag_JoeSchmoe_Attributes extends Image_Tag_Attributes {
 			$src .=  $gender . '/';
 
 		if ( !empty( $seed ) )
-			$src .= $seed;
+			$src .= $seed . '/';
 
 		return $src;
 	}

@@ -108,11 +108,11 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 			),
 			'male name' => array(
 				$this->new_instance( array(), array( 'gender' => 'male', 'seed' => 'josh' ) ),
-				'<img src="https://joeschmoe.crstauf.workers.dev/male/josh" sizes="100vw" alt="" />',
+				'<img src="https://joeschmoe.crstauf.workers.dev/male/josh/" sizes="100vw" alt="" />',
 			),
 			'female name' => array(
 				$this->new_instance( array(), array( 'gender' => 'female', 'seed' => 'josephine' ) ),
-				'<img src="https://joeschmoe.crstauf.workers.dev/female/josephine" sizes="100vw" alt="" />',
+				'<img src="https://joeschmoe.crstauf.workers.dev/female/josephine/" sizes="100vw" alt="" />',
 			),
 			'primary source' => array(
 				$this->new_instance( array(), array( 'source' => 'primary' ) ),
@@ -120,7 +120,7 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 			),
 			'lgbtq' => array(
 				$this->new_instance( array(), array( 'gender' => uniqid(), 'seed' => 'alex' ) ),
-				'<img src="https://joeschmoe.crstauf.workers.dev/alex" sizes="100vw" alt="" />',
+				'<img src="https://joeschmoe.crstauf.workers.dev/alex/" sizes="100vw" alt="" />',
 			),
 		);
 	}
@@ -217,7 +217,7 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 			Image_Tag::create( 'joeschmoe' ),
 		);
 
-		$gender = array_rand( array( 'male', 'female' ) );
+		$gender = array_rand( array( 'male' => 1, 'female' => 1 ) );
 		$data['gender'] = array(
 			Image_Tag::create( 'https://source.unsplash.com/1000x1000', array(), array( 'gender' => $gender ) ),
 			array( null, null ),

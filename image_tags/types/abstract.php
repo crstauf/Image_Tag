@@ -363,11 +363,21 @@ abstract class Image_Tag_Abstract {
 			return $this;
 		}
 
+		if ( is_null( $attributes ) )
+			$attributes = array();
+
+		if ( is_null( $settings ) )
+			$settings = array();
+
 		if ( is_array( $attributes ) )
 			$attributes = wp_parse_args( $attributes, $this->attributes->get() );
+		else if ( is_a( $attributes, Image_Tag_Attributes::class ) )
+			$attributes->defaults = wp_parse_args( $attributes->defaults, $this->attributes->get() );
 
 		if ( is_array( $settings ) )
 			$settings = wp_parse_args( $settings, $this->settings->get() );
+		else if ( is_a( $settings, Image_Tag_Settings::class ) )
+			$settings->defaults = wp_parse_args( $settings->defaults, $this->settings->get() );
 
 		$into = Image_Tag::create( $type, $attributes, $settings );
 		$into->attributes->set( 'src', null );
