@@ -88,11 +88,14 @@ class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 
 			'properties/joeschmoe/attributes' => array( 'properties/joeschmoe.php', 'Image_Tag_JoeSchmoe_Attributes' ),
 			'properties/joeschmoe/settings'   => array( 'properties/joeschmoe.php', 'Image_Tag_JoeSchmoe_Settings' ),
+			'properties/picsum/attributes'    => array( 'properties/picsum.php',    'Image_Tag_Picsum_Attributes' ),
+			'properties/picsum/settings'      => array( 'properties/picsum.php',    'Image_Tag_Picsum_Settings' ),
 
 			# Types.
 			'abstracts/image tag' => array( 'types/abstract.php', 'Image_Tag_Abstract' ),
 			'types/base' => array( 'types/base.php', 'Image_Tag' ),
 			'types/joeschmoe' => array( 'types/joeschmoe.php', 'Image_Tag_JoeSchmoe' ),
+			'types/picsum' => array( 'types/picsum.php', 'Image_Tag_Picsum' ),
 
 		);
 	}

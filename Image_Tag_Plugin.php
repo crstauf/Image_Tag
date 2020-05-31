@@ -70,11 +70,13 @@ class Image_Tag_Plugin {
 		require_once 'image_tags/properties/attributes.php';
 		require_once 'image_tags/properties/settings.php';
 		require_once 'image_tags/properties/joeschmoe.php';
+		require_once 'image_tags/properties/picsum.php';
 
 		# Types.
 		require_once 'image_tags/types/abstract.php';
 		require_once 'image_tags/types/base.php';
 		require_once 'image_tags/types/joeschmoe.php';
+		require_once 'image_tags/types/picsum.php';
 
 	}
 

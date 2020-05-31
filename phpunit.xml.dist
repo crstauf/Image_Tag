@@ -25,11 +25,13 @@
 			<file>./tests/properties/attributes.php</file>
 			<file>./tests/properties/settings.php</file>
 			<file>./tests/properties/joeschmoe.php</file>
+			<file>./tests/properties/picsum.php</file>
 		</testsuite>
 
 		<testsuite name="types">
 			<file>./tests/types/base.php</file>
 			<file>./tests/types/joeschmoe.php</file>
+			<file>./tests/types/picsum.php</file>
 		</testsuite>
 
 	</testsuites>
@@ -48,11 +50,13 @@
 			<file>image_tags/properties/attributes.php</file>
 			<file>image_tags/properties/settings.php</file>
 			<file>image_tags/properties/joeschmoe.php</file>
+			<file>image_tags/properties/picsum.php</file>
 
 			<!-- types -->
 			<file>image_tags/types/abstract.php</file>
 			<file>image_tags/types/base.php</file>
 			<file>image_tags/types/joeschmoe.php</file>
+			<file>image_tags/types/picsum.php</file>
 
 		</whitelist>
 	</filter>
