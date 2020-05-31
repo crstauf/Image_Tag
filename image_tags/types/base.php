@@ -36,6 +36,10 @@ class Image_Tag extends Image_Tag_Abstract {
 		if ( in_array( $source, Image_Tag_JoeSchmoe::TYPES ) )
 			return new Image_Tag_JoeSchmoe( $attributes, $settings );
 
+		# Create Picsum image tag.
+		if ( in_array( $source, Image_Tag_Picsum::TYPES ) )
+			return new Image_Tag_Picsum( $attributes, $settings );
+
 		# If URL, create using base object.
 		if ( ( bool ) wp_http_validate_url( $source ) ) {
 			$attributes['src'] = $source;

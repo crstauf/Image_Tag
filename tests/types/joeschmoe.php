@@ -87,7 +87,7 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 	}
 
 	/**
-	 * Data providerf or Image_Tag_JoeSchmoe_Test::test__toString().
+	 * Data provider for Image_Tag_JoeSchmoe_Test::test__toString().
 	 *
 	 * @see static::test__toString()
 	 * @return array[]
