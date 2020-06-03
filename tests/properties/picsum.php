@@ -5,7 +5,7 @@
  *
  * @todo add tests
  */
-class Image_Tag_Picsum_Attribute_Test extends Image_Tag_Attributes_Test {
+class Image_Tag_Picsum_Attributes_Test extends Image_Tag_Attributes_Test {
 
 	protected function class_name() {
 		return Image_Tag_Picsum_Attributes::class;
@@ -70,17 +70,6 @@ class Image_Tag_Picsum_Attribute_Test extends Image_Tag_Attributes_Test {
 			'src' => 'https://picsum.photos/',
 			'sizes' => '100vw',
 			'class' => 'foo bar',
-		);
-
-		$image_id = mt_rand( 1, 100 );
-		$image_tag = Image_Tag::create( 'picsum', array(), array(
-			'image_id' => $image_id,
-		) );
-		$data['image id'] = array(
-			$image_tag->attributes,
-			'src',
-			'https://picsum.photos/id/' . $image_id,
-			'view',
 		);
 
 		return $data;

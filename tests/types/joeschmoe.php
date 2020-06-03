@@ -24,6 +24,7 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 					'joeschmoe',
 					'avatar',
 					'person',
+					'placeholder',
 					'external',
 					'remote',
 				),
@@ -72,19 +73,6 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 	##     ## ##     ## ##    ##   ##  ##    ##
 	##     ## ##     ##  ######   ####  ######
 	*/
-
-	/**
-	 * @covers ::__construct()
-	 *
-	 * @group instance
-	 * @group magic
-	 */
-	function test__construct() {
-		parent::test__construct();
-
-		$instance = $this->new_instance( array(), array( 'gender' => 'lgbtq' ) );
-		$this->assertNull( $instance->settings->gender );
-	}
 
 	/**
 	 * Data provider for Image_Tag_JoeSchmoe_Test::test__toString().

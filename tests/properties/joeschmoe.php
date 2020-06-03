@@ -5,7 +5,7 @@
  *
  * @todo add tests
  */
-class Image_Tag_JoeSchmoe_Attribute_Test extends Image_Tag_Attributes_Test {
+class Image_Tag_JoeSchmoe_Attributes_Test extends Image_Tag_Attributes_Test {
 
 	protected function class_name() {
 		return Image_Tag_JoeSchmoe_Attributes::class;
@@ -175,6 +175,8 @@ class Image_Tag_JoeSchmoe_Settings_Test extends Image_Tag_Settings_Test {
 	 * @see Image_Tag_Properties_Base::test_set()
 	 * @uses Image_Tag_Settings_Test::data_set()
 	 * @return array[]
+	 *
+	 * @todo add test for lgbtq
 	 */
 	function data_set() {
 		$data = parent::data_set();

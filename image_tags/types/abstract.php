@@ -231,7 +231,7 @@ abstract class Image_Tag_Abstract {
 	function http( bool $fresh = false ) {
 		static $responses = array();
 
-		$src = $this->attributes->get( 'src' );
+		$src = $this->attributes->get( 'src', 'view' );
 
 		if (
 			empty( $src )

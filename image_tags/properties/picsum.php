@@ -26,7 +26,7 @@ class Image_Tag_Picsum_Attributes extends Image_Tag_Attributes {
 			$src .= 'id/' . $settings['image_id'] . '/';
 
 		if ( !empty( $settings['seed'] ) )
-			$src .= 'seed/' . $settings['seed'] . '/';
+			$src .= 'seed/' . urlencode( $settings['seed'] ) . '/';
 
 		if ( !empty( $settings['width'] ) )
 			$src .= ( int ) $settings['width'] . '/';
@@ -43,8 +43,14 @@ class Image_Tag_Picsum_Attributes extends Image_Tag_Attributes {
 			  !empty( $settings['random'] )
 			&& empty( $settings['image_id'] )
 			&& empty( $settings['seed'] )
-		)
+		) {
+			static $random = 1;
+
 			$src = add_query_arg( 'random', $settings['random'], $src );
+
+			if ( true === $settings['random'] )
+				$src = add_query_arg( 'random', $random++, $src );
+		}
 
 		if ( !empty( $settings['grayscale'] ) )
 			$src = add_query_arg( 'grayscale', 1, $src );
