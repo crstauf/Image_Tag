@@ -239,10 +239,10 @@ abstract class Image_Tag_Abstract {
 		)
 			return new WP_Error( 'required_src', 'Image URL is required to perform HTTP GET request.' );
 
-		if (
-			!$fresh
-			&& isset( $responses[$src] )
-		)
+		if ( $fresh )
+			unset( $responses[$src] );
+
+		if ( isset( $responses[$src] ) )
 			return $responses[$src];
 
 		$responses[$src] = wp_safe_remote_get( $src );
@@ -293,8 +293,8 @@ abstract class Image_Tag_Abstract {
 		$lazyload->attributes->set( $set_attributes );
 		$lazyload->settings->set(   $set_settings   );
 
-		$lazyload->attributes->add( 'data-src',    $this->src );
-		$lazyload->attributes->add( 'data-srcset', $this->srcset );
+		$lazyload->attributes->add( 'data-src',    $this->attributes->get( 'src',    'view' ) );
+		$lazyload->attributes->add( 'data-srcset', $this->attributes->get( 'srcset', 'view' ) );
 		$lazyload->attributes->add_to( 'class', 'lazyload hide-if-no-js' );
 
 		$lazyload_settings = $lazyload->settings->get( 'lazyload' );

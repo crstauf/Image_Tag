@@ -176,36 +176,53 @@ class Image_Tag_Test extends Image_Tag_Test_Base {
 	*/
 
 	/**
-	 * @covers ::http()
-	 * @group instance
-	 * @group external-http
+	 * Data provider for Image_Tag_Test::test_http().
+	 *
+	 * @see static::test_http()
+	 * @return array[]
 	 */
-	function test_http() {
-		$instance = $this->new_instance( array( 'src' => 'https://source.unsplash.com/WLUHO9A_xik/1x1' ) );
-
-		$count = ( int ) did_action( 'http_api_debug' );
-		$response = $instance->http();
-
-		if ( is_wp_error( $response ) )
-			$this->fail( $response->get_error_message() );
-
-		$this->assertEquals( ++$count, did_action( 'http_api_debug' ) );
-		$this->assertSame( '1054000', wp_remote_retrieve_header( $response, 'content-length' ) );
-		$this->assertSame( 'image/jpeg', wp_remote_retrieve_header( $response, 'content-type' ) );
-		$this->assertSame( '81fa2e45b06ed579f48a80af08225aa57fd5de7f', wp_remote_retrieve_header( $response, 'x-imgix-id' ) );
-
-		# Call again to confirm pulled from cache.
-		$instance->http();
-		$this->assertEquals( $count, did_action( 'http_api_debug' ) );
-
-		# And call again to test flag skips cache.
-		$instance->http( true );
-		$this->assertEquals( ++$count, did_action( 'http_api_debug' ) );
-
-		# And call again (one more time) to confirm pulled from cache.
-		$instance->http();
-		$this->assertEquals( $count, did_action( 'http_api_debug' ) );
+	function data_http() {
+		return array(
+			array(
+				$this->new_instance( array( 'src' => 'https://source.unsplash.com/WLUHO9A_xik/1x1' ) ),
+			),
+		);
 	}
+
+	/**
+	 * @param Image_Tag $instance
+	 *
+ 	 * @covers ::http()
+ 	 * @group instance
+	 * @group feature
+ 	 * @group external-http
+ 	 *
+ 	 * @dataProvider data_http
+ 	 */
+ 	function test_http( Image_Tag_Abstract $instance ) {
+ 		$count = ( int ) did_action( 'http_api_debug' );
+ 		$response = $instance->http();
+
+ 		if ( is_wp_error( $response ) )
+ 			$this->fail( $response->get_error_message() );
+
+ 		$this->assertEquals( ++$count, did_action( 'http_api_debug' ) );
+ 		$this->assertSame( '1054000', wp_remote_retrieve_header( $response, 'content-length' ) );
+ 		$this->assertSame( 'image/jpeg', wp_remote_retrieve_header( $response, 'content-type' ) );
+ 		$this->assertSame( '81fa2e45b06ed579f48a80af08225aa57fd5de7f', wp_remote_retrieve_header( $response, 'x-imgix-id' ) );
+
+ 		# Call again to confirm pulled from cache.
+ 		$instance->http();
+ 		$this->assertEquals( $count, did_action( 'http_api_debug' ) );
+
+ 		# And call again to test flag skips cache.
+ 		$instance->http( true );
+ 		$this->assertEquals( ++$count, did_action( 'http_api_debug' ) );
+
+ 		# And call again (one more time) to confirm pulled from cache.
+ 		$instance->http();
+ 		$this->assertEquals( $count, did_action( 'http_api_debug' ) );
+ 	}
 
 	/**
 	 * Data provider for Image_Tag_Test_Base::test_lazyload().

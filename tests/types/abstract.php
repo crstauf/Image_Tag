@@ -345,12 +345,44 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 	*/
 
 	/**
-	 * @covers ::http()
-	 * @group instance
-	 * @group feature
-	 * @group external-http
+	 * Data provider for Image_Tag_Test_Base::test_http().
+	 *
+	 * @see static::test_http()
+	 * @return array[]
 	 */
-	abstract function test_http();
+	abstract function data_http();
+
+	/**
+	 * @param Image_Tag_Abstract $instance
+	 *
+ 	 * @covers ::http()
+ 	 * @group instance
+	 * @group feature
+ 	 * @group external-http
+ 	 *
+ 	 * @dataProvider data_http
+ 	 */
+ 	function test_http( Image_Tag_Abstract $instance ) {
+ 		$count = ( int ) did_action( 'http_api_debug' );
+ 		$response = $instance->http();
+
+ 		if ( is_wp_error( $response ) )
+ 			$this->fail( $response->get_error_message() );
+
+ 		$this->assertEquals( ++$count, did_action( 'http_api_debug' ) );
+
+ 		# Call again to confirm pulled from cache.
+ 		$instance->http();
+ 		$this->assertEquals( $count, did_action( 'http_api_debug' ) );
+
+ 		# And call again to test flag skips cache.
+ 		$instance->http( true );
+ 		$this->assertEquals( ++$count, did_action( 'http_api_debug' ) );
+
+ 		# And call again (one more time) to confirm pulled from cache.
+ 		$instance->http();
+ 		$this->assertEquals( $count, did_action( 'http_api_debug' ) );
+ 	}
 
 	/**
 	 * Data provider for Image_Tag_Test_Base::test_lazyload().
@@ -388,10 +420,10 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 		$this->assertSame( Image_Tag::BLANK, $lazyload->src );
 		$this->assertSame( $expected->class, $lazyload->class );
 		$this->assertSame( $expected->sizes, $lazyload->sizes );
-		$this->assertSame( $instance->src, $lazyload->attributes->get( 'data-src' ) );
-		$this->assertSame( $expected->attributes->get( 'data-src' ), $lazyload->attributes->get( 'data-src' ) );
-		$this->assertSame( $expected->attributes->get( 'data-sizes' ), $lazyload->attributes->get( 'data-sizes' ) );
-		$this->assertSame( $expected->attributes->get( 'data-srcset' ), $lazyload->attributes->get( 'data-srcset' ) );
+		$this->assertSame( $instance->attributes->get( 'src', 'view' ), $lazyload->attributes->get( 'data-src', 'view' ) );
+		$this->assertSame( $expected->attributes->get( 'data-src', 'view' ), $lazyload->attributes->get( 'data-src', 'view' ) );
+		$this->assertSame( $expected->attributes->get( 'data-sizes', 'view' ), $lazyload->attributes->get( 'data-sizes', 'view' ) );
+		$this->assertSame( $expected->attributes->get( 'data-srcset', 'view' ), $lazyload->attributes->get( 'data-srcset', 'view' ) );
 		$this->assertSame( $expected->settings->get( 'lazyload' ), $lazyload->settings->get( 'lazyload' ) );
 		$this->assertSame( $expected->settings->get( 'after_output' ), $lazyload->settings->get( 'after_output' ) );
 

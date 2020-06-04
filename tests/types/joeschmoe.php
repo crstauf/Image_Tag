@@ -172,12 +172,35 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 	*/
 
 	/**
+	 * Data provider for Image_Tag_JoeSchmoe_Test::test_http().
+	 *
+	 * @see static::test_http()
+	 * @return array[]
+	 */
+	function data_http() {
+		return array(
+			array( $this->new_instance() ),
+			array( $this->new_instance( array(), array( 'source' => 'primary', 'random' => true ) ) ),
+		);
+	}
+
+	/**
 	 * @covers ::http()
 	 * @group instance
 	 * @group external-http
+	 *
+	 * @dataProvider data_http
 	 */
-	function test_http() {
-		$this->markTestIncomplete();
+	function test_http( Image_Tag_Abstract $instance ) {
+		$count = did_action( 'http_api_debug' );
+		echo $instance;
+		$response = $instance->http();
+
+		$this->assertSame( ++$count, did_action( 'http_api_debug' ) );
+		$this->assertSame( 'image/svg+xml; charset=utf-8', wp_remote_retrieve_header( $response, 'content-type' ) );
+
+		$this->assertSame( $response, $instance->http() );
+		$this->assertSame( $count, did_action( 'http_api_debug' ) );
 	}
 
 	/**
@@ -187,7 +210,26 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 	 * @return array[]
 	 */
 	function data_lazyload() {
-		$this->markTestIncomplete();
+		return array(
+			array(
+				$this->get_instance( array(), array(
+					'lazyload' => array( 'noscript' => false ),
+				) ),
+				new Image_Tag( array(
+					'src' => Image_Tag::BLANK,
+					'class' => array( 'lazyload', 'hide-if-no-js' ),
+					'sizes' => array(),
+					'data-src' => 'https://joeschmoe.crstauf.workers.dev/',
+					'data-sizes' => array( 'auto' ),
+				), array(
+					'lazyload' => array(
+						'noscript' => false,
+						'noscript_priority' => -10,
+						'sizes_auto' => true,
+					),
+				) ),
+			),
+		);
 	}
 
 	/**

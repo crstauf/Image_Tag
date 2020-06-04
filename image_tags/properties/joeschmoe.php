@@ -44,7 +44,7 @@ class Image_Tag_JoeSchmoe_Attributes extends Image_Tag_Attributes {
 	 * @return string
 	 */
 	function get_src_attribute_for_view() {
-		if ( wp_http_validate_url( $this->get( 'src' ) ) )
+		if ( !empty( $this->get( 'src' ) ) )
 			return $this->get( 'src' );
 
 		$src = $this->get_url();

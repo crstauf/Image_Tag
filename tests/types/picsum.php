@@ -196,12 +196,30 @@ class Image_Tag_Picsum_Test extends Image_Tag_Test_Base {
 	*/
 
 	/**
-	 * @covers ::http()
-	 * @group instance
-	 * @group external-http
+	 * Data provider for Image_Tag_Picsum_Test::test_http().
+	 *
+	 * @see static::test_http()
+	 * @return array[]
 	 */
-	function test_http() {
-		$instance = $this->new_instance( array(), array( 'width' => 400 ) );
+	function data_http() {
+		return array(
+			array(
+				$this->new_instance( array(), array( 'width' => 400 ) ),
+			),
+		);
+	}
+
+	/**
+	 * @param Image_Tag_Picsum $instance
+	 *
+ 	 * @covers ::http()
+ 	 * @group instance
+	 * @group feature
+ 	 * @group external-http
+ 	 *
+ 	 * @dataProvider data_http
+ 	 */
+	function test_http( Image_Tag_Abstract $instance ) {
 		$response = $instance->http();
 		$image_id = ( int ) wp_remote_retrieve_header( $response, 'picsum-id' );
 
@@ -245,8 +263,37 @@ class Image_Tag_Picsum_Test extends Image_Tag_Test_Base {
 
 	}
 
+	/**
+	 * Data provider for Image_Tag_Test_Base::test_noscript().
+	 *
+	 * @see static::test_noscript()
+	 * @return array[]
+	 */
 	function data_noscript() {
-		$this->markTestIncomplete();
+		$instance = $this->get_instance( array( 'src' => 'https://source.unsplash.com/1000x1000' ) );
+
+		return array(
+			array(
+				$this->new_instance( array(), array( 'width' => 400 ) ),
+				array( array(), array() ),
+				array(),
+				new Image_Tag_Picsum( array(
+					'class' => array( 1 => 'no-js' ),
+				), array(
+					'width' => 400,
+					'before_output' => array(
+						20 => array( '<noscript>' ),
+					),
+					'after_output' => array(
+						0 => array( '</noscript>' ),
+					),
+					'noscript' => array(
+						'before_position' => 20,
+						 'after_position' => 0,
+					),
+				) ),
+			),
+		);
 	}
 
 	function data_lazyload() {
