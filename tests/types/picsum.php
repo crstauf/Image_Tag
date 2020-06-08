@@ -296,8 +296,34 @@ class Image_Tag_Picsum_Test extends Image_Tag_Test_Base {
 		);
 	}
 
+	/**
+	 * Data provider for Image_Tag_Test_Base::test_lazyload().
+	 *
+	 * @see Image_Tag_Test_Base::test_lazyload()
+	 * @return array[]
+	 */
 	function data_lazyload() {
-		$this->markTestIncomplete();
+		return array(
+			array(
+				$this->get_instance( array(), array(
+					'width' => 100,
+					'lazyload' => array( 'noscript' => false ),
+				) ),
+				new Image_Tag( array(
+					'src' => Image_Tag::BLANK,
+					'class' => array( 'lazyload', 'hide-if-no-js' ),
+					'sizes' => array(),
+					'data-src' => 'https://picsum.photos/100',
+					'data-sizes' => array( 'auto' ),
+				), array(
+					'lazyload' => array(
+						'noscript' => false,
+						'noscript_priority' => -10,
+						'sizes_auto' => true,
+					),
+				) ),
+			),
+		);
 	}
 
 	function data_into() {
