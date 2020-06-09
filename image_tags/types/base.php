@@ -40,6 +40,9 @@ class Image_Tag extends Image_Tag_Abstract {
 		if ( in_array( $source, Image_Tag_Picsum::TYPES ) )
 			return new Image_Tag_Picsum( $attributes, $settings );
 
+		if ( in_array( $source, Image_Tag_Placeholder::TYPES ) )
+			return new Image_Tag_Placeholder( $attributes, $settings );
+
 		# If URL, create using base object.
 		if ( ( bool ) wp_http_validate_url( $source ) ) {
 			$attributes['src'] = $source;

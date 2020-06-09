@@ -44,7 +44,7 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 	*/
 
 	/**
-	 * @covers Imagee_Tag::create()
+	 * @covers Image_Tag::create()
 	 */
 	function data_create() {
 		return array(
