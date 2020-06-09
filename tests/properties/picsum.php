@@ -72,7 +72,65 @@ class Image_Tag_Picsum_Attributes_Test extends Image_Tag_Attributes_Test {
 			'class' => 'foo bar',
 		);
 
+		$image = Image_Tag::create( 'picsum', array(), array(
+			'width' => 400,
+			'height' => 300,
+			'image_id' => 50,
+			'blur' => 5,
+			'grayscale' => true,
+		) );
+		$data['src view'] = array(
+			$image->attributes,
+			'src',
+			'https://picsum.photos/id/50/400/300?blur=5&grayscale=1',
+			'view',
+		);
+
+		$image = Image_Tag::create( 'picsum', array(), array(
+			'width' => 400,
+			'seed' => __FUNCTION__,
+		) );
+		$data['src seed view'] = array(
+			$image->attributes,
+			'src',
+			'https://picsum.photos/seed/' . __FUNCTION__ . '/400',
+			'view',
+		);
+
+		$image = Image_Tag::create( 'picsum', array(), array(
+			'width' => 200,
+			'random' => 5,
+		) );
+		$data['src random view'] = array(
+			$image->attributes,
+			'src',
+			'https://picsum.photos/200?random=5',
+			'view',
+		);
+
 		return $data;
+	}
+
+	/**
+	 * @param Image_Tag_Properties_Abstract $instance
+	 * @param string|array $get_properties
+	 * @param mixed $expected
+	 * @param string $context
+	 * @see static::test_get()
+	 *
+	 * @covers ::get()
+	 * @covers ::trim()
+	 * @covers ::get_properties()
+	 * @covers ::get_property()
+	 * @covers ::get_src_attribute_for_view()
+	 * @covers Image_Tag_Properties_Abstract::_get()
+	 * @group instance
+	 * @group get
+	 *
+	 * @dataProvider data_get
+	 */
+	function test_get( Image_Tag_Properties_Abstract $instance, $get_properties, $expected, $context = 'edit' ) {
+		parent::test_get( $instance, $get_properties, $expected, $context );
 	}
 
 }
