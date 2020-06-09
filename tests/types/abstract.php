@@ -625,26 +625,31 @@ abstract class Image_Tag_Test_Base extends WP_UnitTestCase {
 	 *
 	 * @dataProvider data_into()
 	 */
-	function test_into( Image_Tag_Abstract $instance, $into_params, Image_Tag_Abstract $expected ) {
+	function test_into( Image_Tag_Abstract $instance, string $into_type, $into_params, Image_Tag_Abstract $expected ) {
 
 		# Test self conversion attempt.
 		if ( $instance === $expected ) {
-			$into = @$instance->into( 'joeschmoe', ...$into_params );
+			$into = @$instance->into( $into_type, ...$into_params );
 			$this->assertSame( $expected, $into );
 
 			$this->expectException( PHPUnit\Framework\Error\Error::class );
-			$into = $instance->into( 'joeschmoe', ...$into_params );
+			$into = $instance->into( $into_type, ...$into_params );
 
 			return;
 		}
 
-		$into = $instance->into( 'joeschmoe', ...$into_params );
+		$into = $instance->into( $into_type, ...$into_params );
 
 		$this->assertEquals( $expected, $into );
-		$this->assertEquals(
-			$expected->__toString(),
-			$into->__toString()
-		);
+
+		if (
+			$expected->is_valid()
+			&& $into->is_valid()
+		)
+			$this->assertEquals(
+				$expected->__toString(),
+				$into->__toString()
+			);
 	}
 
 }

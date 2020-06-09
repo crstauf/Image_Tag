@@ -326,8 +326,31 @@ class Image_Tag_Picsum_Test extends Image_Tag_Test_Base {
 		);
 	}
 
+	/**
+	 * Data provider for Image_Tag_JoeSchmoe_Test::test_into().
+	 *
+	 * @see static::test_into()
+	 * @return array[]
+	 */
 	function data_into() {
-		$this->markTestIncomplete();
+		$data = array();
+
+		$data['direct'] = array(
+			Image_Tag::create( 'https://source.unsplash.com/1000x1000' ),
+			'picsum',
+			array( null, null ),
+			Image_Tag::create( 'picsum' ),
+		);
+
+		$instance = Image_Tag::create( 'picsum' );
+		$data['self'] = array(
+			$instance,
+			'picsum',
+			array( null, null ),
+			$instance,
+		);
+
+		return $data;
 	}
 
 }

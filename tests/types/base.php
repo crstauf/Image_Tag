@@ -321,7 +321,7 @@ class Image_Tag_Test extends Image_Tag_Test_Base {
 	 * @dataProvider data_into()
 	 * @doesNotPerformAssertions
 	 */
-	function test_into( Image_Tag_Abstract $instance, $into_params, Image_Tag_Abstract $expected ) {}
+	function test_into( Image_Tag_Abstract $instance, string $into_type, $into_params, Image_Tag_Abstract $expected ) {}
 
 }
 

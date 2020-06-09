@@ -243,6 +243,7 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 
 		$data['direct'] = array(
 			Image_Tag::create( 'https://source.unsplash.com/1000x1000' ),
+			'joeschmoe',
 			array( null, null ),
 			Image_Tag::create( 'joeschmoe' ),
 		);
@@ -250,6 +251,7 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 		$gender = array_rand( array( 'male' => 1, 'female' => 1 ) );
 		$data['gender'] = array(
 			Image_Tag::create( 'https://source.unsplash.com/1000x1000', array(), array( 'gender' => $gender ) ),
+			'joeschmoe',
 			array( null, null ),
 			Image_Tag::create( 'joeschmoe', array(), array( 'gender' => $gender ) ),
 		);
@@ -257,6 +259,7 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 		$params = array( array( 'id' => __FUNCTION__ ), array( 'seed' => __FUNCTION__ ) );
 		$data['params'] = array(
 			Image_Tag::create( 'https://source.unsplash.com/1000x1000' ),
+			'joeschmoe',
 			$params,
 			Image_Tag::create( 'joeschmoe', ...$params ),
 		);
@@ -264,6 +267,7 @@ class Image_Tag_JoeSchmoe_Test extends Image_Tag_Test_Base {
 		$instance = Image_Tag::create( 'joeschmoe' );
 		$data['self'] = array(
 			$instance,
+			'joeschmoe',
 			array( null, null ),
 			$instance,
 		);
