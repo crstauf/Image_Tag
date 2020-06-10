@@ -327,7 +327,7 @@ class Image_Tag_Picsum_Test extends Image_Tag_Test_Base {
 	}
 
 	/**
-	 * Data provider for Image_Tag_JoeSchmoe_Test::test_into().
+	 * Data provider for Image_Tag_Picsum_Test::test_into().
 	 *
 	 * @see static::test_into()
 	 * @return array[]
