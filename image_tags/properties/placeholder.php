@@ -36,16 +36,16 @@ class Image_Tag_Placeholder_Attributes extends Image_Tag_Attributes {
 
 		$src .= '/';
 
-		$src = untrailingslashit( $src );
-
 		if ( !empty( $settings['bg_color'] ) )
 			$src .= $settings['bg_color'] . '/';
 
 		if ( !empty( $settings['text_color'] ) )
 			$src .= $settings['text_color'] . '/';
 
+		$src = untrailingslashit( $src );
+
 		if ( !empty( $settings['text'] ) )
-			$src = add_query_args( 'text', urlencode( $settings['text'] ), $src );
+			$src = add_query_arg( 'text', urlencode( $settings['text'] ), $src );
 
 		return $src;
 	}

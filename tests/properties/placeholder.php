@@ -73,42 +73,28 @@ class Image_Tag_Placeholder_Attributes_Test extends Image_Tag_Attributes_Test {
 			'class' => 'foo bar',
 		);
 
-		$image_tag = Image_Tag::create( 'joeschmoe', array(), array(
-			'source' => 'primary',
+		$image = Image_Tag::create( 'placeholder.com', array(), array(
+			'width' => 400,
+			'height' => 300,
 		) );
-		$data['primary source'] = array(
-			$image_tag->attributes,
+		$data['src view'] = array(
+			$image->attributes,
 			'src',
-			'https://joeschmoe.io/api/v1/',
+			'https://via.placeholder.com/400x300',
 			'view',
 		);
 
-		$gender = array_rand( array( 'male' => 1, 'female' => 1 ) );
-		$image_tag = Image_Tag::create( 'joeschmoe', array(), array(
-			'gender' => $gender,
+		$image = Image_Tag::create( 'placeholder.com', array(), array(
+			'width' => 400,
+			'height' => 300,
+			'text' => __FUNCTION__,
+			'text_color' => 'FFF',
+			'bg_color' => '000',
 		) );
-		$data['gender'] = array(
-			$image_tag->attributes,
+		$data['src all view'] = array(
+			$image->attributes,
 			'src',
-			'https://joeschmoe.crstauf.workers.dev/' . $gender . '/',
-			'view',
-		);
-
-		$image_tag = Image_Tag::create( 'joeschmoe', array(), array(
-			'seed' => __FUNCTION__,
-		) );
-		$data['seed'] = array(
-			$image_tag->attributes,
-			'src',
-			'https://joeschmoe.crstauf.workers.dev/' . __FUNCTION__ . '/',
-			'view',
-		);
-
-		$image_tag = Image_Tag::create( 'joeschmoe', array( 'src' => 'https://joeschmoe.io/joe' ) );
-		$data['preset'] = array(
-			$image_tag->attributes,
-			'src',
-			'https://joeschmoe.io/joe',
+			'https://via.placeholder.com/400x300/000/FFF?text=' . __FUNCTION__,
 			'view',
 		);
 
@@ -126,6 +112,7 @@ class Image_Tag_Placeholder_Attributes_Test extends Image_Tag_Attributes_Test {
 	 * @covers ::trim()
 	 * @covers ::get_properties()
 	 * @covers ::get_property()
+	 * @covers ::get_src_attribute_for_view()
 	 * @covers Image_Tag_Properties_Abstract::_get()
 	 * @covers ::get_src_attribute_for_view()
 	 * @group instance
