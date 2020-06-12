@@ -92,6 +92,8 @@ class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 			'properties/picsum/settings'        => array( 'properties/picsum.php',      'Image_Tag_Picsum_Settings' ),
 			'properties/placeholder/attributes' => array( 'properties/placeholder.php', 'Image_Tag_Placeholder_Attributes' ),
 			'properties/placeholder/settings'   => array( 'properties/placeholder.php', 'Image_Tag_Placeholder_Settings' ),
+			'properties/unsplash/attributes'    => array( 'properties/unsplash.php',    'Image_Tag_Unsplash_Attributes' ),
+			'properties/unsplash/settings'      => array( 'properties/unsplash.php',    'Image_Tag_Unsplash_Settings' ),
 
 			# Types.
 			'abstracts/image tag' => array( 'types/abstract.php', 'Image_Tag_Abstract' ),
@@ -99,6 +101,7 @@ class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 			'types/joeschmoe' => array( 'types/joeschmoe.php', 'Image_Tag_JoeSchmoe' ),
 			'types/picsum' => array( 'types/picsum.php', 'Image_Tag_Picsum' ),
 			'types/placeholder' => array( 'types/placeholder.php', 'Image_Tag_Placeholder' ),
+			'types/unsplash' => array( 'types/unsplash.php', 'Image_Tag_Unsplash' ),
 
 		);
 	}

@@ -27,6 +27,7 @@
 			<file>./tests/properties/joeschmoe.php</file>
 			<file>./tests/properties/picsum.php</file>
 			<file>./tests/properties/placeholder.php</file>
+			<file>./tests/properties/unsplash.php</file>
 		</testsuite>
 
 		<testsuite name="types">
@@ -34,6 +35,7 @@
 			<file>./tests/types/joeschmoe.php</file>
 			<file>./tests/types/picsum.php</file>
 			<file>./tests/types/placeholder.php</file>
+			<file>./tests/types/unsplash.php</file>
 		</testsuite>
 
 	</testsuites>
@@ -54,6 +56,7 @@
 			<file>image_tags/properties/joeschmoe.php</file>
 			<file>image_tags/properties/picsum.php</file>
 			<file>image_tags/properties/placeholder.php</file>
+			<file>image_tags/properties/unsplash.php</file>
 
 			<!-- types -->
 			<file>image_tags/types/abstract.php</file>
@@ -61,6 +64,7 @@
 			<file>image_tags/types/joeschmoe.php</file>
 			<file>image_tags/types/picsum.php</file>
 			<file>image_tags/types/placeholder.php</file>
+			<file>image_tags/types/unsplash.php</file>
 
 		</whitelist>
 	</filter>

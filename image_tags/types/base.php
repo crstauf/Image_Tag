@@ -40,8 +40,13 @@ class Image_Tag extends Image_Tag_Abstract {
 		if ( in_array( $source, Image_Tag_Picsum::TYPES ) )
 			return new Image_Tag_Picsum( $attributes, $settings );
 
+		# Create Placeholder image tag.
 		if ( in_array( $source, Image_Tag_Placeholder::TYPES ) )
 			return new Image_Tag_Placeholder( $attributes, $settings );
+
+		# Create Unsplash image tag.
+		if ( in_array( $source, Image_Tag_Unsplash::TYPES ) )
+			return new Image_Tag_Unsplash( $attributes, $settings );
 
 		# If URL, create using base object.
 		if ( ( bool ) wp_http_validate_url( $source ) ) {

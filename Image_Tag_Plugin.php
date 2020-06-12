@@ -72,6 +72,7 @@ class Image_Tag_Plugin {
 		require_once 'image_tags/properties/joeschmoe.php';
 		require_once 'image_tags/properties/picsum.php';
 		require_once 'image_tags/properties/placeholder.php';
+		require_once 'image_tags/properties/unsplash.php';
 
 		# Types.
 		require_once 'image_tags/types/abstract.php';
@@ -79,6 +80,7 @@ class Image_Tag_Plugin {
 		require_once 'image_tags/types/joeschmoe.php';
 		require_once 'image_tags/types/picsum.php';
 		require_once 'image_tags/types/placeholder.php';
+		require_once 'image_tags/types/unsplash.php';
 
 	}
 
