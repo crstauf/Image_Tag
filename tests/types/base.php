@@ -54,7 +54,7 @@ class Image_Tag_Test extends Image_Tag_Test_Base {
 
 			'fail' => array(
 				'warning',
-				'source.unsplash.com',
+				'nothing.unsplash.com',
 			),
 
 			'base' => array(
