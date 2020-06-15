@@ -51,7 +51,7 @@ abstract class Image_Tag_Abstract {
 	 * @param mixed $value
 	 */
 	function __set( string $key, $value ) {
-		if ( in_array( $key, array_keys( get_object_vars( $this ) ) ) ) {
+		if ( in_array( $key, array( 'attributes', 'settings' ) ) ) {
 			if ( is_subclass_of( $value, Image_Tag_Properties_Abstract::class ) )
 				$this->$key = $value;
 
