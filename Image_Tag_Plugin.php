@@ -12,14 +12,14 @@
  * Requires PHP: 7.1
  */
 
+declare( strict_types=1 );
+
 defined( 'ABSPATH' ) || die();
 
 /**
- * Class: Image_Tag_Plugin
- *
- * @todo add tests
+ * Class: Image_Tag_Plugin.
  */
-class Image_Tag_Plugin {
+final class Image_Tag_Plugin {
 
 	/**
 	 * @var float
@@ -31,7 +31,7 @@ class Image_Tag_Plugin {
 	 *
 	 * @return self
 	 */
-	static function instance() {
+	static function instance() : self {
 		static $instance = null;
 
 		if ( is_null( $instance ) )
@@ -56,36 +56,56 @@ class Image_Tag_Plugin {
 	 *
 	 * @uses static::includes()
 	 */
-	function action__template_redirect() {
-		static::includes();
+	function action__template_redirect() : void {
+		static::include_files();
 	}
 
 	/**
-	 * Include all the files.
+	 * Get plugin directory path.
+	 *
+	 * @return string
 	 */
-	static function includes() {
+	static function dir() : string {
+		return trailingslashit( __DIR__ );
+	}
 
-		# Properties.
-		require_once 'image_tags/properties/abstract.php';
-		require_once 'image_tags/properties/attributes.php';
-		require_once 'image_tags/properties/settings.php';
-		require_once 'image_tags/properties/joeschmoe.php';
-		require_once 'image_tags/properties/picsum.php';
-		require_once 'image_tags/properties/placeholder.php';
-		require_once 'image_tags/properties/unsplash.php';
+	/**
+	 * Get includes directory path.
+	 *
+	 * @uses static::dir()
+	 * @return string
+	 */
+	static function inc() : string {
+		return static::dir() . 'includes/';
+	}
 
-		# Types.
-		require_once 'image_tags/types/abstract.php';
-		require_once 'image_tags/types/base.php';
-		require_once 'image_tags/types/joeschmoe.php';
-		require_once 'image_tags/types/picsum.php';
-		require_once 'image_tags/types/placeholder.php';
-		require_once 'image_tags/types/unsplash.php';
+	/**
+	 * Include all the core files.
+	 *
+	 * @see Image_Tag::create() for loading of image tag types.
+	 * @uses static::inc()
+	 */
+	static function include_files() : void {
+		$dir = static::inc();
+
+		# Interfaces.
+		require_once $dir . 'interfaces/attributes.php';
+		require_once $dir . 'interfaces/settings.php';
+		require_once $dir . 'interfaces/validation.php';
+
+		# Abstracts.
+		require_once $dir . 'abstracts/helpers.php';
+		require_once $dir . 'abstracts/image_tag.php';
 
 	}
 
 }
 
 Image_Tag_Plugin::instance();
+
+add_action( 'get_header', function() {
+	echo Image_Tag::create( 'https://source.unsplash.com/random/800x600' );
+	exit;
+} );
 
 ?>
