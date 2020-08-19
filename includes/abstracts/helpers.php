@@ -8,9 +8,9 @@ declare( strict_types=1 );
 defined( 'ABSPATH' ) || die();
 
 /**
- * Abstract class: Image_Tag_Helpers.
+ * Abstract class: Image_Tag_Helpers
  */
-abstract class Image_Tag_Helpers implements Image_Tag_Attributes_Interface, Image_Tag_Settings_Interface, Image_Tag_Validation_Interface {
+abstract class Image_Tag_Helpers implements Image_Tag_Attributes_Interface, Image_Tag_Settings_Interface, Image_Tag_Sources_Interface, Image_Tag_Validation_Interface {
 
 
 	/*
@@ -462,6 +462,129 @@ abstract class Image_Tag_Helpers implements Image_Tag_Attributes_Interface, Imag
 
 
 	/*
+	 ######   #######  ##     ## ########   ######  ########  ######
+	##    ## ##     ## ##     ## ##     ## ##    ## ##       ##    ##
+	##       ##     ## ##     ## ##     ## ##       ##       ##
+	 ######  ##     ## ##     ## ########  ##       ######    ######
+	      ## ##     ## ##     ## ##   ##   ##       ##             ##
+	##    ## ##     ## ##     ## ##    ##  ##    ## ##       ##    ##
+	 ######   #######   #######  ##     ##  ######  ########  ######
+	*/
+
+	/**
+	 * Sources for image: {descriptor} => {URL}.
+	 * @var array
+	 */
+	protected $sources = array();
+
+	/**
+	 * Check if has source.
+	 *
+	 * @param string $search URL or descriptor.
+	 * @return bool
+	 */
+	function has_source( string $search ) : bool {
+		return (
+			in_array( $search, $this->sources )
+			|| isset( $this->sources[$search] )
+		);
+	}
+
+	/**
+	 * Add source if doesn't exist.
+	 *
+	 * @param string $source
+	 * @param string $descriptor
+	 * @return Image_Tag
+	 */
+	function add_source( string $source, string $descriptor = '' ) : Image_Tag {
+		if (
+			   $this->has_source( $source )
+			|| $this->has_source( $descriptor )
+		)
+			return $this;
+
+		$this->set_source( $source, $descriptor );
+
+		return $this;
+	}
+
+	/**
+	 * Set source.
+	 *
+	 * @param string $source
+	 * @param string $descriptor
+	 * @uses $this->apply_sources()
+	 * @return Image_Tag
+	 */
+	function set_source( string $source, string $descriptor = '' ) : Image_Tag {
+		$this->sources[$descriptor] = $source;
+
+		$this->apply_sources();
+
+		return $this;
+	}
+
+	/**
+	 * Delete source by URL or descriptor.
+	 *
+	 * @param string $source URL or descriptor.
+	 * @uses $this->apply_sources()
+	 * @return Image_Tag
+	 */
+	function delete_source( string $source ) : Image_Tag {
+		if ( empty( $source ) )
+			return $this;
+
+		$search = array_search( $source, $this->sources );
+
+		unset(
+			$this->sources[$search],
+			$this->sources[$source]
+		);
+
+		$this->apply_sources();
+
+		return $this;
+	}
+
+	/**
+	 * Get sources.
+	 *
+	 * @return array
+	 */
+	function get_sources() : array {
+		return array_filter( $this->sources );
+	}
+
+	/**
+	 * Apply the sources to image tag attributes.
+	 *
+	 * @codeCoverageIgnore
+	 *
+	 * @uses $this->get_sources()
+	 */
+	protected function apply_sources() : void {
+		$sources = $this->get_sources();
+
+		if ( empty( $sources ) )
+			return;
+
+		if ( 1 === count( $sources ) ) {
+			$this->attributes['src'] = array_pop( $sources );
+			return;
+		}
+
+		$srcset = array();
+
+		foreach ( $sources as $descriptor => $source )
+			$srcset[] = trim( $source . ' ' . $descriptor );
+
+		$this->attributes['srcset'] = implode( ', ', $srcset );
+	}
+
+
+	/*
 	##     ##    ###    ##       #### ########     ###    ######## ####  #######  ##    ##
 	##     ##   ## ##   ##        ##  ##     ##   ## ##      ##     ##  ##     ## ###   ##
 	##     ##  ##   ##  ##        ##  ##     ##  ##   ##     ##     ##  ##     ## ####  ##
@@ -525,11 +648,11 @@ abstract class Image_Tag_Helpers implements Image_Tag_Attributes_Interface, Imag
 	protected function perform_validation_checks() : WP_Error {
 		$errors = new WP_Error;
 
-		if (
-			!$this->has_attribute( 'src' )
-			|| empty( $this->get_attribute( 'src' ) )
-		)
-			$errors->add( 'required_src', 'The <code>src</code> attribute is required.' );
+		$has_srcset = $this->has_attribute( 'srcset' ) && !empty( $this->get_attribute( 'srcset' ) );
+		$has_src    = $this->has_attribute( 'src'    ) && !empty( $this->get_attribute( 'src'    ) );
+
+		if ( !$has_srcset && !$has_src )
+			$errors->add( 'required_src', 'Image tags require <code>src</code> or <code>srcset</code> attribute.' );
 
 		return $errors;
 	}

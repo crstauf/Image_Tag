@@ -19,6 +19,7 @@
 			<file>./tests/plugin.php</file>
 			<file>./tests/helpers-attributes.php</file>
 			<file>./tests/helpers-settings.php</file>
+			<file>./tests/helpers-sources.php</file>
 			<file>./tests/helpers-validation.php</file>
 			<file>./tests/image_tag.php</file>
 		</testsuite>

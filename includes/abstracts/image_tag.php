@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || die();
 /**
  * Abstract class: Image_Tag.
  */
-abstract class Image_Tag extends Image_Tag_Helpers implements Image_Tag_Attributes_Interface, Image_Tag_Settings_Interface, Image_Tag_Validation_Interface {
+abstract class Image_Tag extends Image_Tag_Helpers implements Image_Tag_Attributes_Interface, Image_Tag_Settings_Interface, Image_Tag_Sources_Interface, Image_Tag_Validation_Interface {
 
 	/**
 	 * Smallest transparent data URI image.
@@ -41,8 +41,9 @@ abstract class Image_Tag extends Image_Tag_Helpers implements Image_Tag_Attribut
 		 */
 		if ( esc_url_raw( $source ) === $source ) {
 			require_once Image_Tag_Plugin::inc() . 'types/base.php';
-			$attributes['src'] = $source;
-			return new Image_Tag_Base( $attributes, $settings );
+			$object = new Image_Tag_Base( $attributes, $settings );
+			$object->add_source( $source );
+			return $object;
 		}
 
 		# Unable to determine type.
@@ -69,10 +70,9 @@ abstract class Image_Tag extends Image_Tag_Helpers implements Image_Tag_Attribut
 	 * @uses $this->check_valid()
 	 * @uses $this->get_attributes()
 	 * @return string
-	 *
-	 * @todo add test
 	 */
 	function __toString() : string {
+		$this->apply_sources();
 		$errors = $this->check_valid();
 
 		if ( is_wp_error( $errors ) ) {

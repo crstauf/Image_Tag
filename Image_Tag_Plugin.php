@@ -91,6 +91,7 @@ final class Image_Tag_Plugin {
 		# Interfaces.
 		require_once $dir . 'interfaces/attributes.php';
 		require_once $dir . 'interfaces/settings.php';
+		require_once $dir . 'interfaces/sources.php';
 		require_once $dir . 'interfaces/validation.php';
 
 		# Abstracts.

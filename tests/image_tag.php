@@ -42,9 +42,8 @@ class Image_Tag_Test_Abstract extends WP_UnitTestCase {
 	function data__create__Image_Tag_Base() : array {
 		$data = array();
 
-		$object = new Image_Tag_Base( array(
-			'src' => 'https://source.unsplash.com/800x600'
-		) );
+		$object = new Image_Tag_Base;
+		$object->add_source( 'https://source.unsplash.com/800x600' );
 
 		$data[ 'L' . __LINE__ ] = array(
 			'https://source.unsplash.com/800x600',
@@ -65,7 +64,7 @@ class Image_Tag_Test_Abstract extends WP_UnitTestCase {
 			array(
 				new Image_Tag_Base(),
 				'',
-				"/\nWarning: The \<code\>src\<\/code\> attribute is required\..*/",
+				"/\nWarning: Image tags require \<code\>src\<\/code\> or \<code\>srcset\<\/code\> attribute\..*/",
 			),
 		);
 	}
