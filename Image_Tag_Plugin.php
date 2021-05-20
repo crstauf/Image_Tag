@@ -89,14 +89,19 @@ final class Image_Tag_Plugin {
 		$dir = static::inc();
 
 		# Interfaces.
-		require_once $dir . 'interfaces/attributes.php';
-		require_once $dir . 'interfaces/settings.php';
-		require_once $dir . 'interfaces/sources.php';
-		require_once $dir . 'interfaces/validation.php';
+		require_once $dir . 'interfaces/Data_Store.php';
+		require_once $dir . 'interfaces/Validation.php';
 
 		# Abstracts.
-		require_once $dir . 'abstracts/helpers.php';
-		require_once $dir . 'abstracts/image_tag.php';
+		require_once $dir . 'abstracts/Base.php';
+		require_once $dir . 'abstracts/Data_Store.php';
+
+		# Data.
+		require_once $dir . 'data_stores/Attributes.php';
+		require_once $dir . 'data_stores/Settings.php';
+
+		# Base.
+		require_once $dir . 'types/Image_Tag.php';
 
 	}
 
@@ -105,7 +110,12 @@ final class Image_Tag_Plugin {
 Image_Tag_Plugin::instance();
 
 add_action( 'get_header', function() {
-	echo Image_Tag::create( 'https://source.unsplash.com/random/800x600' );
+	$img = Image_Tag::create( 'https://source.unsplash.com/random/800x600', array(
+		'title' => 'Unsplash',
+		'width' => 800,
+		'height' => 600,
+	) );
+	echo $img;
 	exit;
 } );
 

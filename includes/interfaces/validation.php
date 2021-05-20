@@ -1,12 +1,15 @@
 <?php
+
 declare( strict_types=1 );
+
+namespace Image_Tag\Interfaces;
 
 defined( 'ABSPATH' ) || die();
 
 /**
- * Interface: Image_Tag_Validation_Interface
+ * Interface: Image_Tag\Validation
  */
-interface Image_Tag_Validation_Interface {
+interface Validation {
 
 	function get_type() : string;
 	function is_type( $test_types ) : bool;
