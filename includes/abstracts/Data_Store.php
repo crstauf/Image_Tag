@@ -4,10 +4,23 @@ declare( strict_types=1 );
 
 namespace Image_Tag\Abstracts;
 
+defined( 'WPINC' ) || die();
+
+/**
+ * Abstract class: Image_Tag\Abstracts\Data_Store
+ */
 class Data_Store implements \Image_Tag\Interfaces\Data_Store {
 
+	/**
+	 * @var array Data storage.
+	 */
 	protected $store = array();
 
+	/**
+	 * Construct.
+	 *
+	 * @param array|object $data
+	 */
 	function __construct( $data ) {
 		if (
 			is_object( $data )
@@ -23,18 +36,44 @@ class Data_Store implements \Image_Tag\Interfaces\Data_Store {
 		$this->store = $data;
 	}
 
+	/**
+	 * Getter.
+	 *
+	 * @param string $key
+	 * @return mixed
+	 */
 	function __get( string $key ) {
-		return $this->store;
+		return $this->$key;
 	}
 
-	function __set( string $key, $value ) {
+	/**
+	 * Setter.
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 * @return void
+	 */
+	function __set( string $key, $value ) : void {
 		$this->store[ $key ] = $value;
 	}
 
+	/**
+	 * To string.
+	 *
+	 * @uses $this->output()
+	 * @return string
+	 */
 	function __toString() : string {
 		return $this->output();
 	}
 
+	/**
+	 * Set key/value pair.
+	 *
+	 * @param string|array $set
+	 * @param null|mixed $value
+	 * @return self
+	 */
 	function set( $set, $value = null ) : self {
 		if ( is_array( $set ) ) {
 			foreach ( $set as $key => $value )
@@ -44,7 +83,10 @@ class Data_Store implements \Image_Tag\Interfaces\Data_Store {
 			return $this;
 		}
 
-		if ( !is_string( $set ) )
+		if (
+			!is_string( $set )
+			|| array_key_exists( $set, $this->store )
+		)
 			return $this;
 
 		if ( is_null( $value ) ) {
@@ -57,6 +99,13 @@ class Data_Store implements \Image_Tag\Interfaces\Data_Store {
 		return $this;
 	}
 
+	/**
+	 * Update key/value pair.
+	 *
+	 * @param string|array $update
+	 * @param null|mixed $value
+	 * @return self
+	 */
 	function update( $update, $value = null ) : self {
 		if ( is_array( $update ) ) {
 			foreach ( $update as $key => $value )
@@ -74,23 +123,49 @@ class Data_Store implements \Image_Tag\Interfaces\Data_Store {
 			return $this;
 
 		$this->store[ $update ] = $value;
+
+		return $this;
 	}
 
-	function has( $has = array() ) {
-		if ( array() === $has )
+	/**
+	 * Check if key or value exists in store.
+	 *
+	 * @param string|array $has
+	 * @param bool $check_value
+	 * @return bool|array
+	 */
+	function has( $has = null, bool $check_value = true ) {
+		if ( in_array( $has, array( null, '', array() ) ) )
 			return !empty( $this->store );
 
 		if ( is_string( $has ) )
-			return array_key_exists( $has, $this->store );
+			return (
+				array_key_exists( $has, $this->store )
+				|| (
+					$check_value
+					&& in_array( $has, $this->store )
+				)
+			);
 
 		$output = array();
 
 		foreach ( $has as $key )
-			$output[ $key ] = array_key_exists( $key, $this->store );
+			$output[ $key ] = (
+				array_key_exists( $key, $this->store )
+				|| (
+					$check_value
+					&& in_array( $key, $this->store )
+				)
+			);
 
 		return $output;
 	}
 
+	/**
+	 * Get data by key.
+	 *
+	 * @return mixed
+	 */
 	function get( $get = array() ) {
 		if ( array() === $get )
 			return $this->store;
@@ -104,15 +179,6 @@ class Data_Store implements \Image_Tag\Interfaces\Data_Store {
 			$output[ $key ] = $this->store[ $key ];
 
 		return $output;
-	}
-
-	function output() : string {
-		$output = array();
-
-		foreach ( $this->get() as $key => $value )
-			$output[] = sprintf( '%s="%s"', $key, $value );
-
-		return implode( ' ', $output );
 	}
 
 }

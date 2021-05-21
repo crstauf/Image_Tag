@@ -24,18 +24,42 @@ abstract class Base implements Validation {
 	 */
 	const BLANK = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 
+	/**
+	 * @var null|Attributes $attributes
+	 * @var null|Settings $settings
+	 */
 	protected $attributes = null;
 	protected $settings   = null;
-	protected $sources    = null;
 
+	/**
+	 * Getter.
+	 *
+	 * @param string $property
+	 * @return mixed
+	 */
 	function __get( string $property ) {
 		return $this->$property;
 	}
 
+	/**
+	 * String output.
+	 *
+	 * @uses $this->output()
+	 * @return string
+	 */
 	function __toString() : string {
 		return $this->output();
 	}
 
+	/**
+	 * Construct helper.
+	 *
+	 * @param null|array|Attributes $attributes
+	 * @param null|array|Settings $settings
+	 * @uses $this->create_Attributes()
+	 * @uses $this->create_Settings()
+	 * @return void
+	 */
 	protected function construct( $attributes, $settings ) : void {
 		if ( is_a( $attributes, Image_Tag::class ) )
 			foreach ( get_object_vars( $attributes ) as $key => $value )
@@ -45,6 +69,11 @@ abstract class Base implements Validation {
 		$this->create_Settings( $settings );
 	}
 
+	/**
+	 * Create Attributes object.
+	 *
+	 * @param void
+	 */
 	protected function create_Attributes( $attributes ) : void {
 		if ( !is_null( $this->attributes ) )
 			return;
@@ -52,6 +81,11 @@ abstract class Base implements Validation {
 		$this->attributes = new Attributes( $attributes );
 	}
 
+	/**
+	 * Create Settings object.
+	 *
+	 * @return void
+	 */
 	protected function create_Settings( $settings ) : void {
 		if ( !is_null( $this->settings ) )
 			return;
@@ -59,13 +93,13 @@ abstract class Base implements Validation {
 		$this->settings = new Settings( $settings );
 	}
 
-	protected function create_Sources( $sources = array() ) : void {
-		if ( !is_null( $this->sources ) )
-			return;
-
-		$this->sources = new Sources( $sources );
-	}
-
+	/**
+	 * Tag output.
+	 *
+	 * @uses $this->output_attributes()
+	 * @uses Attributes::output()
+	 * @return string
+	 */
 	function output() : string {
 		if ( !$this->is_valid() )
 			return '';
@@ -77,6 +111,12 @@ abstract class Base implements Validation {
 		return $output;
 	}
 
+	/**
+	 * Create Attributes object to use for output.
+	 *
+	 * @uses Attributes::__construct()
+	 * @return Attributes
+	 */
 	protected function output_attributes() : Attributes {
 		$attributes = new Attributes( $this->attributes );
 
@@ -85,20 +125,45 @@ abstract class Base implements Validation {
 		 *
 		 * @link https://www.a11y-101.com/development/the-alt-attribute
 		 */
-		if ( !array_key_exists( 'alt', $this->attributes->store ) )
-			$attributes->set( 'alt', '' );
+		if ( !$this->attributes->has( 'alt' ) ) {
+			$alt = '';
+
+			if ( $this->attributes->has( 'title', false ) )
+				$alt = $this->attributes->get( 'title' );
+
+			$attributes->set( 'alt', $alt );
+		}
 
 		return $attributes;
 	}
 
+	/**
+	 * Get image type.
+	 *
+	 * @return string
+	 */
 	function get_type() : string {
 		return static::TYPES[0];
 	}
 
+	/**
+	 * Test image type.
+	 *
+	 * @param string|array $test_types
+	 * @return bool
+	 */
 	function is_type( $test_types ) : bool {
 		return !empty( array_intersect( static::TYPES, ( array ) $test_types ) );
 	}
 
+	/**
+	 * Test image is valid.
+	 *
+	 * @param null|string|array $test_types
+	 * @uses $this->is_type()
+	 * @uses $this->check_valid()
+	 * @return bool
+	 */
 	function is_valid( $test_types = null ) : bool {
 		if (
 			!is_null( $test_types )
@@ -109,6 +174,12 @@ abstract class Base implements Validation {
 		return true === $this->check_valid();
 	}
 
+	/**
+	 * Collect errors from validation checks.
+	 *
+	 * @uses $this->perform_validation_checks()
+	 * @return \WP_Error|true
+	 */
 	private function check_valid() {
 		$errors = $this->perform_validation_checks();
 
@@ -118,6 +189,11 @@ abstract class Base implements Validation {
 		return true;
 	}
 
+	/**
+	 * Perform validation checks.
+	 *
+	 * @return \WP_Error
+	 */
 	abstract protected function perform_validation_checks() : \WP_Error;
 
 }

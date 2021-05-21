@@ -14,12 +14,14 @@
 
 declare( strict_types=1 );
 
+namespace Image_Tag;
+
 defined( 'ABSPATH' ) || die();
 
 /**
- * Class: Image_Tag_Plugin.
+ * Class: Image_Tag\Plugin
  */
-final class Image_Tag_Plugin {
+final class Plugin {
 
 	/**
 	 * @var float
@@ -107,16 +109,6 @@ final class Image_Tag_Plugin {
 
 }
 
-Image_Tag_Plugin::instance();
-
-add_action( 'get_header', function() {
-	$img = Image_Tag::create( 'https://source.unsplash.com/random/800x600', array(
-		'title' => 'Unsplash',
-		'width' => 800,
-		'height' => 600,
-	) );
-	echo $img;
-	exit;
-} );
+Plugin::instance();
 
 ?>
