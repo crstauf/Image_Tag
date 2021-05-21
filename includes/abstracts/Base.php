@@ -44,16 +44,6 @@ abstract class Base implements Validation, Conversion {
 	}
 
 	/**
-	 * String output.
-	 *
-	 * @uses $this->output()
-	 * @return string
-	 */
-	function __toString() : string {
-		return $this->output();
-	}
-
-	/**
 	 * Construct helper.
 	 *
 	 * @param null|array|Attributes $attributes
@@ -93,6 +83,27 @@ abstract class Base implements Validation, Conversion {
 			return;
 
 		$this->settings = new Settings( $settings );
+	}
+
+
+	/*
+	 #######  ##     ## ######## ########  ##     ## ########
+	##     ## ##     ##    ##    ##     ## ##     ##    ##
+	##     ## ##     ##    ##    ##     ## ##     ##    ##
+	##     ## ##     ##    ##    ########  ##     ##    ##
+	##     ## ##     ##    ##    ##        ##     ##    ##
+	##     ## ##     ##    ##    ##        ##     ##    ##
+	 #######   #######     ##    ##         #######     ##
+	*/
+
+	/**
+	 * String output.
+	 *
+	 * @uses $this->output()
+	 * @return string
+	 */
+	function __toString() : string {
+		return $this->output();
 	}
 
 	/**
@@ -138,6 +149,17 @@ abstract class Base implements Validation, Conversion {
 
 		return $attributes;
 	}
+
+
+	/*
+	##     ##    ###    ##       #### ########     ###    ######## ####  #######  ##    ##
+	##     ##   ## ##   ##        ##  ##     ##   ## ##      ##     ##  ##     ## ###   ##
+	##     ##  ##   ##  ##        ##  ##     ##  ##   ##     ##     ##  ##     ## ####  ##
+	##     ## ##     ## ##        ##  ##     ## ##     ##    ##     ##  ##     ## ## ## ##
+	 ##   ##  ######### ##        ##  ##     ## #########    ##     ##  ##     ## ##  ####
+	  ## ##   ##     ## ##        ##  ##     ## ##     ##    ##     ##  ##     ## ##   ###
+	   ###    ##     ## ######## #### ########  ##     ##    ##    ####  #######  ##    ##
+	*/
 
 	/**
 	 * Get image type.
@@ -198,6 +220,17 @@ abstract class Base implements Validation, Conversion {
 	 */
 	abstract protected function perform_validation_checks() : \WP_Error;
 
+
+	/*
+	 ######   #######  ##    ## ##     ## ######## ########   ######  ####  #######  ##    ##
+	##    ## ##     ## ###   ## ##     ## ##       ##     ## ##    ##  ##  ##     ## ###   ##
+	##       ##     ## ####  ## ##     ## ##       ##     ## ##        ##  ##     ## ####  ##
+	##       ##     ## ## ## ## ##     ## ######   ########   ######   ##  ##     ## ## ## ##
+	##       ##     ## ##  ####  ##   ##  ##       ##   ##         ##  ##  ##     ## ##  ####
+	##    ## ##     ## ##   ###   ## ##   ##       ##    ##  ##    ##  ##  ##     ## ##   ###
+	 ######   #######  ##    ##    ###    ######## ##     ##  ######  ####  #######  ##    ##
+	*/
+
 	/**
 	 * Convert to Picsum photo.
 	 *
@@ -210,6 +243,20 @@ abstract class Base implements Validation, Conversion {
 		$settings   = wp_parse_args( ( array ) $settings,   $this->settings->store   );
 
 		return Image_Tag::create( 'picsum', $attributes, $settings );
+	}
+
+	/**
+	 * Convert to Unsplash Source photo.
+	 *
+	 * @param null|array|Attributes $attributes
+	 * @param null|array|Settings $settings
+	 * @return \Image_Tag\Types\Unsplash
+	 */
+	function unsplash( $attributes = null, $settings = null ) : \Image_Tag\Types\Unsplash {
+		$attributes = wp_parse_args( ( array ) $attributes, $this->attributes->store );
+		$settings   = wp_parse_args( ( array ) $settings,   $this->settings->store   );
+
+		return Image_Tag::create( 'unsplash', $attributes, $settings );
 	}
 
 }

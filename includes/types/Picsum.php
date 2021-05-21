@@ -60,7 +60,7 @@ class Picsum extends \Image_Tag\Abstracts\Base {
 	}
 
 	/**
-	 * Generate image src.
+	 * Generate image source.
 	 *
 	 * @uses Settings::has()
 	 * @uses Settings::get()

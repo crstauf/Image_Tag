@@ -26,7 +26,6 @@ class Image_Tag extends Base {
 	 * @param int|string $source
 	 * @param null|array|Attributes $attributes
 	 * @param null|array|Settings $settings
-	 * @uses Image_Tag::__construct()
 	 * @return Image_Tag
 	 */
 	static function create( $source, $attributes = null, $settings = null ) : Base {
@@ -35,6 +34,11 @@ class Image_Tag extends Base {
 		if ( 'picsum' === $source ) {
 			require_once Plugin::inc() . 'types/Picsum.php';
 			return new Image_Tag\Types\Picsum( $attributes, $settings );
+		}
+
+		if ( 'unsplash' === $source ) {
+			require_once Plugin::inc() . 'types/Unsplash.php';
+			return new Image_Tag\Types\Unsplash( $attributes, $settings );
 		}
 
 		if ( ( bool ) wp_http_validate_url( $source ) )

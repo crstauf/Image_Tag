@@ -20,4 +20,13 @@ interface Conversion {
 	 */
 	function picsum( $attributes = null, $settings = null ) : \Image_Tag\Types\Picsum;
 
+	/**
+	 * Convert to Unsplash Source photo.
+	 *
+	 * @param null|array|Attributes $attributes
+	 * @param null|array|Settings $settings
+	 * @return \Image_Tag\Types\Unsplash
+	 */
+	function unsplash( $attributes = null, $settings = null ) : \Image_Tag\Types\Unsplash;
+
 }
