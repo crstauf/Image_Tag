@@ -118,7 +118,7 @@ class Picsum extends \Image_Tag\Abstracts\Base {
 
 		try {
 			$this->validate_dimensions();
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			$errors->add( $e->getCode(), $e->getMessage() );
 		}
 
@@ -141,7 +141,7 @@ class Picsum extends \Image_Tag\Abstracts\Base {
 		)
 			return;
 
-		throw new Exception( 'Picsum requires at least one dimension.' );
+		throw new \Exception( 'Picsum requires at least one dimension.' );
 	}
 
 }

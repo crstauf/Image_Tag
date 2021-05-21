@@ -6,9 +6,11 @@
 declare( strict_types=1 );
 
 namespace Image_Tag\Abstracts;
+use Image_Tag;
 use Image_Tag\Data_Stores\Attributes;
 use Image_Tag\Data_Stores\Settings;
 use Image_Tag\Data_Stores\Sources;
+use Image_Tag\Interfaces\Conversion;
 use Image_Tag\Interfaces\Validation;
 
 defined( 'ABSPATH' ) || die();
@@ -16,7 +18,7 @@ defined( 'ABSPATH' ) || die();
 /**
  * Abstract class: Image_Tag\Abstracts\Base
  */
-abstract class Base implements Validation {
+abstract class Base implements Validation, Conversion {
 
 	/**
 	 * Smallest transparent data URI image.
@@ -195,5 +197,19 @@ abstract class Base implements Validation {
 	 * @return \WP_Error
 	 */
 	abstract protected function perform_validation_checks() : \WP_Error;
+
+	/**
+	 * Convert to Picsum photo.
+	 *
+	 * @param null|array|Attributes $attributes
+	 * @param null|array|Settings $settings
+	 * @return \Image_Tag\Types\Picsum
+	 */
+	function picsum( $attributes = null, $settings = null ) : \Image_Tag\Types\Picsum {
+		$attributes = wp_parse_args( ( array ) $attributes, $this->attributes->store );
+		$settings   = wp_parse_args( ( array ) $settings,   $this->settings->store   );
+
+		return Image_Tag::create( 'picsum', $attributes, $settings );
+	}
 
 }

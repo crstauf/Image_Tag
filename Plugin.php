@@ -91,6 +91,7 @@ final class Plugin {
 		$dir = static::inc();
 
 		# Interfaces.
+		require_once $dir . 'interfaces/Conversion.php';
 		require_once $dir . 'interfaces/Data_Store.php';
 		require_once $dir . 'interfaces/Validation.php';
 
