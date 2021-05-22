@@ -16,7 +16,7 @@ declare( strict_types=1 );
 
 namespace Image_Tag;
 
-defined( 'ABSPATH' ) || die();
+defined( 'WPINC' ) || die();
 
 /**
  * Class: Image_Tag\Plugin

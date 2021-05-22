@@ -13,7 +13,7 @@ use Image_Tag\Data_Stores\Sources;
 use Image_Tag\Interfaces\Conversion;
 use Image_Tag\Interfaces\Validation;
 
-defined( 'ABSPATH' ) || die();
+defined( 'WPINC' ) || die();
 
 /**
  * Abstract class: Image_Tag\Abstracts\Base
@@ -232,13 +232,39 @@ abstract class Base implements Validation, Conversion {
 	*/
 
 	/**
+	 * Convert to JoeSchmoe.
+	 *
+	 * @param null|array|Attributes $attributes
+	 * @param null|array|Settings $settings
+	 * @uses $this->is_type()
+	 * @return \Image_Tag\Types\JoeSchmoe
+	 */
+	function joeschmoe( $attributes = null, $settings = null ) : \Image_Tag\Types\JoeSchmoe {
+		if ( $this->is_type( 'joeschmoe' ) ) {
+			trigger_error( sprintf( 'Image is already type <code>%s</code>', $this->get_type() ) );
+			return $this;
+		}
+
+		$attributes = wp_parse_args( ( array ) $attributes, $this->attributes->store );
+		$settings   = wp_parse_args( ( array ) $settings,   $this->settings->store   );
+
+		return Image_Tag::create( 'joeschmoe', $attributes, $settings );
+	}
+
+	/**
 	 * Convert to Picsum photo.
 	 *
 	 * @param null|array|Attributes $attributes
 	 * @param null|array|Settings $settings
+	 * @uses $this->is_type()
 	 * @return \Image_Tag\Types\Picsum
 	 */
 	function picsum( $attributes = null, $settings = null ) : \Image_Tag\Types\Picsum {
+		if ( $this->is_type( 'picsum' ) ) {
+			trigger_error( sprintf( 'Image is already type <code>%s</code>', $this->get_type() ) );
+			return $this;
+		}
+
 		$attributes = wp_parse_args( ( array ) $attributes, $this->attributes->store );
 		$settings   = wp_parse_args( ( array ) $settings,   $this->settings->store   );
 
@@ -250,9 +276,15 @@ abstract class Base implements Validation, Conversion {
 	 *
 	 * @param null|array|Attributes $attributes
 	 * @param null|array|Settings $settings
+	 * @uses $this->is_type()
 	 * @return \Image_Tag\Types\Placeholder
 	 */
 	function placeholder( $attributes = null, $settings = null ) : \Image_Tag\Types\Placeholder {
+		if ( $this->is_type( 'placeholder' ) ) {
+			trigger_error( sprintf( 'Image is already type <code>%s</code>', $this->get_type() ) );
+			return $this;
+		}
+
 		$attributes = wp_parse_args( ( array ) $attributes, $this->attributes->store );
 		$settings   = wp_parse_args( ( array ) $settings,   $this->settings->store   );
 
@@ -264,9 +296,15 @@ abstract class Base implements Validation, Conversion {
 	 *
 	 * @param null|array|Attributes $attributes
 	 * @param null|array|Settings $settings
+	 * @uses $this->is_type()
 	 * @return \Image_Tag\Types\Unsplash
 	 */
 	function unsplash( $attributes = null, $settings = null ) : \Image_Tag\Types\Unsplash {
+		if ( $this->is_type( 'unsplash' ) ) {
+			trigger_error( sprintf( 'Image is already type <code>%s</code>', $this->get_type() ) );
+			return $this;
+		}
+
 		$attributes = wp_parse_args( ( array ) $attributes, $this->attributes->store );
 		$settings   = wp_parse_args( ( array ) $settings,   $this->settings->store   );
 

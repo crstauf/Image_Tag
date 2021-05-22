@@ -31,6 +31,11 @@ class Image_Tag extends Base {
 	static function create( $source, $attributes = null, $settings = null ) : Base {
 		$source = strtolower( $source );
 
+		if ( 'joeschmoe' === $source ) {
+			require_once Plugin::inc() . 'types/JoeSchmoe.php';
+			return new Image_Tag\Types\JoeSchmoe( $attributes, $settings );
+		}
+
 		if ( 'picsum' === $source ) {
 			require_once Plugin::inc() . 'types/Picsum.php';
 			return new Image_Tag\Types\Picsum( $attributes, $settings );

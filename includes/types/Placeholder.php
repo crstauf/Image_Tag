@@ -116,7 +116,7 @@ class Placeholder extends \Image_Tag\Abstracts\Base {
 		try {
 			$this->validate_dimensions();
 		} catch ( \Exception $e ) {
-			$errors->add( $e->getCode(), $e->getMessage() );
+			$errors->add( 'placeholder', $e->getMessage() );
 		}
 
 		return $errors;
@@ -139,6 +139,18 @@ class Placeholder extends \Image_Tag\Abstracts\Base {
 			return;
 
 		throw new \Exception( 'Placeholder requires at least one dimension.' );
+	}
+
+	/**
+	 * Prevent conversion to same type.
+	 *
+	 * @param null|array|Attributes $attributes
+	 * @param null|array|Settings $settings
+	 * @return self
+	 */
+	function placeholder( $attributes = null, $settings = null ) : self {
+		trigger_error( sprintf( 'Image is already type <code>%s</code>', $this->get_type() ) );
+		return $this;
 	}
 
 }

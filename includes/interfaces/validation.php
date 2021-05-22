@@ -4,7 +4,7 @@ declare( strict_types=1 );
 
 namespace Image_Tag\Interfaces;
 
-defined( 'ABSPATH' ) || die();
+defined( 'WPINC' ) || die();
 
 /**
  * Interface: Image_Tag\Validation
