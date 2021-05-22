@@ -3,20 +3,21 @@
  * Placeholder image service: Lorem Picsum
  *
  * @link https://picsum.photos/
+ * @todo add static functions for API calls
  */
 
 declare( strict_types=1 );
 
 namespace Image_Tag\Types;
-use Image_Tag\Data_Store\Attributes;
-use Image_Tag\Data_Store\Settings;
+use Image_Tag\Data_Stores\Attributes;
+use Image_Tag\Data_Stores\Settings;
 
 defined( 'WPINC' ) || die();
 
 /**
  * Class: Image_Tag\Types\Picsum
  */
-class Picsum extends \Image_Tag\Abstracts\Base {
+class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\Dynamic_Source {
 
 	const BASE_URL = 'https://picsum.photos';
 
@@ -40,23 +41,17 @@ class Picsum extends \Image_Tag\Abstracts\Base {
 	}
 
 	/**
-	 * Tag output.
+	 * Create Attributes object to use for output.
 	 *
-	 * @uses $this->output_attributes()
-	 * @uses Attributes::output()
-	 * @return string
+	 * @uses Base::output_attributes()
+	 * @uses $this->generate_source()
+	 * @return Attributes
 	 */
-	function output() : string {
-		if ( !$this->is_valid() )
-			return '';
+	protected function output_attributes() : Attributes {
+		$attributes = parent::output_attributes();
+		$attributes->update( 'src', $this->generate_source() );
 
-		$this->generate_src();
-
-		$output  = '<img ';
-		$output .= $this->output_attributes()->output();
-		$output .= ' />';
-
-		return $output;
+		return $attributes;
 	}
 
 	/**
@@ -67,9 +62,9 @@ class Picsum extends \Image_Tag\Abstracts\Base {
 	 * @uses Attributes::has()
 	 * @uses Attributes::get()
 	 * @uses Attributes::update()
-	 * @return void
+	 * @return string
 	 */
-	protected function generate_src() : void {
+	 function generate_source() : string {
 		static $random = 1;
 
 		$src = array( static::BASE_URL );
@@ -104,7 +99,7 @@ class Picsum extends \Image_Tag\Abstracts\Base {
 		if ( $this->settings->has( 'random', false ) )
 			$src = add_query_arg( 'random', $random++, $src );
 
-		$this->attributes->update( 'src', $src );
+		return $url;
 	}
 
 	/**

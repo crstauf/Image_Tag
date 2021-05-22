@@ -8,15 +8,15 @@
 declare( strict_types=1 );
 
 namespace Image_Tag\Types;
-use Image_Tag\Data_Store\Attributes;
-use Image_Tag\Data_Store\Settings;
+use Image_Tag\Data_Stores\Attributes;
+use Image_Tag\Data_Stores\Settings;
 
 defined( 'WPINC' ) || die();
 
 /**
  * Class: Image_Tag\Types\Unsplash
  */
-class Unsplash extends \Image_Tag\Abstracts\Base {
+class Unsplash extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\Dynamic_Source {
 
 	const BASE_URL = 'https://source.unsplash.com';
 
@@ -40,23 +40,17 @@ class Unsplash extends \Image_Tag\Abstracts\Base {
 	}
 
 	/**
-	 * Tag output.
+	 * Create Attributes object to use for output.
 	 *
-	 * @uses $this->output_attributes()
-	 * @uses Attributes::output()
-	 * @return string
+	 * @uses Base::output_attributes()
+	 * @uses $this->generate_source()
+	 * @return Attributes
 	 */
-	function output() : string {
-		if ( !$this->is_valid() )
-			return '';
+	protected function output_attributes() : Attributes {
+		$attributes = parent::output_attributes();
+		$attributes->update( 'src', $this->generate_source() );
 
-		$this->generate_src();
-
-		$output  = '<img ';
-		$output .= $this->output_attributes()->output();
-		$output .= ' />';
-
-		return $output;
+		return $attributes;
 	}
 
 	/**
@@ -66,9 +60,9 @@ class Unsplash extends \Image_Tag\Abstracts\Base {
 	 * @uses Settings::get()
 	 * @uses Attributes::has()
 	 * @uses Attributes::get()
-	 * @return void
+	 * @return string
 	 */
-	protected function generate_src() : void {
+	function generate_source() : string {
 		$url = array( static::BASE_URL );
 
 		# User (likes)
@@ -136,7 +130,7 @@ class Unsplash extends \Image_Tag\Abstracts\Base {
 		if ( $this->settings->has( 'search', false ) )
 			$url .= '?' . ( ( string ) $this->settings->get( 'search' ) );
 
-		$this->attributes->update( 'src', $url );
+		return $url;
 	}
 
 	/**
