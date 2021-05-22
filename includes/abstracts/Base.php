@@ -246,6 +246,20 @@ abstract class Base implements Validation, Conversion {
 	}
 
 	/**
+	 * Convert to Placeholder.com image.
+	 *
+	 * @param null|array|Attributes $attributes
+	 * @param null|array|Settings $settings
+	 * @return \Image_Tag\Types\Placeholder
+	 */
+	function placeholder( $attributes = null, $settings = null ) : \Image_Tag\Types\Placeholder {
+		$attributes = wp_parse_args( ( array ) $attributes, $this->attributes->store );
+		$settings   = wp_parse_args( ( array ) $settings,   $this->settings->store   );
+
+		return Image_Tag::create( 'placeholder', $attributes, $settings );
+	}
+
+	/**
 	 * Convert to Unsplash Source photo.
 	 *
 	 * @param null|array|Attributes $attributes

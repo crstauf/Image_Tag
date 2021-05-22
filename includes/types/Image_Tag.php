@@ -36,6 +36,11 @@ class Image_Tag extends Base {
 			return new Image_Tag\Types\Picsum( $attributes, $settings );
 		}
 
+		if ( 'placeholder' === $source ) {
+			require_once Plugin::inc() . 'types/Placeholder.php';
+			return new Image_Tag\Types\Placeholder( $attributes, $settings );
+		}
+
 		if ( 'unsplash' === $source ) {
 			require_once Plugin::inc() . 'types/Unsplash.php';
 			return new Image_Tag\Types\Unsplash( $attributes, $settings );
@@ -44,7 +49,7 @@ class Image_Tag extends Base {
 		if ( ( bool ) wp_http_validate_url( $source ) )
 			return new Image_Tag( $source, $attributes, $settings );
 
-		return new Image_Tag( $attributes, $settings );
+		return new Image_Tag( '', $attributes, $settings );
 	}
 
 	/**
