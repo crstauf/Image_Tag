@@ -62,22 +62,27 @@ class JoeSchmoe extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfac
 	 * @return string
 	 */
 	function generate_source() : string {
-		$url = array( static::BASE_URL );
+		static $src = null;
+
+		if ( !is_null( $src ) )
+			return $src;
+
+		$src = array( static::BASE_URL );
 
 		# Gender
 		if ( $this->settings->has( 'gender' ) )
-			$url[] = $this->settings->get( 'gender' );
+			$src[] = $this->settings->get( 'gender' );
 
 		# Seed
 		if ( $this->settings->has( 'seed' ) )
-			$url[] = $this->settings->get( 'seed' );
+			$src[] = $this->settings->get( 'seed' );
 		else
-			$url[] = uniqid( 'random-' );
+			$src[] = uniqid( 'random-' );
 
 		# Convert to string
-		$url = implode( '/', $url );
+		$src = implode( '/', $src );
 
-		return $url;
+		return $src;
 	}
 
 	/**

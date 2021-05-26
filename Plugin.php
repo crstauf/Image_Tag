@@ -99,6 +99,7 @@ final class Plugin {
 		# Abstracts.
 		require_once $dir . 'abstracts/Base.php';
 		require_once $dir . 'abstracts/Data_Store.php';
+		require_once $dir . 'abstracts/WordPress.php';
 
 		# Data.
 		require_once $dir . 'data_stores/Attributes.php';

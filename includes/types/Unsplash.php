@@ -63,42 +63,47 @@ class Unsplash extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interface
 	 * @return string
 	 */
 	function generate_source() : string {
-		$url = array( static::BASE_URL );
+		static $src = null;
+
+		if ( !is_null( $src ) )
+			return $src;
+
+		$src = array( static::BASE_URL );
 
 		# User (likes)
 		if ( $this->settings->has( 'user', false ) ) {
-			$url[] = sprintf( 'user/%s', sanitize_title_with_dashes( $this->settings->get( 'user' ) ) );
+			$src[] = sprintf( 'user/%s', sanitize_title_with_dashes( $this->settings->get( 'user' ) ) );
 
 			# User likes
 			if ( $this->settings->has( 'user_likes', false ) )
-				$url[] = 'likes';
+				$src[] = 'likes';
 		}
 
 		# Daily
 		if ( $this->settings->has( 'daily', false ) )
-			$url[] = 'daily';
+			$src[] = 'daily';
 
 		# Weekly
 		else if ( $this->settings->has( 'weekly', false ) )
-			$url[] = 'weekly';
+			$src[] = 'weekly';
 
 		# Collection
 		else if (
 			  !$this->settings->has(       'user', false )
 			&& $this->settings->has( 'collection', false )
 		)
-			$url[] = sprintf( 'collection/%d', absint( $this->settings->get( 'collection' ) ) );
+			$src[] = sprintf( 'collection/%d', absint( $this->settings->get( 'collection' ) ) );
 
 		# Photo ID
 		else if (
 			  !$this->settings->has(     'user', false )
 			&& $this->settings->has( 'photo_id', false )
 		)
-			$url[] = $this->settings->get( 'photo_id' );
+			$src[] = $this->settings->get( 'photo_id' );
 
 		# Random
 		if ( $this->settings->has( 'random', false ) )
-			$url = array(
+			$src = array(
 				static::BASE_URL,
 				'random',
 			);
@@ -119,18 +124,18 @@ class Unsplash extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interface
 			if ( 1 === count( $dimensions ) )
 				$dimensions[] = $dimensions[0];
 
-			$url[] = implode( 'x', $dimensions );
+			$src[] = implode( 'x', $dimensions );
 
 		}
 
 		# Convert to string
-		$url = implode( '/', $url );
+		$src = implode( '/', $src );
 
 		# Add search keywords
 		if ( $this->settings->has( 'search', false ) )
-			$url .= '?' . ( ( string ) $this->settings->get( 'search' ) );
+			$src .= '?' . ( ( string ) $this->settings->get( 'search' ) );
 
-		return $url;
+		return $src;
 	}
 
 	/**

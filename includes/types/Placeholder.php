@@ -63,7 +63,12 @@ class Placeholder extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interf
 	 * @return string
 	 */
 	function generate_source() : string {
-		$url = array( static::BASE_URL );
+		static $src = null;
+
+		if ( !is_null( $src ) )
+			return $src;
+
+		$src = array( static::BASE_URL );
 
 		$dimensions = array();
 
@@ -78,24 +83,24 @@ class Placeholder extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interf
 		if ( 1 === count( $dimensions ) )
 			$dimensions[] = $dimensions[0];
 
-		$url[] = implode( 'x', $dimensions );
+		$src[] = implode( 'x', $dimensions );
 
 		# Colors
 		if ( $this->settings->has( 'bg_color' ) ) {
-			$url[] = $this->settings->get( 'bg_color' );
+			$src[] = $this->settings->get( 'bg_color' );
 
 			if ( $this->settings->has( 'text_color' ) )
-				$url[] = $this->settings->get( 'text_color' );
+				$src[] = $this->settings->get( 'text_color' );
 		}
 
 		# Convert to string
-		$url = implode( '/', $url );
+		$src = implode( '/', $src );
 
 		# Custom text
 		if ( $this->settings->has( 'text' ) )
-			$url = add_query_arg( 'text', $this->settings->get( 'text' ), $url );
+			$src = add_query_arg( 'text', $this->settings->get( 'text' ), $src );
 
-		return $url;
+		return $src;
 	}
 
 	/**

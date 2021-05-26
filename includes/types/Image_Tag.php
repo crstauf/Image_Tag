@@ -29,6 +29,11 @@ class Image_Tag extends Base {
 	 * @return Image_Tag
 	 */
 	static function create( $source, $attributes = null, $settings = null ) : Base {
+		if ( is_int( $source ) ) {
+			require_once Plugin::inc() . 'types/WP_Attachment.php';
+			return new Image_Tag\Types\WP_Attachment( $source, $attributes, $settings );
+		}
+
 		$source = strtolower( $source );
 
 		if ( 'joeschmoe' === $source ) {
@@ -75,9 +80,9 @@ class Image_Tag extends Base {
 	 * Perform validation checks.
 	 *
 	 * @uses Attributes::has()
-	 * @return WP_Error
+	 * @return \WP_Error
 	 */
-	protected function perform_validation_checks() : WP_Error {
+	protected function perform_validation_checks() : \WP_Error {
 		$errors = new \WP_Error;
 
 		if ( !$this->attributes->has( 'src' ) )

@@ -65,7 +65,10 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 	 * @return string
 	 */
 	 function generate_source() : string {
-		static $random = 1;
+		static $random = 1, $url = null;
+
+		if ( !is_null( $url ) )
+			return $url;
 
 		$src = array( static::BASE_URL );
 
@@ -99,7 +102,7 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 		if ( $this->settings->has( 'random', false ) )
 			$src = add_query_arg( 'random', $random++, $src );
 
-		return $url;
+		return $src;
 	}
 
 	/**
