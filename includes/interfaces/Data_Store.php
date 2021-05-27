@@ -15,5 +15,6 @@ interface Data_Store {
 	function update( $update, $value = null ) : self;
 	function has( $has );
 	function get( $get );
+	function append( string $key, string $value, string $glue = ' ' ) : self;
 
 }

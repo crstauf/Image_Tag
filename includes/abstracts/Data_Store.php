@@ -181,4 +181,31 @@ class Data_Store implements \Image_Tag\Interfaces\Data_Store {
 		return $output;
 	}
 
+	/**
+	 * Append value onto key.
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 * @param string $glue
+	 * @uses $this->has()
+	 * @uses $this->set()
+	 * @uses $this->get()
+	 * @uses $this->update()
+	 * @return self
+	 */
+	function append( string $key, $value, string $glue = ' ' ) : self {
+		if ( !$this->has( $key ) ) {
+			$this->set( $key, $value );
+			return $this;
+		}
+
+		$update_value_with  = $this->get( $key );
+		$update_value_with .= $glue;
+		$update_value_with .= $value;
+
+		$this->update( $key, $update_value_with );
+
+		return $this;
+	}
+
 }

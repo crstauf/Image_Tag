@@ -21,7 +21,12 @@ class Attributes extends Data_Store {
 		foreach ( $this->get() as $key => $value )
 			$output[] = sprintf( '%s="%s"', $key, $value );
 
-		return implode( ' ', $output );
+		$glue = ' ';
+
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG )
+			$glue .= PHP_EOL;
+
+		return implode( $glue, $output );
 	}
 
 }

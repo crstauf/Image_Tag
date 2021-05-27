@@ -117,9 +117,17 @@ abstract class Base implements Validation, Conversion {
 		if ( !$this->is_valid() )
 			return '';
 
-		$output  = '<img ';
+		$output = '';
+
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG )
+			$output .= PHP_EOL;
+
+		$output .= '<img ';
 		$output .= $this->output_attributes()->output();
 		$output .= ' />';
+
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG )
+			$output .= PHP_EOL;
 
 		return $output;
 	}

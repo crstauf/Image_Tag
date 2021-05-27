@@ -20,15 +20,19 @@ abstract class WordPress extends Base {
 	 * @param int $count
 	 * @return array
 	 */
-	protected static function identify_colors( string $path, int $count = 5 ) : array {
+	protected static function identify_colors( string $path, int $count = 3 ) : array {
 		require_once \Image_Tag\Plugin::inc() . 'class-get-image-most-common-colors.php';
 
-		$util = new GetImageMostCommonColors;
+		$util = new \GetImageMostCommonColors;
 		$_colors = $util->Get_Colors( $path, $count );
+
+		if ( empty( $_colors ) )
+			return array();
+
 		$colors = array();
 
 		foreach ( $_colors as $color => $percentage )
-			$colors['#' . $color] = $percentage;
+			$colors[] = '#' . $color;
 
 		return $colors;
 	}
@@ -36,11 +40,11 @@ abstract class WordPress extends Base {
 	/**
 	 * Set image orientation.
 	 *
-	 * @uses $this->get_ratio()
+	 * @uses $this->ratio()
 	 * @return void
 	 */
 	protected function set_orientation() : void {
-		$ratio = $this->get_ratio();
+		$ratio = $this->ratio();
 
 		if ( $ratio > 1 )
 			$this->orientation = 'portrait';
@@ -60,7 +64,7 @@ abstract class WordPress extends Base {
 	 *
 	 * @return float
 	 */
-	abstract function get_ratio() : float;
+	abstract function ratio() : float;
 
 	/**
 	 * Get most common colors.
@@ -69,7 +73,7 @@ abstract class WordPress extends Base {
 	 * @uses static::identify_colors()
 	 * @return array
 	 */
-	abstract function get_colors( int $count = 5 ) : array;
+	abstract function colors( int $count = 5 ) : array;
 
 	/**
 	 * Get most common color.
@@ -77,8 +81,8 @@ abstract class WordPress extends Base {
 	 * @uses $this->get_colors()
 	 * @return string
 	 */
-	function get_mode_color() : string {
-		return array_keys( $this->get_colors() )[0];
+	function mode_color() : string {
+		return array_keys( $this->colors() )[0];
 	}
 
 }
