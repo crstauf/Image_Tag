@@ -11,6 +11,7 @@ use Image_Tag\Data_Stores\Attributes;
 use Image_Tag\Data_Stores\Settings;
 use Image_Tag\Data_Stores\Sources;
 use Image_Tag\Interfaces\Conversion;
+use Image_Tag\Interfaces\Output;
 use Image_Tag\Interfaces\Validation;
 
 defined( 'WPINC' ) || die();
@@ -18,7 +19,7 @@ defined( 'WPINC' ) || die();
 /**
  * Abstract class: Image_Tag\Abstracts\Base
  */
-abstract class Base implements Validation, Conversion {
+abstract class Base implements Conversion, Output, Validation {
 
 	/**
 	 * Smallest transparent data URI image.
@@ -109,13 +110,21 @@ abstract class Base implements Validation, Conversion {
 	/**
 	 * Tag output.
 	 *
+	 * @uses $this->is_valid()
+	 * @uses $this->fallback()
 	 * @uses $this->output_attributes()
 	 * @uses Attributes::output()
 	 * @return string
 	 */
-	function output() : string {
-		if ( !$this->is_valid() )
-			return '';
+	function output( array $fallbacks = array() ) : string {
+		if ( !$this->is_valid() ) {
+			$fallback = $this->fallback( $fallbacks );
+
+			if ( !$fallback->is_valid() )
+				return '';
+
+			return $fallback->output();
+		}
 
 		$output = '';
 
@@ -130,6 +139,46 @@ abstract class Base implements Validation, Conversion {
 			$output .= PHP_EOL;
 
 		return $output;
+	}
+
+	/**
+	 * Get fallback image.
+	 *
+	 * @param string[] $fallbacks
+	 * @uses Image_Tag::create()
+	 * @uses $this->is_valid()
+	 * @return \Image_Tag\Abstract\Base
+	 */
+	protected function fallback( array $fallbacks = array() ) : Base {
+		if ( empty( $fallbacks ) )
+			return new Image_Tag;
+
+		# Handle non-associative array of fallbacks.
+		$has_string_keys = ( 0 < count( array_filter( array_keys( $fallbacks ), 'is_string' ) ) );
+		if ( !$has_string_keys ) {
+
+			# Change image type names to array's keys.
+			$fallbacks = array_flip( $fallbacks );
+
+			# Set each array item to true.
+			array_walk( $fallbacks, function( &$item ) {
+				$item = true;
+			} );
+		}
+
+		foreach ( $fallbacks as $fallback => $conditional ) {
+			if ( !$conditional )
+				continue;
+
+			$img = Image_Tag::create( $fallback, $this->attributes, $this->settings );
+
+			if ( !$img->is_valid() )
+				continue;
+
+			return $img;
+		}
+
+		return new Image_Tag;
 	}
 
 	/**
@@ -161,6 +210,8 @@ abstract class Base implements Validation, Conversion {
 	/**
 	 * Output lazyloaded image.
 	 *
+	 * @uses $this->is_valid()
+	 * @uses $this->fallback()
 	 * @uses $this->output_attributes()
 	 * @uses Attributes::append()
 	 * @uses Attributes::has()
@@ -169,9 +220,18 @@ abstract class Base implements Validation, Conversion {
 	 * @uses $this->noscript()
 	 * @return string
 	 */
-	function lazyload() : string {
+	function lazyload( array $fallbacks = array() ) : string {
+		if ( !$this->is_valid() ) {
+			$fallback = $this->fallback( $fallbacks );
+
+			if ( !$fallback->is_valid() )
+				return '';
+
+			return $fallback->lazyload();
+		}
+
 		$no_js = $this->output_attributes();
-		$js = clone $no_js;
+		   $js = clone $no_js;
 
 		$js->append( 'class', 'lazyload hide-if-no-js' );
 
@@ -199,7 +259,7 @@ abstract class Base implements Validation, Conversion {
 		$output = $js;
 
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG )
-			$output .= PHP_EOL . PHP_EOL;
+			$output .= PHP_EOL;
 
 		$output .= $no_js->noscript();
 
@@ -209,10 +269,22 @@ abstract class Base implements Validation, Conversion {
 	/**
 	 * Output of noscript image.
 	 *
+	 * @param array $fallbacks
+	 * @uses $this->is_valid()
+	 * @uses $this->fallback()
 	 * @uses $this->output()
 	 * @return string
 	 */
-	function noscript() : string {
+	function noscript( array $fallbacks = array() ) : string {
+		if ( !$this->is_valid() ) {
+			$fallback = $this->fallback( $fallbacks );
+
+			if ( !$fallback->is_valid() )
+				return '';
+
+			return $fallback->noscript();
+		}
+
 		return '<noscript>' . $this->output() . '</noscript>';
 	}
 

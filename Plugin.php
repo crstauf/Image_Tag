@@ -94,6 +94,7 @@ final class Plugin {
 		require_once $dir . 'interfaces/Conversion.php';
 		require_once $dir . 'interfaces/Data_Store.php';
 		require_once $dir . 'interfaces/Dynamic_Source.php';
+		require_once $dir . 'interfaces/Output.php';
 		require_once $dir . 'interfaces/Validation.php';
 
 		# Abstracts.

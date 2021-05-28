@@ -7,7 +7,7 @@ namespace Image_Tag\Interfaces;
 defined( 'WPINC' ) || die();
 
 /**
- * Interface: Image_Tag\Validation
+ * Interface: Image_Tag\Interfaces\Validation
  */
 interface Validation {
 
