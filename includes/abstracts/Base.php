@@ -158,6 +158,64 @@ abstract class Base implements Validation, Conversion {
 		return $attributes;
 	}
 
+	/**
+	 * Output lazyloaded image.
+	 *
+	 * @uses $this->output_attributes()
+	 * @uses Attributes::append()
+	 * @uses Attributes::has()
+	 * @uses Attributes::update()
+	 * @uses Attributes::remove()
+	 * @uses $this->noscript()
+	 * @return string
+	 */
+	function lazyload() : string {
+		$no_js = $this->output_attributes();
+		$js = clone $no_js;
+
+		$js->append( 'class', 'lazyload hide-if-no-js' );
+
+		if ( $js->has( 'src' ) ) {
+			$js->update( 'data-src', $js->get( 'src' ) );
+			$js->update( 'src', static::BLANK );
+		}
+
+		if ( $js->has( 'srcset' ) ) {
+			$js->update( 'data-srcset', $js->get( 'srcset' ) );
+			$js->remove( 'srcset' );
+		}
+
+		if ( $js->has( 'sizes' ) ) {
+			$js->update( 'data-sizes', 'auto' );
+			$js->remove( 'sizes' );
+		}
+
+		$no_js->append( 'class', 'no-js' );
+		$no_js->update( 'loading', 'lazy' );
+
+		$no_js = new Image_Tag( $no_js, $this->settings );
+		   $js = new Image_Tag(    $js, $this->settings );
+
+		$output = $js;
+
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG )
+			$output .= PHP_EOL . PHP_EOL;
+
+		$output .= $no_js->noscript();
+
+		return $output;
+	}
+
+	/**
+	 * Output of noscript image.
+	 *
+	 * @uses $this->output()
+	 * @return string
+	 */
+	function noscript() : string {
+		return '<noscript>' . $this->output() . '</noscript>';
+	}
+
 
 	/*
 	##     ##    ###    ##       #### ########     ###    ######## ####  #######  ##    ##

@@ -16,5 +16,6 @@ interface Data_Store {
 	function has( $has );
 	function get( $get );
 	function append( string $key, string $value, string $glue = ' ' ) : self;
+	function remove( string $key ) : self;
 
 }

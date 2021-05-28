@@ -115,7 +115,7 @@ class Data_Store implements \Image_Tag\Interfaces\Data_Store {
 		}
 
 		if ( is_null( $value ) ) {
-			trigger_error( sprintf( 'Cannot set value of <code>null</code> for key <code>%s</code>.', $set ), E_USER_NOTICE );
+			trigger_error( sprintf( 'Cannot update value to <code>null</code> for key <code>%s</code>.', $update ), E_USER_NOTICE );
 			return $this;
 		}
 
@@ -205,6 +205,11 @@ class Data_Store implements \Image_Tag\Interfaces\Data_Store {
 
 		$this->update( $key, $update_value_with );
 
+		return $this;
+	}
+
+	function remove( string $key ) : self {
+		unset( $this->store[ $key ] );
 		return $this;
 	}
 

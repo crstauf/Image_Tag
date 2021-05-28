@@ -56,8 +56,11 @@ class Image_Tag extends Base {
 			return new Image_Tag\Types\Unsplash( $attributes, $settings );
 		}
 
-		if ( ( bool ) wp_http_validate_url( $source ) )
-			return new Image_Tag( $source, $attributes, $settings );
+		if ( ( bool ) wp_http_validate_url( $source ) ) {
+			$attributes = new Attributes( $attributes );
+			$attributes->set( 'src', $source );
+			return new Image_Tag( $attributes, $settings );
+		}
 
 		return new Image_Tag( '', $attributes, $settings );
 	}
@@ -65,15 +68,13 @@ class Image_Tag extends Base {
 	/**
 	 * Construct.
 	 *
-	 * @param string $source
 	 * @param null|array|Attributes $attributes
 	 * @param null|array|Settings $settings
 	 * @uses $this->construct()
 	 * @uses Attributes->set()
 	 */
-	function __construct( string $source, $attributes = null, $settings = null ) {
+	function __construct( $attributes = null, $settings = null ) {
 		$this->construct( $attributes, $settings );
-		$this->attributes->set( 'src', $source );
 	}
 
 	/**
