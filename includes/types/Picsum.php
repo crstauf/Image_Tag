@@ -30,6 +30,59 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 	);
 
 	/**
+	 * Get list of available images from Picsum API.
+	 *
+	 * @link https://picsum.photos/#list-images Documentation
+	 * @param int $page
+	 * @return array
+	 */
+	static function list( int $page = 1 ) : array {
+		$url = add_query_arg( array(
+			'page' => $page,
+			'limit' => 50,
+		), static::BASE_URL . '/v2/list' );
+
+		$response = wp_remote_get( $url );
+
+		if ( 200 !== wp_remote_retrieve_response_code( $response ) )
+			return array();
+
+		$body = wp_remote_retrieve_body( $response );
+		return json_decode( $body );
+	}
+
+	/**
+	 * Get image details from Picsum API.
+	 *
+	 * @link https://picsum.photos/#image-details Documentation.
+	 * @param int $image_id
+	 * @return object
+	 */
+	static function details( int $image_id ) : object {
+		$default = ( object ) array(
+			'id' => '',
+			'author' => '',
+			'width' => 0,
+			'height' => 0,
+			'url' => '',
+			'download_url' => '',
+		);
+
+		if ( empty( $image_id ) )
+			return $default;
+
+		$url = sprintf( '%s/id/%d/info', static::BASE_URL, $image_id );
+
+		$response = wp_remote_get( $url );
+
+		if ( 200 !== wp_remote_retrieve_response_code( $response ) )
+			return $default;
+
+		$body = wp_remote_retrieve_body( $response );
+		return json_decode( $body );
+	}
+
+	/**
 	 * Construct.
 	 *
 	 * @param null|array|Attributes $attributes
@@ -73,8 +126,8 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 		$src = array( static::BASE_URL );
 
 		# Image ID
-		if ( $this->settings->has( 'image_id', false ) )
-			$src[] = sprintf( 'id/%d', absint( $this->settings->get( 'image_id' ) ) );
+		if ( $this->settings->has( 'image-id', false ) )
+			$src[] = sprintf( 'id/%d', absint( $this->settings->get( 'image-id' ) ) );
 
 		# Seed
 		if ( $this->settings->has( 'seed', false ) )
@@ -152,6 +205,42 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 	function picsum( $attributes = null, $settings = null ) : self {
 		trigger_error( sprintf( 'Image is already type <code>%s</code>', $this->get_type() ) );
 		return $this;
+	}
+
+	/**
+	 * Get image info from Picsum API.
+	 *
+	 * @uses Settings::has()
+	 * @uses Settings::get()
+	 * @uses static::details()
+	 * @return object
+	 */
+	function info() : object {
+		static $details = null;
+
+		if ( !is_null( $details ) )
+			return $details;
+
+		$defaults = ( object ) array(
+			'id' => '',
+			'author' => '',
+			'width' => 0,
+			'height' => 0,
+			'url' => '',
+			'download_url' => '',
+		);
+
+		if ( !$this->settings->has( 'image-id' ) )
+			return $defaults;
+
+		$id = absint( $this->settings->get( 'image-id' ) );
+
+		if ( empty( $id ) )
+			return $defaults;
+
+		$details = static::details( $id );
+
+		return $details;
 	}
 
 }

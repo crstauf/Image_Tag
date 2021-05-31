@@ -34,24 +34,24 @@ class Image_Tag extends Base {
 			return new Image_Tag\Types\WP_Attachment( $source, $attributes, $settings );
 		}
 
-		$source = strtolower( $source );
+		$_source = strtolower( $source );
 
-		if ( 'joeschmoe' === $source ) {
+		if ( 'joeschmoe' === $_source ) {
 			require_once Plugin::inc() . 'types/JoeSchmoe.php';
 			return new Image_Tag\Types\JoeSchmoe( $attributes, $settings );
 		}
 
-		if ( 'picsum' === $source ) {
+		if ( 'picsum' === $_source ) {
 			require_once Plugin::inc() . 'types/Picsum.php';
 			return new Image_Tag\Types\Picsum( $attributes, $settings );
 		}
 
-		if ( 'placeholder' === $source ) {
+		if ( 'placeholder' === $_source ) {
 			require_once Plugin::inc() . 'types/Placeholder.php';
 			return new Image_Tag\Types\Placeholder( $attributes, $settings );
 		}
 
-		if ( 'unsplash' === $source ) {
+		if ( 'unsplash' === $_source ) {
 			require_once Plugin::inc() . 'types/Unsplash.php';
 			return new Image_Tag\Types\Unsplash( $attributes, $settings );
 		}
@@ -60,6 +60,11 @@ class Image_Tag extends Base {
 			$attributes = new Attributes( $attributes );
 			$attributes->set( 'src', $source );
 			return new Image_Tag( $attributes, $settings );
+		}
+
+		if ( is_string( $source ) ) {
+			require_once Plugin::inc() . 'types/WP_Theme.php';
+			return new Image_Tag\Types\WP_Theme( $source, $attributes, $settings );
 		}
 
 		return new Image_Tag( '', $attributes, $settings );
