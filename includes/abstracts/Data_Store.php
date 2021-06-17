@@ -143,7 +143,7 @@ class Data_Store implements \Image_Tag\Interfaces\Data_Store {
 				array_key_exists( $has, $this->store )
 				|| (
 					$check_value
-					&& in_array( $has, $this->store )
+					&& in_array( $has, $this->store, true )
 				)
 			);
 
@@ -154,7 +154,7 @@ class Data_Store implements \Image_Tag\Interfaces\Data_Store {
 				array_key_exists( $key, $this->store )
 				|| (
 					$check_value
-					&& in_array( $key, $this->store )
+					&& in_array( $key, $this->store, true )
 				)
 			);
 
