@@ -246,11 +246,12 @@ abstract class Base implements Conversion, Output, Validation {
 
 		if ( $js->has( 'srcset' ) ) {
 			$js->update( 'data-srcset', $js->get( 'srcset' ) );
+			$js->update( 'data-sizes', 'auto' );
 			$js->remove( 'srcset' );
 		}
 
 		if ( $js->has( 'sizes' ) ) {
-			$js->update( 'data-sizes', 'auto' );
+			$js->update( 'data-sizes', $js->get( 'sizes' ) );
 			$js->remove( 'sizes' );
 		}
 
