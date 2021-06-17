@@ -129,6 +129,17 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 			return;
 		}
 
+		/**
+		 * Images that are smaller than 'thumbnail'
+		 * will not have sizes, so set to 'full'.
+		 */
+		if ( empty( $meta['sizes'] ) ) {
+			$this->wp_smallest_size = 'full';
+			$this->wp_largest_size  = 'full';
+
+			return;
+		}
+
 		$all_sizes = $meta['sizes'];
 		$all_sizes['full'] = array(
 			'file'   => basename( $meta['file'] ),
