@@ -73,12 +73,12 @@ class Placeholder extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interf
 		$dimensions = array();
 
 		# Width
-		     if ( $this->settings->has(   'width', false ) ) $dimensions[] = $this->settings->get(   'width' );
-		else if ( $this->attributes->has( 'width', false ) ) $dimensions[] = $this->attributes->get( 'width' );
+		     if ( $this->settings->has(   'width' ) ) $dimensions[] = $this->settings->get(   'width' );
+		else if ( $this->attributes->has( 'width' ) ) $dimensions[] = $this->attributes->get( 'width' );
 
 		# Height
-		     if ( $this->settings->has(   'height', false ) ) $dimensions[] = $this->settings->get(   'height' );
-		else if ( $this->attributes->has( 'height', false ) ) $dimensions[] = $this->attributes->get( 'height' );
+		     if ( $this->settings->has(   'height' ) ) $dimensions[] = $this->settings->get(   'height' );
+		else if ( $this->attributes->has( 'height' ) ) $dimensions[] = $this->attributes->get( 'height' );
 
 		if ( 1 === count( $dimensions ) )
 			$dimensions[] = $dimensions[0];
