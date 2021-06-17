@@ -233,7 +233,11 @@ abstract class Base implements Conversion, Output, Validation {
 		$no_js = $this->output_attributes();
 		   $js = clone $no_js;
 
-		$js->append( 'class', 'lazyload hide-if-no-js' );
+		$lazyload_class = 'lazyload';
+		if ( $this->settings->has( 'lazyload-class' ) )
+			$lazyload_class = $this->settings->get( 'lazyload-class' );
+
+		$js->append( 'class', $lazyload_class . ' hide-if-no-js' );
 
 		if ( $js->has( 'src' ) ) {
 			$js->update( 'data-src', $js->get( 'src' ) );
