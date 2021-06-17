@@ -292,6 +292,12 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 			$value = $src[0] . ' ' . $src[1] . 'w';
 			$attributes->append( 'srcset', $value, $glue );
 		}
+
+		if (
+			    $attributes->has( 'srcset' )
+			&& !$attributes->has( 'sizes' )
+		)
+			$attributes->set( 'sizes', '100vw' );
 	}
 
 }
