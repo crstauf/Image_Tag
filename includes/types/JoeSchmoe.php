@@ -62,10 +62,8 @@ class JoeSchmoe extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfac
 	 * @return string
 	 */
 	function generate_source() : string {
-		static $src = null;
-
-		if ( !is_null( $src ) )
-			return $src;
+		if ( array_key_exists( __FUNCTION__, $this->cache ) )
+			return $this->cache[ __FUNCTION__ ];
 
 		$src = array( static::BASE_URL );
 
@@ -81,6 +79,8 @@ class JoeSchmoe extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfac
 
 		# Convert to string
 		$src = implode( '/', $src );
+
+		$this->cache[ __FUNCTION__ ] = $src;
 
 		return $src;
 	}

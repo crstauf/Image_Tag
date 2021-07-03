@@ -63,10 +63,8 @@ class Placeholder extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interf
 	 * @return string
 	 */
 	function generate_source() : string {
-		static $src = null;
-
-		if ( !is_null( $src ) )
-			return $src;
+		if ( array_key_exists( __FUNCTION__, $this->cache ) )
+			return $this->cache[ __FUNCTION__ ];
 
 		$src = array( static::BASE_URL );
 
@@ -99,6 +97,8 @@ class Placeholder extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interf
 		# Custom text
 		if ( $this->settings->has( 'text' ) )
 			$src = add_query_arg( 'text', $this->settings->get( 'text' ), $src );
+
+		$this->cache[ __FUNCTION__ ] = $src;
 
 		return $src;
 	}

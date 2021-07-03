@@ -30,9 +30,11 @@ abstract class Base implements Conversion, Output, Validation {
 	/**
 	 * @var null|Attributes $attributes
 	 * @var null|Settings $settings
+	 * @var array $cache
 	 */
 	protected $attributes = null;
 	protected $settings   = null;
+	protected $cache      = array();
 
 	/**
 	 * Getter.
@@ -116,9 +118,12 @@ abstract class Base implements Conversion, Output, Validation {
 	 * @uses Attributes::output()
 	 * @return string
 	 */
-	function output( array $fallbacks = array() ) : string {
+	function output() : string {
 		if ( !$this->is_valid() ) {
-			$fallback = $this->fallback( $fallbacks );
+			if ( !$this->settings->has( 'fallback' ) )
+				return '';
+
+			$fallback = $this->fallback();
 
 			if ( !$fallback->is_valid() )
 				return '';
@@ -144,14 +149,20 @@ abstract class Base implements Conversion, Output, Validation {
 	/**
 	 * Get fallback image.
 	 *
-	 * @param string[] $fallbacks
 	 * @uses Image_Tag::create()
 	 * @uses $this->is_valid()
-	 * @return \Image_Tag\Abstract\Base
+	 * @return \Image_Tag\Abstracts\Base
 	 */
-	protected function fallback( array $fallbacks = array() ) : Base {
+	protected function fallback() : Base {
+		if ( !$this->settings->has( 'fallback' ) )
+			return new Image_Tag;
+
+		$fallbacks = $this->settings->get( 'fallback' );
+
 		if ( empty( $fallbacks ) )
 			return new Image_Tag;
+
+		$fallbacks = ( array ) $fallbacks;
 
 		# Handle non-associative array of fallbacks.
 		$has_string_keys = ( 0 < count( array_filter( array_keys( $fallbacks ), 'is_string' ) ) );
@@ -220,9 +231,9 @@ abstract class Base implements Conversion, Output, Validation {
 	 * @uses $this->noscript()
 	 * @return string
 	 */
-	function lazyload( array $fallbacks = array() ) : string {
+	function lazyload() : string {
 		if ( !$this->is_valid() ) {
-			$fallback = $this->fallback( $fallbacks );
+			$fallback = $this->fallback();
 
 			if ( !$fallback->is_valid() )
 				return '';
@@ -274,15 +285,14 @@ abstract class Base implements Conversion, Output, Validation {
 	/**
 	 * Output of noscript image.
 	 *
-	 * @param array $fallbacks
 	 * @uses $this->is_valid()
 	 * @uses $this->fallback()
 	 * @uses $this->output()
 	 * @return string
 	 */
-	function noscript( array $fallbacks = array() ) : string {
+	function noscript() : string {
 		if ( !$this->is_valid() ) {
-			$fallback = $this->fallback( $fallbacks );
+			$fallback = $this->fallback();
 
 			if ( !$fallback->is_valid() )
 				return '';
@@ -333,8 +343,8 @@ abstract class Base implements Conversion, Output, Validation {
 	 */
 	function is_valid( $test_types = null ) : bool {
 		if (
-			!is_null( $test_types )
-			&& $this->is_type( $test_types )
+			   !is_null( $test_types )
+			&& !$this->is_type( $test_types )
 		)
 			return false;
 
@@ -347,7 +357,7 @@ abstract class Base implements Conversion, Output, Validation {
 	 * @uses $this->perform_validation_checks()
 	 * @return \WP_Error|true
 	 */
-	private function check_valid() {
+	protected function check_valid() {
 		$errors = $this->perform_validation_checks();
 
 		if ( $errors->has_errors() )

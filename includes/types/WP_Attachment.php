@@ -52,6 +52,7 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 	 * @uses $this->identify_sizes();
 	 */
 	function __construct( int $attachment_id, $attributes = null, $settings = null ) {
+		$attachment_id = ( int ) apply_filters( 'image_tag/wp_attachment/attachment_id', $attachment_id, $attributes, $settings );
 		$this->attachment_id = $attachment_id;
 
 		$this->construct( $attributes, $settings );
@@ -198,7 +199,7 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 		)
 			return array_slice( $meta, 0, $count );
 
-		$path = $this->path( 'thumbnail' );
+		$path   = $this->path( 'thumbnail' );
 		$colors = static::identify_colors( $path, $count );
 
 		if ( empty( $colors ) )
@@ -298,6 +299,29 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 			&& !$attributes->has( 'sizes' )
 		)
 			$attributes->set( 'sizes', '100vw' );
+	}
+
+	/**
+	 * Get or generate low-quality image placeholder (LQIP).
+	 *
+	 * Gets LQIP from meta data, or generates and stores LQIP to
+	 * attachment meta data.
+	 *
+	 * @uses \Image_Tag\Abstracts\WordPress::generate_lqip()
+	 * @uses $this->path()
+	 * @return string
+	 */
+	function lqip() : string {
+		$meta = get_post_meta( $this->attachment_id, '_lqip', true );
+
+		if ( !empty( $meta ) )
+			return $meta;
+
+		$lqip = static::generate_lqip( $this->path( 'medium' ) );
+
+		add_post_meta( $this->attachment_id, '_lqip', $lqip, true );
+
+		return $lqip;
 	}
 
 }

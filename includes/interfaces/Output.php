@@ -12,7 +12,7 @@ defined( 'WPINC' ) || die();
 interface Output {
 
 	function output() : string;
-	function lazyload( array $fallbacks = array() ) : string;
-	function noscript( array $fallbacks = array() ) : string;
+	function lazyload() : string;
+	function noscript() : string;
 
 }

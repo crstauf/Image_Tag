@@ -63,10 +63,10 @@ class Unsplash extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interface
 	 * @return string
 	 */
 	function generate_source() : string {
-		static $src = null;
+		static $random = 0;
 
-		if ( !is_null( $src ) )
-			return $src;
+		if ( array_key_exists( __FUNCTION__, $this->cache ) )
+			return $this->cache[ __FUNCTION__ ];
 
 		$src = array( static::BASE_URL );
 
@@ -102,11 +102,15 @@ class Unsplash extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interface
 			$src[] = $this->settings->get( 'photo_id' );
 
 		# Random
-		if ( $this->settings->has( 'random', false ) )
+		$random_arg = '';
+		if ( $this->settings->has( 'random', false ) ) {
+			$random_arg = '?random=' . ++$random;
+
 			$src = array(
 				static::BASE_URL,
 				'random',
 			);
+		}
 
 		# Dimensions
 		if (
@@ -132,8 +136,16 @@ class Unsplash extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interface
 		$src = implode( '/', $src );
 
 		# Add search keywords
-		if ( $this->settings->has( 'search', false ) )
+		if ( $this->settings->has( 'search', false ) ) {
 			$src .= '?' . ( ( string ) $this->settings->get( 'search' ) );
+
+			if ( !empty( $random ) )
+				$random_arg = '&random=' . $random;
+		}
+
+		$src .= $random_arg;
+
+		$this->cache[ __FUNCTION__ ] = $src;
 
 		return $src;
 	}

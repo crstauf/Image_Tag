@@ -118,10 +118,10 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 	 * @return string
 	 */
 	 function generate_source() : string {
-		static $random = 1, $url = null;
+		static $random = 1;
 
-		if ( !is_null( $url ) )
-			return $url;
+		if ( array_key_exists( __FUNCTION__, $this->cache ) )
+			return $this->cache[ __FUNCTION__ ];
 
 		$src = array( static::BASE_URL );
 
@@ -154,6 +154,8 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 
 		if ( $this->settings->has( 'random', false ) )
 			$src = add_query_arg( 'random', $random++, $src );
+
+		$this->cache[ __FUNCTION__ ] = $src;
 
 		return $src;
 	}
@@ -216,10 +218,8 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 	 * @return object
 	 */
 	function info() : object {
-		static $details = null;
-
-		if ( !is_null( $details ) )
-			return $details;
+		if ( array_key_exists( __FUNCTION__, $this->cache ) )
+			return $this->cache[ __FUNCTION__ ];
 
 		$defaults = ( object ) array(
 			'id' => '',
@@ -239,6 +239,7 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 			return $defaults;
 
 		$details = static::details( $id );
+		$this->cache[ __FUNCTION__ ] = $details;
 
 		return $details;
 	}

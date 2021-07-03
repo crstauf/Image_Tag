@@ -10,6 +10,9 @@
  * Version: 2.0
  * Requires at least: 5.1
  * Requires PHP: 7.1
+ *
+ * @todo add CLI command: clear common colors from attachment meta data
+ * @todo add CLI command: clear LQIPs from attachment meta data
  */
 
 declare( strict_types=1 );

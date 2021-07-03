@@ -38,6 +38,39 @@ abstract class WordPress extends Base {
 	}
 
 	/**
+	 * Generate LQIP and return base64 encoded string.
+	 *
+	 * @uses wp_get_image_editor()
+	 * @return string
+	 */
+	protected static function generate_lqip( string $path ) : string {
+		$editor = wp_get_image_editor( $path );
+		$size = $editor->get_size();
+		$ratio = $size['height'] / $size['width'];
+
+		$resize_width  = 20;
+		$resize_height = 20;
+
+		if ( $size['width'] > $size['height'] )
+			$resize_height = $resize_width * $ratio;
+		else if ( $size['width'] < $size['height'] )
+			$resize_width = $resize_height * $ratio;
+
+		$editor->resize( $resize_width, $resize_height );
+		$editor->set_quality( 50 );
+
+		$path = $editor->generate_filename( 'lqip', get_temp_dir() );
+		$editor->save( $path );
+
+		$mime = wp_get_image_mime( $path );
+		$plain_encoded = base64_encode( file_get_contents( $path ) );
+		$data64 = sprintf( 'data:%s;base64,%s', $mime, $plain_encoded );
+		unlink( $path );
+
+		return $data64;
+	}
+
+	/**
 	 * Set image orientation.
 	 *
 	 * @uses $this->ratio()
@@ -82,7 +115,15 @@ abstract class WordPress extends Base {
 	 * @return string
 	 */
 	function mode_color() : string {
-		return array_keys( $this->colors() )[0];
+		$colors = $this->colors();
+		return $colors[0];
 	}
+
+	/**
+	 * Get encoded LQIP.
+	 *
+	 * @return string
+	 */
+	abstract function lqip() : string;
 
 }

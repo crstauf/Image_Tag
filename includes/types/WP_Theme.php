@@ -61,19 +61,22 @@ class WP_Theme extends \Image_Tag\Abstracts\WordPress {
 	 * @param int $count
 	 * @uses static::identify_colors()
 	 * @return array
+	 *
+	 * @todo implement temporary caching
 	 */
 	function colors( int $count = 3 ) : array {
-		static $colors = null;
+		$cache_key = sprintf( '%s-%d', __FUNCTION__, $count );
 
-		if ( !is_null( $colors ) )
-			return $colors;
+		if ( array_key_exists( $cache_key, $this->cache ) )
+			return $this->cache[ $cache_key ];
 
-		$_colors = static::identify_colors( $this->path, $count );
+		$colors = static::identify_colors( $this->path, $count );
 
-		if ( empty( $_colors ) )
+		if ( empty( $colors ) )
 			return array();
 
-		$colors = $_colors;
+		$this->cache[ $cache_key ] = $colors;
+
 		return $colors;
 	}
 
@@ -91,6 +94,13 @@ class WP_Theme extends \Image_Tag\Abstracts\WordPress {
 		return $errors;
 	}
 
+	/**
+	 * Get image ratio.
+	 *
+	 * @uses $this->is_valid()
+	 * @uses getimagesize()
+	 * @return float
+	 */
 	function ratio() : float {
 		if ( !$this->is_valid() )
 			return 0;
@@ -98,6 +108,15 @@ class WP_Theme extends \Image_Tag\Abstracts\WordPress {
 		$dimensions = getimagesize( $this->path );
 
 		return absint( $dimensions[0] ) / absint( $dimensions[1] );
+	}
+
+	/**
+	 * No LQIP support for theme images.
+	 *
+	 * @return string
+	 */
+	function lqip() : string {
+		return '';
 	}
 
 }
