@@ -40,13 +40,15 @@ final class Plugin {
 		static $instance = null;
 
 		if ( is_null( $instance ) )
-			$instance = new self;
+			$instance = new self; // @codeCoverageIgnore
 
 		return $instance;
 	}
 
 	/**
 	 * Construct.
+	 *
+	 * @codeCoverageIgnore
 	 */
 	protected function __construct() {
 
@@ -60,6 +62,8 @@ final class Plugin {
 	 * - include files, hopefully after any processing and redirection
 	 *
 	 * @uses static::includes()
+	 *
+	 * @codeCoverageIgnore
 	 */
 	function action__template_redirect() : void {
 		static::include_files();
@@ -89,6 +93,8 @@ final class Plugin {
 	 *
 	 * @see Image_Tag::create() for loading of image tag types.
 	 * @uses static::inc()
+	 *
+	 * @codeCoverageIgnore
 	 */
 	static function include_files() : void {
 		$dir = static::inc();

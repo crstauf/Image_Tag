@@ -17,11 +17,6 @@
 	<testsuites>
 		<testsuite name="all">
 			<file>./tests/plugin.php</file>
-			<file>./tests/helpers-attributes.php</file>
-			<file>./tests/helpers-settings.php</file>
-			<file>./tests/helpers-sources.php</file>
-			<file>./tests/helpers-validation.php</file>
-			<file>./tests/image_tag.php</file>
 		</testsuite>
 	</testsuites>
 
@@ -33,9 +28,7 @@
 
 	<filter>
 		<whitelist processUncoveredFilesFromWhitelist="true">
-			<file>includes/abstracts/helpers.php</file>
-			<file>includes/abstracts/image_tag.php</file>
-			<file>includes/types/base.php</file>
+			<file>Plugin.php</file>
 		</whitelist>
 	</filter>
 
