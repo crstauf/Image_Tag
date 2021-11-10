@@ -161,10 +161,10 @@ class Placeholder extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interf
 	 */
 	protected function validate_dimensions() : void {
 		if (
-			   $this->settings->has(   'width' )
-			|| $this->attributes->has( 'width' )
-			|| $this->settings->has(   'height' )
-			|| $this->attributes->has( 'height' )
+			   $this->settings->has(   'width',  false )
+			|| $this->attributes->has( 'width',  false )
+			|| $this->settings->has(   'height', false )
+			|| $this->attributes->has( 'height', false )
 		)
 			return;
 
