@@ -333,29 +333,33 @@ abstract class Base implements Conversion, Output, Validation {
 	/**
 	 * Test image type.
 	 *
-	 * @param string|array $test_types
+	 * @param null|string|array $test_types
 	 * @return bool
 	 */
 	function is_type( $test_types ) : bool {
+		if ( empty( $test_types ) )
+			return true;
+
 		return !empty( array_intersect( static::TYPES, ( array ) $test_types ) );
 	}
 
 	/**
-	 * Test image is valid.
+	 * Check image is valid.
 	 *
 	 * @param null|string|array $test_types
-	 * @uses $this->is_type()
+	 * @param bool $check_fallback
 	 * @uses $this->check_valid()
+	 * @uses $this->is_type()
 	 * @return bool
 	 */
-	function is_valid( $test_types = null ) : bool {
-		if (
-			   !is_null( $test_types )
-			&& !$this->is_type( $test_types )
-		)
+	function is_valid( $test_types = null, bool $check_fallback = true ) : bool {
+		if ( true === $this->check_valid() )
+			return $this->is_type( $test_types );
+
+		if ( !$check_fallback )
 			return false;
 
-		return true === $this->check_valid();
+		return $this->fallback()->is_valid( $test_types );
 	}
 
 	/**
