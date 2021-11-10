@@ -161,6 +161,37 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 	}
 
 	/**
+	 * Get ratio of image dimensions: width divided by height.
+	 *
+	 * @return float
+	 */
+	public function ratio() : float {
+		$width  = 0;
+		$height = 0;
+
+		if ( $this->settings->has( 'width', false ) )
+			$width = $this->settings->get( 'width' );
+		else if ( $this->attributes->has( 'width', false ) )
+			$width = $this->attributes->get( 'width' );
+
+		if ( $this->settings->has( 'height', false ) )
+			$height = $this->settings->get( 'height' );
+		else if ( $this->attributes->has( 'height', false ) )
+			$height = $this->attributes->get( 'height' );
+
+		if ( empty( $height ) )
+			$height = $width;
+
+		if ( empty( $width ) )
+			$width = $height;
+
+		if ( empty( $height ) )
+			return 0;
+
+		return absint( $width ) / absint( $height );
+	}
+
+	/**
 	 * Perform validation checks.
 	 *
 	 * @uses $this->validate_dimensions()
