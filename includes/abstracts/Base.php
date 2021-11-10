@@ -352,7 +352,7 @@ abstract class Base implements Conversion, Output, Validation {
 	 * @uses $this->is_type()
 	 * @return bool
 	 */
-	function is_valid( $test_types = null, bool $check_fallback = true ) : bool {
+	function is_valid( $test_types = null, bool $check_fallback = false ) : bool {
 		if ( true === $this->check_valid() )
 			return $this->is_type( $test_types );
 
