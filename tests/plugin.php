@@ -1,5 +1,7 @@
 <?php
 
+declare( strict_types=1 );
+
 use Image_Tag\Plugin;
 
 /**
@@ -8,9 +10,18 @@ use Image_Tag\Plugin;
 class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 
 	/**
+	 * Return directory path.
+	 *
+	 * @return string
+	 */
+	static function dir() : string {
+		return trailingslashit( __DIR__ );
+	}
+
+	/**
 	 * Test plugin info.
 	 */
-	function test_info() {
+	function test_info() : void {
 		$data = get_plugin_data( dirname( __DIR__ ) . '/Plugin.php', false, false );
 
 		$this->assertEquals( 'Image Tag Generator', $data['Name'] );
@@ -32,7 +43,7 @@ class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 	 *
 	 * @link https://developer.wordpress.org/reference/functions/get_plugin_data/
 	 */
-	function test_requires_info() {
+	function test_requires_info() : void {
 		require ABSPATH . WPINC . '/version.php';
 
 		if ( version_compare( $wp_version, '5.3.0', '<=' ) )
@@ -49,14 +60,14 @@ class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 	 *
 	 * @group constant
 	 */
-	function test_constants() {
+	function test_constants() : void {
 		$this->assertSame( 2.0, Plugin::VERSION );
 	}
 
 	/**
 	 * @covers ::instance()
 	 */
-	function test_instance() {
+	function test_instance() : void {
 		$this->assertInstanceOf( Plugin::class, Plugin::instance() );
 	}
 
@@ -64,7 +75,7 @@ class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 	 * @covers ::dir()
 	 * @covers ::inc()
 	 */
-	function test_static() {
+	function test_static() : void {
 		$this->assertEquals( trailingslashit( dirname( __DIR__ ) ), Plugin::dir() );
 		$this->assertEquals( trailingslashit( dirname( __DIR__ ) ) . 'includes/', Plugin::inc() );
 	}
@@ -72,7 +83,7 @@ class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 	/**
 	 * @covers ::include_files()
 	 */
-	function test_includes() {
+	function test_includes() : void {
 		$files = array_filter( get_included_files(), function( string $path ) : bool {
 			return (
 				   0 === stripos( $path, Plugin::dir() )
@@ -97,6 +108,7 @@ class Image_Tag_Plugin_Test extends WP_UnitTestCase {
 			'includes/data_stores/Attributes.php',
 			'includes/data_stores/Settings.php',
 			'includes/types/Image_Tag.php',
+			// 'includes/types/Placeholder.php',
 		);
 
 		$this->assertSame( $expected, array_values( $files ) );

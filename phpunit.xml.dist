@@ -16,7 +16,7 @@
 
 	<testsuites>
 		<testsuite name="all">
-			<file>./tests/plugin.php</file>
+			<file>./tests/Plugin.php</file>
 		</testsuite>
 	</testsuites>
 
@@ -29,6 +29,7 @@
 	<filter>
 		<whitelist processUncoveredFilesFromWhitelist="true">
 			<file>Plugin.php</file>
+			<file>includes/abstracts/Base.php</file>
 		</whitelist>
 	</filter>
 

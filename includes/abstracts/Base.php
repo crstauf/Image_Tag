@@ -43,7 +43,8 @@ abstract class Base implements Conversion, Output, Validation {
 	 * @return mixed
 	 */
 	function __get( string $property ) {
-		return $this->$property;
+		if ( 'cache' !== $property )
+			return $this->$property;
 	}
 
 	/**
@@ -54,9 +55,11 @@ abstract class Base implements Conversion, Output, Validation {
 	 * @uses $this->create_Attributes()
 	 * @uses $this->create_Settings()
 	 * @return void
+	 *
+	 * @codeCoverageIgnore
 	 */
 	protected function construct( $attributes, $settings ) : void {
-		if ( is_a( $attributes, Image_Tag::class ) )
+		if ( is_a( $attributes, static::class ) )
 			foreach ( get_object_vars( $attributes ) as $key => $value )
 				$this->$key = $value;
 
@@ -68,6 +71,8 @@ abstract class Base implements Conversion, Output, Validation {
 	 * Create Attributes object.
 	 *
 	 * @param void
+	 *
+	 * @codeCoverageIgnore
 	 */
 	protected function create_Attributes( $attributes ) : void {
 		if ( !is_null( $this->attributes ) )
@@ -80,6 +85,8 @@ abstract class Base implements Conversion, Output, Validation {
 	 * Create Settings object.
 	 *
 	 * @return void
+	 *
+	 * @codeCoverageIgnore
 	 */
 	protected function create_Settings( $settings ) : void {
 		if ( !is_null( $this->settings ) )
