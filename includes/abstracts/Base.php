@@ -322,6 +322,24 @@ abstract class Base implements Conversion, Output, Validation {
 	*/
 
 	/**
+	 * Get valid object, either this or fallback.
+	 *
+	 * @param null|string|array $test_types
+	 * @uses $this->is_valid()
+	 * @uses $this->fallback()
+	 * @return self
+	 */
+	function get_valid( $test_types = null ) : self {
+		if ( $this->is_valid( $test_types ) )
+			return $this;
+
+		if ( $this->fallback()->is_valid( $test_types ) )
+			return $this->fallback();
+
+		return new Image_Tag;
+	}
+
+	/**
 	 * Get image type.
 	 *
 	 * @return string
