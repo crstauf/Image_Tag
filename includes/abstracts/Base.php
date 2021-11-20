@@ -159,6 +159,16 @@ abstract class Base implements Conversion, Output, Validation {
 	 * @uses Image_Tag::create()
 	 * @uses $this->is_valid()
 	 * @return \Image_Tag\Abstracts\Base
+	 *
+	 * @todo support attributes and settings in array:
+	 * array(
+	 *   'placeholder' => true,
+	 *   'joeschmoe' => array(
+	 *     'conditional' => true,
+	 *     'attributes' => array( ... ),
+	 *     'settings' => array( ... ),
+	 *   ),
+	 * )
 	 */
 	protected function fallback() : Base {
 		if ( !$this->settings->has( 'fallback' ) )
