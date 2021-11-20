@@ -187,6 +187,8 @@ class _Image_Tag extends \WP_UnitTestCase {
 		$object = new Image_Tag;
 		$this->assertFalse( $object->is_valid() );
 		$this->assertFalse( $object->is_valid( 'base' ) );
+
+		$this->_test_is_valid_fallback();
 	}
 
 	protected function _test_is_valid_fallback() : void {
@@ -202,6 +204,102 @@ class _Image_Tag extends \WP_UnitTestCase {
 
 		$this->assertFalse( $object->is_valid() );
 		$this->assertFalse( $object->is_valid( 'base' ) );
+	}
+
+	function test_joeschmoe() : void {
+		$object = Image_Tag::create( 'https://doesnotexist.com/doesnotexist.jpg', array(
+			'width' => 1600,
+			'height' => 900,
+		) );
+
+		$joeschmoe = $object->joeschmoe();
+
+		$this->assertInstanceOf( \Image_Tag\Types\JoeSchmoe::class, $joeschmoe );
+		$this->assertEquals( 1600, $joeschmoe->attributes->get( 'width' ) );
+		$this->assertEquals(  900, $joeschmoe->attributes->get( 'height' ) );
+
+		$expected = sprintf( '%s<img %swidth="%d" %sheight="%d" %ssrc="%s" %salt="%s" />%s',
+			PHP_EOL, PHP_EOL,
+			1600, PHP_EOL,
+			900, PHP_EOL,
+			'https://doesnotexist.com/doesnotexist.jpg', PHP_EOL,
+			'',
+			PHP_EOL
+		);
+
+		$this->assertNotEquals( $expected, $joeschmoe->output() );
+	}
+
+	function test_picsum() : void {
+		$object = Image_Tag::create( 'https://doesnotexist.com/doesnotexist.jpg', array(
+			'width' => 1600,
+			'height' => 900,
+		) );
+
+		$picsum = $object->picsum();
+
+		$this->assertInstanceOf( \Image_Tag\Types\Picsum::class, $picsum );
+		$this->assertEquals( 1600, $picsum->attributes->get( 'width' ) );
+		$this->assertEquals(  900, $picsum->attributes->get( 'height' ) );
+
+		$expected = sprintf( '%s<img %swidth="%d" %sheight="%d" %ssrc="%s" %salt="%s" />%s',
+			PHP_EOL, PHP_EOL,
+			1600, PHP_EOL,
+			900, PHP_EOL,
+			'https://doesnotexist.com/doesnotexist.jpg', PHP_EOL,
+			'',
+			PHP_EOL
+		);
+
+		$this->assertNotEquals( $expected, $picsum->output() );
+	}
+
+	function test_placeholder() : void {
+		$object = Image_Tag::create( 'https://doesnotexist.com/doesnotexist.jpg', array(
+			'width' => 1600,
+			'height' => 900,
+		) );
+
+		$placeholder = $object->placeholder();
+
+		$this->assertInstanceOf( \Image_Tag\Types\Placeholder::class, $placeholder );
+		$this->assertEquals( 1600, $placeholder->attributes->get( 'width' ) );
+		$this->assertEquals(  900, $placeholder->attributes->get( 'height' ) );
+
+		$expected = sprintf( '%s<img %swidth="%d" %sheight="%d" %ssrc="%s" %salt="%s" />%s',
+			PHP_EOL, PHP_EOL,
+			1600, PHP_EOL,
+			900, PHP_EOL,
+			'https://doesnotexist.com/doesnotexist.jpg', PHP_EOL,
+			'',
+			PHP_EOL
+		);
+
+		$this->assertNotEquals( $expected, $placeholder->output() );
+	}
+
+	function test_unsplash() : void {
+		$object = Image_Tag::create( 'https://doesnotexist.com/doesnotexist.jpg', array(
+			'width' => 1600,
+			'height' => 900,
+		) );
+
+		$unsplash = $object->unsplash();
+
+		$this->assertInstanceOf( \Image_Tag\Types\Unsplash::class, $unsplash );
+		$this->assertEquals( 1600, $unsplash->attributes->get( 'width' ) );
+		$this->assertEquals(  900, $unsplash->attributes->get( 'height' ) );
+
+		$expected = sprintf( '%s<img %swidth="%d" %sheight="%d" %ssrc="%s" %salt="%s" />%s',
+			PHP_EOL, PHP_EOL,
+			1600, PHP_EOL,
+			900, PHP_EOL,
+			'https://doesnotexist.com/doesnotexist.jpg', PHP_EOL,
+			'',
+			PHP_EOL
+		);
+
+		$this->assertNotEquals( $expected, $unsplash->output() );
 	}
 
 }
