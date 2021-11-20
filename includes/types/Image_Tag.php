@@ -35,6 +35,9 @@ class Image_Tag extends Base {
 			return new Image_Tag\Types\WP_Attachment( $source, $attributes, $settings );
 		}
 
+		if ( !is_string( $source ) )
+			return new Image_Tag( $attributes, $settings );
+
 		$_source = strtolower( $source );
 
 		if ( 'joeschmoe' === $_source ) {
@@ -63,12 +66,9 @@ class Image_Tag extends Base {
 			return new Image_Tag( $attributes, $settings );
 		}
 
-		if ( is_string( $source ) ) {
-			require_once Plugin::inc() . 'types/WP_Theme.php';
-			return new Image_Tag\Types\WP_Theme( $source, $attributes, $settings );
-		}
-
-		return new Image_Tag( '', $attributes, $settings );
+		# Only option left is a theme image.
+		require_once Plugin::inc() . 'types/WP_Theme.php';
+		return new Image_Tag\Types\WP_Theme( $source, $attributes, $settings );
 	}
 
 	/**

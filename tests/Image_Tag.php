@@ -7,6 +7,9 @@ use \Image_Tag;
 
 class _Image_Tag extends \WP_UnitTestCase {
 
+	/**
+	 * @group constant
+	 */
 	function test_types() : void {
 		$expected = array(
 			'base',
@@ -16,31 +19,132 @@ class _Image_Tag extends \WP_UnitTestCase {
 		$this->assertEquals( $expected, Image_Tag::TYPES );
 	}
 
-	function test_create() : void {
-		$actual_src = 'https://doesnotexist.com/doesnotexist.jpg';
-		$actual_attributes = array(
-			'width' => 1600,
-			'height' => 900,
-		);
-		$actual_settings = array(
-			'foo' => 'bar',
-			'bar' => 'foo',
-		);
-
+	/**
+	 * @dataProvider creationProvider
+	 * @covers \Image_Tag::create()
+	 * @covers \Image_Tag::__construct()
+	 */
+	function test_create( $expected_class, $actual_src, $actual_attributes, $actual_settings ) : void {
 		$actual_object = Image_Tag::create(
 			$actual_src,
 			$actual_attributes,
 			$actual_settings
 		);
 
-		$this->assertInstanceOf( Image_Tag::class, $actual_object );
-		$this->assertEquals( $actual_src, $actual_object->attributes->get( 'src' ) );
+		$this->assertInstanceOf( $expected_class, $actual_object );
 
 		foreach ( $actual_attributes as $attribute => $value )
 			$this->assertEquals( $value, $actual_object->attributes->get( $attribute ) );
 
 		foreach ( $actual_settings as $setting => $value )
 			$this->assertEquals( $value, $actual_object->settings->get( $setting ) );
+	}
+
+	function creationProvider() : array {
+		$attachment_id = wp_insert_attachment(
+			array(
+				'post_content' => 'https://unsplash.com/photos/zs98a0DtKL4',
+			),
+			trailingslashit( __DIR__ ) . 'stephen-phillips-hostreviews-co-uk-zs98a0DtKL4-unsplash.jpg'
+		);
+
+		$data = array();
+
+		$data['Image_Tag'] = array(
+			Image_Tag::class,
+			'https://doesnotexist.com/doesnotexist.jpg',
+			array(
+				'width' => 1600,
+				'height' => 900,
+			),
+			array(
+				'foo' => 'bar',
+				'bar' => 'foo',
+			),
+		);
+
+		$data['joeschmoe'] = array(
+			\Image_Tag\Types\JoeSchmoe::class,
+			'joeschmoe',
+			array(
+				'width' => 500,
+				'height' => 500,
+			),
+			array(
+				'gender' => 'male',
+			),
+		);
+
+		$data['picsum'] = array(
+			\Image_Tag\Types\Picsum::class,
+			'picsum',
+			array(
+				'width' => 800,
+				'height' => 600,
+			),
+			array(
+				'width' => 1600,
+				'height' => 1200,
+			),
+		);
+
+		$data['placeholder'] = array(
+			\Image_Tag\Types\Placeholder::class,
+			'placeholder',
+			array(
+				'width' => 400,
+				'height' => 300,
+			),
+			array(
+				'bg_color' => 'FF0000',
+			),
+		);
+
+		$data['unsplash'] = array(
+			\Image_Tag\Types\Unsplash::class,
+			'unsplash',
+			array(
+				'width' => 1600,
+				'height' => 1000,
+			),
+			array(
+				'random' => true,
+			),
+		);
+
+		$data['wp_theme'] = array(
+			\Image_Tag\Types\WP_Theme::class,
+			'assets/images/Daffodils.jpg',
+			array(
+				'width' => 894,
+				'height' => 1108,
+			),
+			array()
+		);
+
+		$data['wp_attachment'] = array(
+			\Image_Tag\Types\WP_Attachment::class,
+			$attachment_id,
+			array(
+				'width' => 1000,
+				'height' => 667,
+			),
+			array(
+				'image-sizes' => array( 'medium', 'full' ),
+			)
+		);
+
+		$data['default'] = array(
+			Image_Tag::class,
+			1.5,
+			array(
+				'width' => 15,
+				'height' => 15,
+			),
+			array(),
+		);
+
+		return $data;
 	}
 
 	function test_output() : void {
@@ -176,6 +280,9 @@ class _Image_Tag extends \WP_UnitTestCase {
 		) ) );
 	}
 
+	/**
+	 * @covers \Image_Tag::perform_validation_checks()
+	 */
 	function test_is_valid() : void {
 		$this->assertTrue( Image_Tag::create( 'https://doesnotexist.com/doesnotexist.jpg' )->is_valid() );
 		$this->assertTrue( Image_Tag::create( 'https://doesnotexist.com/doesnotexist.jpg' )->is_valid( 'base' ) );
