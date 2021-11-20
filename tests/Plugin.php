@@ -2,12 +2,14 @@
 
 declare( strict_types=1 );
 
+namespace Image_Tag\Tests;
+
 use Image_Tag\Plugin;
 
 /**
  * @coversDefaultClass Image_Tag\Plugin
  */
-class Image_Tag_Plugin_Test extends WP_UnitTestCase {
+class _Plugin extends \WP_UnitTestCase {
 
 	/**
 	 * Return directory path.
