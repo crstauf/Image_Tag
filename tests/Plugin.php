@@ -3,7 +3,6 @@
 declare( strict_types=1 );
 
 namespace Image_Tag\Tests;
-
 use Image_Tag\Plugin;
 
 /**

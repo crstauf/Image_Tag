@@ -4,6 +4,7 @@ declare( strict_types=1 );
 
 use Image_Tag\Plugin;
 use Image_Tag\Abstracts\Base;
+use Image_Tag\Data_Stores\Attributes;
 
 defined( 'WPINC' ) || die();
 
@@ -91,8 +92,8 @@ class Image_Tag extends Base {
 	protected function perform_validation_checks() : \WP_Error {
 		$errors = new \WP_Error;
 
-		if ( !$this->attributes->has( 'src' ) )
-			$errors->add( 'empty_source', 'Image tag requires at least one source.' );
+		if ( $this->attributes->empty( 'src' ) )
+			$errors->add( 'empty_source', 'Image tag requires a source.' );
 
 		return $errors;
 	}
