@@ -1,6 +1,6 @@
-name: Test Suite
+name: PHPUnit
 
-on: [push]
+on: workflow-dispatch
 
 jobs:
   run:
