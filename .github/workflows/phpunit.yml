@@ -1,6 +1,14 @@
 name: PHPUnit
 
-on: workflow_dispatch
+on: 
+  push:
+    paths:
+      Plugin.php
+      includes/**
+      tests/**
+      .github/workflows/phpunit.yml
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   run:
