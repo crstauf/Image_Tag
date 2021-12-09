@@ -50,4 +50,4 @@ jobs:
       run: ./bin/install-wp-tests.sh ${MYSQL_DATABASE} ${MYSQL_USER} ${MYSQL_PASSWORD} ${DB_HOST}:${DB_PORT} ${WP_VERSION}
 
     - name: phpunit tests
-      run: ./vendor/bin/phpunit
+      run: ./tests/vendor/bin/phpunit
