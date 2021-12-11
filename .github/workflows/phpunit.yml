@@ -51,10 +51,12 @@ jobs:
       run: php -v
 
     - name: Get Composer cache directory
+      working-directory: ./tests
       id: composer-cache
       run: echo "::set-output name=dir::$(composer config cache-files-dir)"
 
     - name: Set up Composer caching
+      working-directory: ./tests
       uses: actions/cache@v2
       env:
         cache-name: cache-composer-dependencies
