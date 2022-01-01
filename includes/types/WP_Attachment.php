@@ -180,6 +180,10 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 	 */
 	function ratio() : float {
 		$size = wp_get_attachment_image_src( $this->attachment_id, $this->wp_largest_size );
+
+		if ( empty( $size ) || empty( $size[1] ) || empty( $size[2] ) )
+			return 0;
+
 		return absint( $size[1] ) / absint( $size[2] );
 	}
 
