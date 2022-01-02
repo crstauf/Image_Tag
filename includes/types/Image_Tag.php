@@ -4,6 +4,8 @@ declare( strict_types=1 );
 
 use Image_Tag\Plugin;
 use Image_Tag\Abstracts\Base;
+use Image_Tag\Data_Stores\Attributes;
+use Image_Tag\Data_Stores\Settings;
 
 defined( 'WPINC' ) || die();
 
