@@ -31,6 +31,10 @@ class Image_Tag extends Base {
 	 * @return Image_Tag
 	 */
 	static function create( $source, $attributes = null, $settings = null ) : Base {
+		if ( is_a( $source, self::class ) ) {
+			return $source;
+		}
+
 		if ( is_int( $source ) ) {
 			require_once Plugin::inc() . 'types/WP_Attachment.php';
 			return new Image_Tag\Types\WP_Attachment( $source, $attributes, $settings );

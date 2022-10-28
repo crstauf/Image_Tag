@@ -150,7 +150,18 @@ abstract class Base implements Conversion, Output, Validation {
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG )
 			$output .= PHP_EOL;
 
-		return $output;
+		$before = '';
+		$after  = '';
+
+		if ( $this->settings->has( 'before' ) ) {
+			$before = $this->settings->get( 'before' );
+		}
+
+		if ( $this->settings->has( 'after' ) ) {
+			$after = $this->settings->get( 'after' );
+		}
+
+		return $before . $output . $after;
 	}
 
 	/**
@@ -265,11 +276,18 @@ abstract class Base implements Conversion, Output, Validation {
 		if ( $js->has( 'srcset' ) ) {
 			$js->update( 'data-srcset', $js->get( 'srcset' ) );
 			$js->update( 'data-sizes', 'auto' );
+			$js->remove( 'data-src' );
 			$js->remove( 'srcset' );
 		}
 
 		if ( $js->has( 'sizes' ) ) {
-			$js->update( 'data-sizes', $js->get( 'sizes' ) );
+			$sizes = $js->get( 'sizes' );
+
+			if ( '100vw' === $sizes ) {
+				$sizes = 'auto';
+			}
+
+			$js->update( 'data-sizes', $sizes );
 			$js->remove( 'sizes' );
 		}
 

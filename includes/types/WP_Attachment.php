@@ -240,7 +240,7 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 	 * @uses parent::output_attributes()
 	 * @return Attributes
 	 */
-	protected function output_attributes() : Attributes {
+	public function output_attributes() : Attributes {
 		$attributes = parent::output_attributes();
 
 		$attributes->set( 'class', 'attachment attachment-' . $this->attachment_id );

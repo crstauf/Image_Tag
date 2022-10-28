@@ -104,6 +104,27 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 		$attributes = parent::output_attributes();
 		$attributes->update( 'src', $this->generate_source() );
 
+		$dimensions = array();
+
+		# Width
+		     if ( $this->settings->has(   'width' ) ) $dimensions[] = $this->settings->get(   'width' );
+		else if ( $this->attributes->has( 'width' ) ) $dimensions[] = $this->attributes->get( 'width' );
+
+		# Height
+		     if ( $this->settings->has(   'height' ) ) $dimensions[] = $this->settings->get(   'height' );
+		else if ( $this->attributes->has( 'height' ) ) $dimensions[] = $this->attributes->get( 'height' );
+
+		if ( 1 === count( $dimensions ) )
+			$dimensions[] = $dimensions[0];
+
+		if ( ! $attributes->has( 'width' ) ) {
+			$attributes->set( 'width', $dimensions[0] );
+		}
+
+		if ( ! $attributes->has( 'height' ) ) {
+			$attributes->set( 'height', $dimensions[1] );
+		}
+
 		return $attributes;
 	}
 
@@ -143,6 +164,8 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 
 		# Convert to string
 		$src = implode( '/', $src );
+
+		$src .= '.webp';
 
 		# Grayscale
 		if ( $this->settings->has( 'grayscale', false ) )
