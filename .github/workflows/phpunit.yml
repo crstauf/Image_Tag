@@ -1,6 +1,14 @@
 name: PHPUnit
 
-on: workflow_dispatch
+on: 
+  push:
+    paths:
+      Plugin.php
+      includes/**
+      tests/**
+      .github/workflows/phpunit.yml
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   run:
@@ -41,6 +49,21 @@ jobs:
 
     - name: Check PHP Version
       run: php -v
+
+    - name: Get Composer cache directory
+      working-directory: ./tests
+      id: composer-cache
+      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+    - name: Set up Composer caching
+      uses: actions/cache@v2
+      env:
+        cache-name: cache-composer-dependencies
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-composer-
 
     - name: Composer install
       working-directory: ./tests
