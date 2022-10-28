@@ -3,13 +3,12 @@
 declare( strict_types=1 );
 
 namespace Image_Tag\Tests;
-
-use Image_Tag\Plugin;
+use Image_Tag\Plugin as PluginActual;
 
 /**
  * @coversDefaultClass Image_Tag\Plugin
  */
-class _Plugin extends \WP_UnitTestCase {
+class Plugin extends \WP_UnitTestCase {
 
 	/**
 	 * Return directory path.
@@ -28,7 +27,7 @@ class _Plugin extends \WP_UnitTestCase {
 
 		$this->assertEquals( 'Image Tag Generator', $data['Name'] );
 		$this->assertEquals( 'https://github.com/crstauf/image_tag', $data['PluginURI'] );
-		$this->assertEquals( '2.0', $data['Version'] );
+		$this->assertEquals( '2.1', $data['Version'] );
 		$this->assertEquals( 'WordPress drop-in to generate <code>img</code> tags.', $data['Description'] );
 		$this->assertEquals( 'Caleb Stauffer', $data['Author'] );
 		$this->assertEquals( 'https://develop.calebstauffer.com', $data['AuthorURI'] );
@@ -63,14 +62,14 @@ class _Plugin extends \WP_UnitTestCase {
 	 * @group constant
 	 */
 	function test_constants() : void {
-		$this->assertSame( 2.0, Plugin::VERSION );
+		$this->assertSame( 2.1, PluginActual::VERSION );
 	}
 
 	/**
 	 * @covers ::instance()
 	 */
 	function test_instance() : void {
-		$this->assertInstanceOf( Plugin::class, Plugin::instance() );
+		$this->assertInstanceOf( PluginActual::class, PluginActual::instance() );
 	}
 
 	/**
@@ -78,8 +77,8 @@ class _Plugin extends \WP_UnitTestCase {
 	 * @covers ::inc()
 	 */
 	function test_static() : void {
-		$this->assertEquals( trailingslashit( dirname( __DIR__ ) ), Plugin::dir() );
-		$this->assertEquals( trailingslashit( dirname( __DIR__ ) ) . 'includes/', Plugin::inc() );
+		$this->assertEquals( trailingslashit( dirname( __DIR__ ) ), PluginActual::dir() );
+		$this->assertEquals( trailingslashit( dirname( __DIR__ ) ) . 'includes/', PluginActual::inc() );
 	}
 
 	/**
@@ -88,13 +87,13 @@ class _Plugin extends \WP_UnitTestCase {
 	function test_includes() : void {
 		$files = array_filter( get_included_files(), function( string $path ) : bool {
 			return (
-				   0 === stripos( $path, Plugin::dir() )
-				&& 0 !== stripos( $path, Plugin::dir() . 'tests/' )
+				   0 === stripos( $path, PluginActual::dir() )
+				&& 0 !== stripos( $path, PluginActual::dir() . 'tests/' )
 			);
 		} );
 
 		$files = array_map( function( string $path ) : string {
-			return str_replace( Plugin::dir(), '', $path );
+			return str_replace( PluginActual::dir(), '', $path );
 		}, $files );
 
 		$expected = array (

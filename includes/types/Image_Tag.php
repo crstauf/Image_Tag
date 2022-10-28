@@ -42,6 +42,9 @@ class Image_Tag extends Base {
 			return new Image_Tag\Types\WP_Attachment( $source, $attributes, $settings );
 		}
 
+		if ( !is_string( $source ) )
+			return new Image_Tag( $attributes, $settings );
+
 		$_source = strtolower( $source );
 
 		if ( 'joeschmoe' === $_source ) {
@@ -70,12 +73,9 @@ class Image_Tag extends Base {
 			return new Image_Tag( $attributes, $settings );
 		}
 
-		if ( is_string( $source ) ) {
-			require_once Plugin::inc() . 'types/WP_Theme.php';
-			return new Image_Tag\Types\WP_Theme( $source, $attributes, $settings );
-		}
-
-		return new Image_Tag( '', $attributes, $settings );
+		# Only option left is a theme image.
+		require_once Plugin::inc() . 'types/WP_Theme.php';
+		return new Image_Tag\Types\WP_Theme( $source, $attributes, $settings );
 	}
 
 	/**
@@ -99,8 +99,8 @@ class Image_Tag extends Base {
 	protected function perform_validation_checks() : \WP_Error {
 		$errors = new \WP_Error;
 
-		if ( !$this->attributes->has( 'src' ) )
-			$errors->add( 'empty_source', 'Image tag requires at least one source.' );
+		if ( $this->attributes->empty( 'src' ) )
+			$errors->add( 'empty_source', 'Image tag requires a source.' );
 
 		return $errors;
 	}

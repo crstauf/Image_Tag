@@ -16,6 +16,7 @@ class Attributes extends Data_Store {
 	 * @return string
 	 */
 	function output() : string {
+		$prefix = '';
 		$output = array();
 
 		foreach ( $this->get() as $key => $value )
@@ -23,10 +24,12 @@ class Attributes extends Data_Store {
 
 		$glue = ' ';
 
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG )
-			$glue .= PHP_EOL;
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			$prefix = PHP_EOL;
+			$glue .= $prefix;
+		}
 
-		return implode( $glue, $output );
+		return $prefix . implode( $glue, $output );
 	}
 
 }

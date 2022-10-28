@@ -138,7 +138,7 @@ class Data_Store implements \Image_Tag\Interfaces\Data_Store {
 		if ( in_array( $has, array( null, '', array() ) ) )
 			return !empty( $this->store );
 
-		if ( is_string( $has ) )
+		if ( is_scalar( $has ) )
 			return (
 				array_key_exists( $has, $this->store )
 				|| (
@@ -147,18 +147,41 @@ class Data_Store implements \Image_Tag\Interfaces\Data_Store {
 				)
 			);
 
-		$output = array();
+		if ( !is_array( $has ) )
+			return false;
+
+		$has = array_filter( $has, 'is_scalar' );
+		$result = array();
 
 		foreach ( $has as $key )
-			$output[ $key ] = (
-				array_key_exists( $key, $this->store )
-				|| (
-					$check_value
-					&& in_array( $key, $this->store, true )
-				)
+			$result[ $key ] = $this->has( $key, $check_value );
+
+		return $result;
+	}
+
+	/**
+	 * Check if key(s) does not exist in store,
+	 * or value is empty.
+	 *
+	 * @param string|array $empty
+	 * @uses $this->has()
+	 * @return bool|array
+	 */
+	function empty( $empty = null ) {
+		if ( is_scalar( $empty ) )
+			return (
+				!$this->has( $empty, false )
+				|| empty( $this->store[ $empty ] )
 			);
 
-		return $output;
+		if ( !is_array( $empty ) )
+			return false;
+
+		$empty = array_filter( $empty, 'is_scalar' );
+		$result = array();
+
+		foreach ( $empty as $key )
+			$result[ $key ] = $this->empty( $key );
 	}
 
 	/**

@@ -17,6 +17,7 @@
 	<testsuites>
 		<testsuite name="all">
 			<file>./tests/Plugin.php</file>
+			<file>./tests/Image_Tag.php</file>
 		</testsuite>
 	</testsuites>
 
@@ -29,7 +30,7 @@
 	<filter>
 		<whitelist processUncoveredFilesFromWhitelist="true">
 			<file>Plugin.php</file>
-			<file>includes/abstracts/Base.php</file>
+			<file>includes/types/Image_Tag.php</file>
 		</whitelist>
 	</filter>
 
