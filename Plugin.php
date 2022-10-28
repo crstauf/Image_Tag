@@ -53,6 +53,7 @@ final class Plugin {
 	protected function __construct() {
 
 		add_action( 'template_redirect', array( $this, 'action__template_redirect' ), 100 );
+		add_action( 'admin_init', array( $this, 'action__admin_init' ) );
 
 	}
 
@@ -66,6 +67,14 @@ final class Plugin {
 	 * @codeCoverageIgnore
 	 */
 	function action__template_redirect() : void {
+		static::include_files();
+	}
+
+	function action__admin_init() : void {
+		if ( ! wp_doing_ajax() ) {
+			return;
+		}
+
 		static::include_files();
 	}
 

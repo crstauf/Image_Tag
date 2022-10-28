@@ -11,6 +11,8 @@ defined( 'WPINC' ) || die();
 
 /**
  * Class: Image_Tag
+ *
+ * @property int $attachment_id
  */
 class Image_Tag extends Base {
 
