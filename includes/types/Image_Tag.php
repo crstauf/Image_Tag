@@ -32,7 +32,7 @@ class Image_Tag extends Base {
 	 * @param null|array|Settings $settings
 	 * @return Image_Tag
 	 */
-	static function create( $source, $attributes = null, $settings = null ) : Base {
+	public static function create( $source, $attributes = null, $settings = null ) : Base {
 		if ( is_a( $source, self::class ) ) {
 			return $source;
 		}
@@ -42,8 +42,9 @@ class Image_Tag extends Base {
 			return new Image_Tag\Types\WP_Attachment( $source, $attributes, $settings );
 		}
 
-		if ( !is_string( $source ) )
+		if ( ! is_string( $source ) ) {
 			return new Image_Tag( $attributes, $settings );
+		}
 
 		$_source = strtolower( $source );
 
@@ -86,7 +87,7 @@ class Image_Tag extends Base {
 	 * @uses $this->construct()
 	 * @uses Attributes->set()
 	 */
-	function __construct( $attributes = null, $settings = null ) {
+	public function __construct( $attributes = null, $settings = null ) {
 		$this->construct( $attributes, $settings );
 	}
 
@@ -99,8 +100,9 @@ class Image_Tag extends Base {
 	protected function perform_validation_checks() : \WP_Error {
 		$errors = new \WP_Error;
 
-		if ( $this->attributes->empty( 'src' ) )
+		if ( $this->attributes->empty( 'src' ) ) {
 			$errors->add( 'empty_source', 'Image tag requires a source.' );
+		}
 
 		return $errors;
 	}

@@ -8,6 +8,7 @@
 declare( strict_types=1 );
 
 namespace Image_Tag\Types;
+
 use Image_Tag\Data_Stores\Attributes;
 use Image_Tag\Data_Stores\Settings;
 
@@ -36,7 +37,7 @@ class JoeSchmoe extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfac
 	 * @param null|array|Settings $settings
 	 * @uses $this->construct()
 	 */
-	function __construct( $attributes = null, $settings = null ) {
+	public function __construct( $attributes = null, $settings = null ) {
 		$this->construct( $attributes, $settings );
 	}
 
@@ -61,21 +62,24 @@ class JoeSchmoe extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfac
 	 * @uses Settings::get()
 	 * @return string
 	 */
-	function generate_source() : string {
-		if ( array_key_exists( __FUNCTION__, $this->cache ) )
+	public function generate_source() : string {
+		if ( array_key_exists( __FUNCTION__, $this->cache ) ) {
 			return $this->cache[ __FUNCTION__ ];
+		}
 
 		$src = array( static::BASE_URL );
 
 		# Gender
-		if ( $this->settings->has( 'gender' ) )
+		if ( $this->settings->has( 'gender' ) ) {
 			$src[] = $this->settings->get( 'gender' );
+		}
 
 		# Seed
-		if ( $this->settings->has( 'seed' ) )
+		if ( $this->settings->has( 'seed' ) ) {
 			$src[] = $this->settings->get( 'seed' );
-		else
+		} else {
 			$src[] = uniqid( 'random-' );
+		}
 
 		# Convert to string
 		$src = implode( '/', $src );
@@ -97,9 +101,10 @@ class JoeSchmoe extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfac
 
 		if (
 			$this->settings->has( 'gender' )
-			&& !in_array( $this->settings->get( 'gender' ), array( 'male', 'female' ) )
-		)
+			&& ! in_array( $this->settings->get( 'gender' ), array( 'male', 'female' ) )
+		) {
 			$errors->add( 'joeschmoe_binary_gender', 'Joe Schmoes are only available in male and female genders' );
+		}
 
 		return $errors;
 	}

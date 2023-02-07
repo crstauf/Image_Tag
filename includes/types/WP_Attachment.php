@@ -6,6 +6,7 @@
 declare( strict_types=1 );
 
 namespace Image_Tag\Types;
+
 use Image_Tag\Data_Stores\Attributes;
 use Image_Tag\Data_Stores\Settings;
 
@@ -17,7 +18,7 @@ defined( 'WPINC' ) || die();
 class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 
 	protected $attachment_id;
-	protected $wp_largest_size = 'thumbnail';
+	protected $wp_largest_size  = 'thumbnail';
 	protected $wp_smallest_size = 'full';
 
 	/**
@@ -36,7 +37,7 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 	 * @uses wp_get_upload_dir()
 	 * @return string
 	 */
-	static function uploads_dir() : string {
+	public static function uploads_dir() : string {
 		$uploads = wp_get_upload_dir();
 		return $uploads['basedir'];
 	}
@@ -51,14 +52,15 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 	 * @uses $this->is_valid()
 	 * @uses $this->identify_sizes();
 	 */
-	function __construct( int $attachment_id, $attributes = null, $settings = null ) {
-		$attachment_id = ( int ) apply_filters( 'image_tag/wp_attachment/attachment_id', $attachment_id, $attributes, $settings );
+	public function __construct( int $attachment_id, $attributes = null, $settings = null ) {
+		$attachment_id       = ( int ) apply_filters( 'image_tag/wp_attachment/attachment_id', $attachment_id, $attributes, $settings );
 		$this->attachment_id = $attachment_id;
 
 		$this->construct( $attributes, $settings );
 
-		if ( !$this->is_valid() )
+		if ( ! $this->is_valid() ) {
 			return;
+		}
 
 		$this->identify_sizes();
 		$this->set_orientation();
@@ -71,9 +73,10 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 	 * @uses parent::__get()
 	 * @return mixed
 	 */
-	function __get( string $property ) {
-		if ( 'attachment_id' === $property )
+	public function __get( string $property ) {
+		if ( 'attachment_id' === $property ) {
 			return $this->attachment_id;
+		}
 
 		return parent::__get( $property );
 	}
@@ -95,8 +98,9 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 	 * @return string
 	 */
 	protected function path( string $size = 'full' ) : string {
-		if ( 'full' === $size )
+		if ( 'full' === $size ) {
 			return get_attached_file( $this->attachment_id );
+		}
 
 		$metadata = $this->metadata();
 
@@ -113,7 +117,7 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 	 * @return void
 	 */
 	protected function identify_sizes() : void {
-		if ( !$this->settings->has( 'image-sizes' ) ) {
+		if ( ! $this->settings->has( 'image-sizes' ) ) {
 			$this->wp_smallest_size = 'full';
 			$this->wp_largest_size  = 'full';
 
@@ -141,7 +145,7 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 			return;
 		}
 
-		$all_sizes = $meta['sizes'];
+		$all_sizes         = $meta['sizes'];
 		$all_sizes['full'] = array(
 			'file'   => basename( $meta['file'] ),
 			'width'  => $meta['width'],
@@ -149,9 +153,9 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 		);
 
 		$requested_sizes = array_flip( $this->settings->get( 'image-sizes' ) );
-		$sizes = array_intersect_key( $all_sizes, $requested_sizes );
+		$sizes           = array_intersect_key( $all_sizes, $requested_sizes );
 
-		$largest_sq_px  = absint( $all_sizes[ $this->wp_largest_size  ]['width'] ) * absint( $all_sizes[ $this->wp_largest_size  ]['height'] );
+		$largest_sq_px  = absint( $all_sizes[ $this->wp_largest_size ]['width'] ) * absint( $all_sizes[ $this->wp_largest_size ]['height'] );
 		$smallest_sq_px = absint( $all_sizes[ $this->wp_smallest_size ]['width'] ) * absint( $all_sizes[ $this->wp_smallest_size ]['height'] );
 
 		foreach ( $sizes as $size => $data ) {
@@ -162,13 +166,13 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 			# Compare to largest square pixels
 			if ( $this_sq_px > $largest_sq_px ) {
 				$this->wp_largest_size = $size;
-				$largest_sq_px = $this_sq_px;
+				$largest_sq_px         = $this_sq_px;
 			}
 
 			# Compare to smallest square pixels
 			if ( $this_sq_px < $smallest_sq_px ) {
 				$this->wp_smallest_size = $size;
-				$smallest_sq_px = $this_sq_px;
+				$smallest_sq_px         = $this_sq_px;
 			}
 		}
 	}
@@ -178,11 +182,12 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 	 *
 	 * @return float
 	 */
-	function ratio() : float {
+	public function ratio() : float {
 		$size = wp_get_attachment_image_src( $this->attachment_id, $this->wp_largest_size );
 
-		if ( empty( $size ) || empty( $size[1] ) || empty( $size[2] ) )
+		if ( empty( $size ) || empty( $size[1] ) || empty( $size[2] ) ) {
 			return 0;
+		}
 
 		return absint( $size[1] ) / absint( $size[2] );
 	}
@@ -194,20 +199,22 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 	 * @uses static::identify_colors()
 	 * @return array
 	 */
-	function colors( int $count = 3 ) : array {
+	public function colors( int $count = 3 ) : array {
 		$meta = get_post_meta( $this->attachment_id, '_common_colors', true );
 
 		if (
-			  !empty( $meta )
+			 ! empty( $meta )
 			&& count( $meta ) >= $count
-		)
+		) {
 			return array_slice( $meta, 0, $count );
+		}
 
 		$path   = $this->path( 'thumbnail' );
 		$colors = static::identify_colors( $path, $count );
 
-		if ( empty( $colors ) )
+		if ( empty( $colors ) ) {
 			return array();
+		}
 
 		update_post_meta( $this->attachment_id, '_common_colors', $colors );
 
@@ -222,14 +229,15 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 	protected function perform_validation_checks() : \WP_Error {
 		$errors = new \WP_Error;
 
-		if ( empty( $this->attachment_id ) )
+		if ( empty( $this->attachment_id ) ) {
 			$errors->add( 'attachment_id', 'Attachment ID is missing.' );
 
-		else if ( 'attachment' !== get_post_type( $this->attachment_id ) )
+		} else if ( 'attachment' !== get_post_type( $this->attachment_id ) ) {
 			$errors->add( 'not_attachment', 'Provided ID is not for an attachment.' );
 
-		else if ( !wp_attachment_is_image( $this->attachment_id ) )
+		} else if ( ! wp_attachment_is_image( $this->attachment_id ) ) {
 			$errors->add( 'not_image', 'Attachment is not an image.' );
+		}
 
 		return $errors;
 	}
@@ -245,8 +253,9 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 
 		$attributes->set( 'class', 'attachment attachment-' . $this->attachment_id );
 
-		if ( empty( $attributes->alt ) )
+		if ( empty( $attributes->alt ) ) {
 			$attributes->update( 'alt', get_the_title( $this->attachment_id ) );
+		}
 
 		$this->output_source_attributes( $attributes );
 
@@ -261,48 +270,55 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 	 */
 	protected function output_source_attributes( &$attributes ) : void {
 		$src = wp_get_attachment_image_src( $this->attachment_id, $this->wp_smallest_size );
-		$attributes->set( 'src',    $src[0] );
-		$attributes->set( 'width',  $src[1] );
+
+		$attributes->set( 'src', $src[0] );
+		$attributes->set( 'width', $src[1] );
 		$attributes->set( 'height', $src[2] );
 
 		if (
-			!$this->settings->has( 'image-sizes' )
+			! $this->settings->has( 'image-sizes' )
 			|| 1 === count( $this->settings->get( 'image-sizes' ) )
-		)
+		) {
 			return;
+		}
 
 		$requested_sizes = $this->settings->get( 'image-sizes' );
-		$wp_sizes = get_intermediate_image_sizes();
-		$wp_sizes[] = 'full';
-		$sizes = array_intersect( $requested_sizes, $wp_sizes );
-		$sizes = array_unique( $sizes );
+		$wp_sizes        = get_intermediate_image_sizes();
+		$wp_sizes[]      = 'full';
+		$sizes           = array_intersect( $requested_sizes, $wp_sizes );
+		$sizes           = array_unique( $sizes );
 
 		$glue = ', ';
 
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG )
+		if ( defined( 'WP_DEBUG' ) && constant( 'WP_DEBUG' ) ) {
 			$glue .= PHP_EOL . "\t";
+		}
 
 		$widths = array();
 
 		foreach ( $sizes as $size ) {
 			$src = wp_get_attachment_image_src( $this->attachment_id, $size );
 
-			if ( empty( $src ) )
+			if ( empty( $src ) ) {
 				continue;
+			}
 
-			if ( in_array( $src[1], $widths ) )
+			if ( in_array( $src[1], $widths ) ) {
 				continue;
+			}
 
 			$widths[] = $src[1];
-			$value = $src[0] . ' ' . $src[1] . 'w';
+			$value    = $src[0] . ' ' . $src[1] . 'w';
+
 			$attributes->append( 'srcset', $value, $glue );
 		}
 
 		if (
-			    $attributes->has( 'srcset' )
-			&& !$attributes->has( 'sizes' )
-		)
+			$attributes->has( 'srcset' )
+			&& ! $attributes->has( 'sizes' )
+		) {
 			$attributes->set( 'sizes', '100vw' );
+		}
 	}
 
 	/**
@@ -315,11 +331,12 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 	 * @uses $this->path()
 	 * @return string
 	 */
-	function lqip() : string {
+	public function lqip() : string {
 		$meta = get_post_meta( $this->attachment_id, '_lqip', true );
 
-		if ( !empty( $meta ) )
+		if ( ! empty( $meta ) ) {
 			return $meta;
+		}
 
 		$lqip = static::generate_lqip( $this->path( 'medium' ) );
 

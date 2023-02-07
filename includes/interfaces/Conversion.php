@@ -18,7 +18,7 @@ interface Conversion {
 	 * @param null|array|Settings $settings
 	 * @return \Image_Tag\Types\JoeSchmoe
 	 */
-	function joeschmoe( $attributes = null, $settings = null ) : \Image_Tag\Types\JoeSchmoe;
+	public function joeschmoe( $attributes = null, $settings = null ) : \Image_Tag\Types\JoeSchmoe;
 
 	/**
 	 * Convert to Picsum photo.
@@ -27,7 +27,7 @@ interface Conversion {
 	 * @param null|array|Settings $settings
 	 * @return \Image_Tag\Types\Picsum
 	 */
-	function picsum( $attributes = null, $settings = null ) : \Image_Tag\Types\Picsum;
+	public function picsum( $attributes = null, $settings = null ) : \Image_Tag\Types\Picsum;
 
 	/**
 	 * Convert to Placeholder.com image.
@@ -36,7 +36,7 @@ interface Conversion {
 	 * @param null|array|Settings $settings
 	 * @return \Image_Tag\Types\Placeholder
 	 */
-	function placeholder( $attributes = null, $settings = null ) : \Image_Tag\Types\Placeholder;
+	public function placeholder( $attributes = null, $settings = null ) : \Image_Tag\Types\Placeholder;
 
 	/**
 	 * Convert to Unsplash Source photo.
@@ -45,6 +45,6 @@ interface Conversion {
 	 * @param null|array|Settings $settings
 	 * @return \Image_Tag\Types\Unsplash
 	 */
-	function unsplash( $attributes = null, $settings = null ) : \Image_Tag\Types\Unsplash;
+	public function unsplash( $attributes = null, $settings = null ) : \Image_Tag\Types\Unsplash;
 
 }

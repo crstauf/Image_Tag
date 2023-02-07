@@ -7,12 +7,12 @@ namespace Image_Tag\Interfaces;
 defined( 'WPINC' ) || die();
 
 /**
- * Interface: Image_Tag\Intefaces\Output
+ * Interface: Image_Tag\Interfaces\Output
  */
 interface Output {
 
-	function output() : string;
-	function lazyload() : string;
-	function noscript() : string;
+	public function output() : string;
+	public function lazyload() : string;
+	public function noscript() : string;
 
 }

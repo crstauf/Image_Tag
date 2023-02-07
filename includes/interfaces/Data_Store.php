@@ -11,11 +11,11 @@ defined( 'WPINC' ) || die();
  */
 interface Data_Store {
 
-	function set( $set, $value = null ) : self;
-	function update( $update, $value = null ) : self;
-	function has( $has );
-	function get( $get );
-	function append( string $key, string $value, string $glue = ' ' ) : self;
-	function remove( string $key ) : self;
+	public function set( $set, $value = null ) : self;
+	public function update( $update, $value = null ) : self;
+	public function has( $has );
+	public function get( $get );
+	public function append( string $key, string $value, string $glue = ' ' ) : self;
+	public function remove( string $key ) : self;
 
 }
