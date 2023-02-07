@@ -11,8 +11,16 @@ defined( 'WPINC' ) || die();
  */
 interface Validation {
 
-	function get_type() : string;
-	function is_type( $test_types ) : bool;
-	function is_valid( $test_types = null ) : bool;
+	public function get_type() : string;
+
+	/**
+	 * @param string[] $test_types
+	 */
+	public function is_type( $test_types ) : bool;
+
+	/**
+	 * @param null|string[] $test_types
+	 */
+	public function is_valid( $test_types = null ) : bool;
 
 }

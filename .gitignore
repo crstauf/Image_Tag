@@ -1,2 +1,4 @@
 /report
-/tests/vendor
+/vendor
+/.phpstan-cache
+/.phpunit.result.cache

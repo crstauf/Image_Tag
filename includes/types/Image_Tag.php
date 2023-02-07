@@ -17,7 +17,7 @@ defined( 'WPINC' ) || die();
 class Image_Tag extends Base {
 
 	/**
-	 * @var array Image types.
+	 * @var string[] Image types.
 	 */
 	const TYPES = array(
 		'base',
@@ -27,13 +27,13 @@ class Image_Tag extends Base {
 	/**
 	 * Create image tag.
 	 *
-	 * @param int|string $source
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
-	 * @return Image_Tag
+	 * @param int|string|Base $source
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
+	 * @return Base
 	 */
-	static function create( $source, $attributes = null, $settings = null ) : Base {
-		if ( is_a( $source, self::class ) ) {
+	public static function create( $source, $attributes = null, $settings = null ) : Base {
+		if ( is_object( $source ) && is_a( $source, Base::class ) ) {
 			return $source;
 		}
 
@@ -42,8 +42,9 @@ class Image_Tag extends Base {
 			return new Image_Tag\Types\WP_Attachment( $source, $attributes, $settings );
 		}
 
-		if ( !is_string( $source ) )
+		if ( ! is_string( $source ) ) {
 			return new Image_Tag( $attributes, $settings );
+		}
 
 		$_source = strtolower( $source );
 
@@ -81,12 +82,12 @@ class Image_Tag extends Base {
 	/**
 	 * Construct.
 	 *
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
 	 * @uses $this->construct()
 	 * @uses Attributes->set()
 	 */
-	function __construct( $attributes = null, $settings = null ) {
+	public function __construct( $attributes = null, $settings = null ) {
 		$this->construct( $attributes, $settings );
 	}
 
@@ -99,8 +100,9 @@ class Image_Tag extends Base {
 	protected function perform_validation_checks() : \WP_Error {
 		$errors = new \WP_Error;
 
-		if ( $this->attributes->empty( 'src' ) )
+		if ( $this->attributes->empty( 'src' ) ) {
 			$errors->add( 'empty_source', 'Image tag requires a source.' );
+		}
 
 		return $errors;
 	}

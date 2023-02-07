@@ -9,6 +9,7 @@
 declare( strict_types=1 );
 
 namespace Image_Tag\Types;
+
 use Image_Tag\Data_Stores\Attributes;
 use Image_Tag\Data_Stores\Settings;
 
@@ -22,7 +23,7 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 	const BASE_URL = 'https://picsum.photos';
 
 	/**
-	 * @var array Image types.
+	 * @var string[] Image types.
 	 */
 	const TYPES = array(
 		'picsum',
@@ -34,18 +35,19 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 	 *
 	 * @link https://picsum.photos/#list-images Documentation
 	 * @param int $page
-	 * @return array
+	 * @return mixed[]
 	 */
-	static function list( int $page = 1 ) : array {
+	public static function list( int $page = 1 ) : array {
 		$url = add_query_arg( array(
-			'page' => $page,
+			'page'  => $page,
 			'limit' => 50,
 		), static::BASE_URL . '/v2/list' );
 
 		$response = wp_remote_get( $url );
 
-		if ( 200 !== wp_remote_retrieve_response_code( $response ) )
+		if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
 			return array();
+		}
 
 		$body = wp_remote_retrieve_body( $response );
 		return json_decode( $body );
@@ -58,25 +60,26 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 	 * @param int $image_id
 	 * @return object
 	 */
-	static function details( int $image_id ) : object {
+	public static function details( int $image_id ) : object {
 		$default = ( object ) array(
-			'id' => '',
-			'author' => '',
-			'width' => 0,
-			'height' => 0,
-			'url' => '',
+			'id'           => '',
+			'author'       => '',
+			'width'        => 0,
+			'height'       => 0,
+			'url'          => '',
 			'download_url' => '',
 		);
 
-		if ( empty( $image_id ) )
+		if ( empty( $image_id ) ) {
 			return $default;
+		}
 
-		$url = sprintf( '%s/id/%d/info', static::BASE_URL, $image_id );
-
+		$url      = sprintf( '%s/id/%d/info', static::BASE_URL, $image_id );
 		$response = wp_remote_get( $url );
 
-		if ( 200 !== wp_remote_retrieve_response_code( $response ) )
+		if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
 			return $default;
+		}
 
 		$body = wp_remote_retrieve_body( $response );
 		return json_decode( $body );
@@ -85,11 +88,11 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 	/**
 	 * Construct.
 	 *
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
 	 * @uses $this->construct()
 	 */
-	function __construct( $attributes = null, $settings = null ) {
+	public function __construct( $attributes = null, $settings = null ) {
 		$this->construct( $attributes, $settings );
 	}
 
@@ -102,26 +105,33 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 	 */
 	protected function output_attributes() : Attributes {
 		$attributes = parent::output_attributes();
-		$attributes->update( 'src', $this->generate_source() );
-
 		$dimensions = array();
 
+		$attributes->update( 'src', $this->generate_source() );
+
 		# Width
-		     if ( $this->settings->has(   'width' ) ) $dimensions[] = $this->settings->get(   'width' );
-		else if ( $this->attributes->has( 'width' ) ) $dimensions[] = $this->attributes->get( 'width' );
+		if ( $this->settings->has( 'width' ) ) {
+			$dimensions[] = $this->settings->get( 'width' );
+		} else if ( $this->attributes->has( 'width' ) ) {
+			$dimensions[] = $this->attributes->get( 'width' );
+		}
 
 		# Height
-		     if ( $this->settings->has(   'height' ) ) $dimensions[] = $this->settings->get(   'height' );
-		else if ( $this->attributes->has( 'height' ) ) $dimensions[] = $this->attributes->get( 'height' );
+		if ( $this->settings->has( 'height' ) ) {
+			$dimensions[] = $this->settings->get( 'height' );
+		} else if ( $this->attributes->has( 'height' ) ) {
+			$dimensions[] = $this->attributes->get( 'height' );
+		}
 
-		if ( 1 === count( $dimensions ) )
+		if ( 1 === count( $dimensions ) ) {
 			$dimensions[] = $dimensions[0];
+		}
 
-		if ( ! $attributes->has( 'width' ) ) {
+		if ( ! $attributes->has( 'width' ) && ! empty( $dimensions[0] ) ) {
 			$attributes->set( 'width', $dimensions[0] );
 		}
 
-		if ( ! $attributes->has( 'height' ) ) {
+		if ( ! $attributes->has( 'height' ) && ! empty( $dimensions[1] ) ) {
 			$attributes->set( 'height', $dimensions[1] );
 		}
 
@@ -138,29 +148,38 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 	 * @uses Attributes::update()
 	 * @return string
 	 */
-	 function generate_source() : string {
+	public function generate_source() : string {
 		static $random = 1;
 
-		if ( array_key_exists( __FUNCTION__, $this->cache ) )
+		if ( array_key_exists( __FUNCTION__, $this->cache ) ) {
 			return $this->cache[ __FUNCTION__ ];
+		}
 
 		$src = array( static::BASE_URL );
 
 		# Image ID
-		if ( $this->settings->has( 'image-id', false ) )
+		if ( $this->settings->has( 'image-id', false ) ) {
 			$src[] = sprintf( 'id/%d', absint( $this->settings->get( 'image-id' ) ) );
+		}
 
 		# Seed
-		if ( $this->settings->has( 'seed', false ) )
+		if ( $this->settings->has( 'seed', false ) ) {
 			$src[] = sprintf( 'seed/%s', sanitize_title_with_dashes( $this->settings->get( 'seed' ) ) );
+		}
 
 		# Width
-		     if ( $this->settings->has(   'width', false ) ) $src[] = $this->settings->get(   'width' );
-		else if ( $this->attributes->has( 'width', false ) ) $src[] = $this->attributes->get( 'width' );
+		if ( $this->settings->has( 'width', false ) ) {
+			$src[] = $this->settings->get( 'width' );
+		} else if ( $this->attributes->has( 'width', false ) ) {
+			$src[] = $this->attributes->get( 'width' );
+		}
 
 		# Height
-		     if ( $this->settings->has(   'height', false ) ) $src[] = $this->settings->get(   'height' );
-		else if ( $this->attributes->has( 'height', false ) ) $src[] = $this->attributes->get( 'height' );
+		if ( $this->settings->has( 'height', false ) ) {
+			$src[] = $this->settings->get( 'height' );
+		} else if ( $this->attributes->has( 'height', false ) ) {
+			$src[] = $this->attributes->get( 'height' );
+		}
 
 		# Convert to string
 		$src = implode( '/', $src );
@@ -168,15 +187,18 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 		$src .= '.webp';
 
 		# Grayscale
-		if ( $this->settings->has( 'grayscale', false ) )
+		if ( $this->settings->has( 'grayscale', false ) ) {
 			$src = add_query_arg( 'grayscale', 1, $src );
+		}
 
 		# Blur
-		if ( $this->settings->has( 'blur', false ) )
+		if ( $this->settings->has( 'blur', false ) ) {
 			$src = add_query_arg( 'blur', absint( $this->settings->get( 'blur' ) ), $src );
+		}
 
-		if ( $this->settings->has( 'random', false ) )
+		if ( $this->settings->has( 'random', false ) ) {
 			$src = add_query_arg( 'random', $random++, $src );
+		}
 
 		$this->cache[ __FUNCTION__ ] = $src;
 
@@ -192,24 +214,29 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 		$width  = 0;
 		$height = 0;
 
-		if ( $this->settings->has( 'width', false ) )
+		if ( $this->settings->has( 'width', false ) ) {
 			$width = $this->settings->get( 'width' );
-		else if ( $this->attributes->has( 'width', false ) )
+		} else if ( $this->attributes->has( 'width', false ) ) {
 			$width = $this->attributes->get( 'width' );
+		}
 
-		if ( $this->settings->has( 'height', false ) )
+		if ( $this->settings->has( 'height', false ) ) {
 			$height = $this->settings->get( 'height' );
-		else if ( $this->attributes->has( 'height', false ) )
+		} else if ( $this->attributes->has( 'height', false ) ) {
 			$height = $this->attributes->get( 'height' );
+		}
 
-		if ( empty( $height ) )
+		if ( empty( $height ) ) {
 			$height = $width;
+		}
 
-		if ( empty( $width ) )
+		if ( empty( $width ) ) {
 			$width = $height;
+		}
 
-		if ( empty( $height ) )
+		if ( empty( $height ) ) {
 			return 0;
+		}
 
 		return absint( $width ) / absint( $height );
 	}
@@ -218,7 +245,7 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 	 * Perform validation checks.
 	 *
 	 * @uses $this->validate_dimensions()
-	 * @return WP_Error
+	 * @return \WP_Error
 	 */
 	protected function perform_validation_checks() : \WP_Error {
 		$errors = new \WP_Error;
@@ -241,12 +268,13 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 	 */
 	protected function validate_dimensions() : void {
 		if (
-			   $this->settings->has(   'width',  false )
-			|| $this->attributes->has( 'width',  false )
-			|| $this->settings->has(   'height', false )
+			   $this->settings->has( 'width', false )
+			|| $this->settings->has( 'height', false )
+			|| $this->attributes->has( 'width', false )
 			|| $this->attributes->has( 'height', false )
-		)
+		) {
 			return;
+		}
 
 		throw new \Exception( 'Picsum requires at least one dimension.' );
 	}
@@ -254,11 +282,11 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 	/**
 	 * Prevent conversion to same type.
 	 *
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
 	 * @return self
 	 */
-	function picsum( $attributes = null, $settings = null ) : self {
+	public function picsum( $attributes = null, $settings = null ) : self {
 		trigger_error( sprintf( 'Image is already type <code>%s</code>', $this->get_type() ) );
 		return $this;
 	}
@@ -271,28 +299,32 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 	 * @uses static::details()
 	 * @return object
 	 */
-	function info() : object {
-		if ( array_key_exists( __FUNCTION__, $this->cache ) )
+	public function info() : object {
+		if ( array_key_exists( __FUNCTION__, $this->cache ) ) {
 			return $this->cache[ __FUNCTION__ ];
+		}
 
 		$defaults = ( object ) array(
-			'id' => '',
-			'author' => '',
-			'width' => 0,
-			'height' => 0,
-			'url' => '',
+			'id'           => '',
+			'author'       => '',
+			'width'        => 0,
+			'height'       => 0,
+			'url'          => '',
 			'download_url' => '',
 		);
 
-		if ( !$this->settings->has( 'image-id' ) )
+		if ( ! $this->settings->has( 'image-id' ) ) {
 			return $defaults;
+		}
 
 		$id = absint( $this->settings->get( 'image-id' ) );
 
-		if ( empty( $id ) )
+		if ( empty( $id ) ) {
 			return $defaults;
+		}
 
 		$details = static::details( $id );
+
 		$this->cache[ __FUNCTION__ ] = $details;
 
 		return $details;

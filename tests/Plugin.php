@@ -21,6 +21,8 @@ class Plugin extends \WP_UnitTestCase {
 
 	/**
 	 * Test plugin info.
+	 *
+	 * @coversNothing
 	 */
 	function test_info() : void {
 		$data = get_plugin_data( dirname( __DIR__ ) . '/Plugin.php', false, false );
@@ -43,6 +45,8 @@ class Plugin extends \WP_UnitTestCase {
 	 * "RequiresWP" and "RequiresPHP" indexes were added in 5.3.0.
 	 *
 	 * @link https://developer.wordpress.org/reference/functions/get_plugin_data/
+	 *
+	 * @coversNothing
 	 */
 	function test_requires_info() : void {
 		require ABSPATH . WPINC . '/version.php';
@@ -60,6 +64,8 @@ class Plugin extends \WP_UnitTestCase {
 	 * Test class constants.
 	 *
 	 * @group constant
+	 *
+	 * @coversNothing
 	 */
 	function test_constants() : void {
 		$this->assertSame( 2.1, PluginActual::VERSION );
@@ -89,6 +95,7 @@ class Plugin extends \WP_UnitTestCase {
 			return (
 				   0 === stripos( $path, PluginActual::dir() )
 				&& 0 !== stripos( $path, PluginActual::dir() . 'tests/' )
+				&& 0 !== stripos( $path, PluginActual::dir() . 'vendor/' )
 			);
 		} );
 

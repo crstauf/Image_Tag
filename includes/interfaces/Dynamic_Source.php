@@ -11,6 +11,6 @@ defined( 'WPINC' ) || die();
  */
 interface Dynamic_Source {
 
-	function generate_source() : string;
+	public function generate_source() : string;
 
 }

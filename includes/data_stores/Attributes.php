@@ -3,6 +3,7 @@
 declare( strict_types=1 );
 
 namespace Image_Tag\Data_Stores;
+
 use Image_Tag\Abstracts\Data_Store;
 
 /**
@@ -15,18 +16,19 @@ class Attributes extends Data_Store {
 	 *
 	 * @return string
 	 */
-	function output() : string {
+	public function output() : string {
 		$prefix = '';
 		$output = array();
 
-		foreach ( $this->get() as $key => $value )
+		foreach ( $this->get() as $key => $value ) {
 			$output[] = sprintf( '%s="%s"', $key, $value );
+		}
 
 		$glue = ' ';
 
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+		if ( defined( 'WP_DEBUG' ) && constant( 'WP_DEBUG' ) ) {
 			$prefix = PHP_EOL;
-			$glue .= $prefix;
+			$glue  .= $prefix;
 		}
 
 		return $prefix . implode( $glue, $output );

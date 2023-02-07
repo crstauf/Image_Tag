@@ -9,6 +9,8 @@ class _Image_Tag extends \WP_UnitTestCase {
 
 	/**
 	 * @group constant
+	 *
+	 * @coversNothing
 	 */
 	function test_types() : void {
 		$expected = array(
@@ -49,6 +51,13 @@ class _Image_Tag extends \WP_UnitTestCase {
 		);
 
 		$data = array();
+
+		$data['self'] = array(
+			Image_Tag::class,
+			Image_Tag::create( 'https://doesnotexist.com/doesnotexist.jpg' ),
+			array(),
+			array()
+		);
 
 		$data['Image_Tag'] = array(
 			Image_Tag::class,
@@ -147,6 +156,9 @@ class _Image_Tag extends \WP_UnitTestCase {
 		return $data;
 	}
 
+	/**
+	 * @covers \Image_Tag::output()
+	 */
 	function test_output() : void {
 		$expected = sprintf( '%s<img %swidth="%d" %sheight="%d" %ssrc="%s" %salt="%s" />%s',
 			PHP_EOL, PHP_EOL,
@@ -202,6 +214,9 @@ class _Image_Tag extends \WP_UnitTestCase {
 		$this->assertEquals( $expected, $object->output() );
 	}
 
+	/**
+	 * @covers \Image_Tag::lazyload()
+	 */
 	function test_lazyload() : void {
 		$object = Image_Tag::create(
 			'https://doesnotexist.com/doesnotexist.jpg',
@@ -236,6 +251,9 @@ class _Image_Tag extends \WP_UnitTestCase {
 		$this->assertEquals( $expected, $object->lazyload() );
 	}
 
+	/**
+	 * @covers \Image_Tag::noscript()
+	 */
 	function test_noscript() : void {
 		$object = Image_Tag::create(
 			'https://doesnotexist.com/doesnotexist.jpg',
@@ -257,11 +275,17 @@ class _Image_Tag extends \WP_UnitTestCase {
 		$this->assertEquals( $expected, $object->noscript() );
 	}
 
+	/**
+	 * @covers \Image_Tag::get_type()
+	 */
 	function test_get_type() : void {
 		$object = new Image_Tag;
 		$this->assertEquals( 'base', $object->get_type() );
 	}
 
+	/**
+	 * @covers \Image_Tag::is_type()
+	 */
 	function test_is_type() : void {
 		$object = new Image_Tag;
 
@@ -313,6 +337,9 @@ class _Image_Tag extends \WP_UnitTestCase {
 		$this->assertFalse( $object->is_valid( 'base' ) );
 	}
 
+	/**
+	 * @coversNothing
+	 */
 	function test_joeschmoe() : void {
 		$object = Image_Tag::create( 'https://doesnotexist.com/doesnotexist.jpg', array(
 			'width' => 1600,
@@ -337,6 +364,9 @@ class _Image_Tag extends \WP_UnitTestCase {
 		$this->assertNotEquals( $expected, $joeschmoe->output() );
 	}
 
+	/**
+	 * @coversNothing
+	 */
 	function test_picsum() : void {
 		$object = Image_Tag::create( 'https://doesnotexist.com/doesnotexist.jpg', array(
 			'width' => 1600,
@@ -361,6 +391,9 @@ class _Image_Tag extends \WP_UnitTestCase {
 		$this->assertNotEquals( $expected, $picsum->output() );
 	}
 
+	/**
+	 * @coversNothing
+	 */
 	function test_placeholder() : void {
 		$object = Image_Tag::create( 'https://doesnotexist.com/doesnotexist.jpg', array(
 			'width' => 1600,
@@ -385,6 +418,9 @@ class _Image_Tag extends \WP_UnitTestCase {
 		$this->assertNotEquals( $expected, $placeholder->output() );
 	}
 
+	/**
+	 * @coversNothing
+	 */
 	function test_unsplash() : void {
 		$object = Image_Tag::create( 'https://doesnotexist.com/doesnotexist.jpg', array(
 			'width' => 1600,

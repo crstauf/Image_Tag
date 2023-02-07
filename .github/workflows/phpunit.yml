@@ -1,13 +1,21 @@
 name: PHPUnit
+run-name: Run PHPUnit on `${{ github.head_ref }}`
 
 on:
   push:
+    branches:
+      - master
     paths:
       - Plugin.php
       - includes/**
       - tests/**
       - .github/workflows/phpunit.yml
   pull_request:
+    paths:
+      - Plugin.php
+      - includes/**
+      - tests/**
+      - .github/workflows/phpunit.yml
   workflow_dispatch:
 
 jobs:
@@ -16,7 +24,7 @@ jobs:
     strategy:
       matrix:
         operating-system: [ubuntu-latest]
-        php-versions: ['7.4']
+        php-versions: ['8.1']
     name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
     services:
       mysql:
@@ -36,7 +44,7 @@ jobs:
       WP_MULTISITE: '0'
     steps:
     - name: Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v3
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -45,15 +53,13 @@ jobs:
         ini-values: post_max_size=256M
         coverage: xdebug #optional, setup coverage driver
         extensions: mysqli, mbstring, intl
-        tools: composer:v1
 
     - name: Check PHP Version
       run: php -v
 
     - name: Get Composer cache directory
-      working-directory: ./tests
       id: composer-cache
-      run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
     - name: Set up Composer caching
       uses: actions/cache@v3.2.4
@@ -66,11 +72,10 @@ jobs:
           ${{ runner.os }}-composer-
 
     - name: Composer install
-      working-directory: ./tests
       run: composer install --optimize-autoloader --prefer-dist --no-suggest --no-progress --no-ansi --no-interaction
 
     - name: Install WP Tests
       run: ./bin/install-wp-tests.sh ${MYSQL_DATABASE} ${MYSQL_USER} ${MYSQL_PASSWORD} ${DB_HOST}:${DB_PORT} ${WP_VERSION}
 
     - name: phpunit tests
-      run: ./tests/vendor/bin/phpunit --coverage-text
+      run: ./vendor/bin/phpunit --coverage-text

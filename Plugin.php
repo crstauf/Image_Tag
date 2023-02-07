@@ -36,11 +36,12 @@ final class Plugin {
 	 *
 	 * @return self
 	 */
-	static function instance() : self {
+	public static function instance() : self {
 		static $instance = null;
 
-		if ( is_null( $instance ) )
+		if ( is_null( $instance ) ) {
 			$instance = new self; // @codeCoverageIgnore
+		}
 
 		return $instance;
 	}
@@ -51,10 +52,8 @@ final class Plugin {
 	 * @codeCoverageIgnore
 	 */
 	protected function __construct() {
-
 		add_action( 'template_redirect', array( $this, 'action__template_redirect' ), 100 );
 		add_action( 'admin_init', array( $this, 'action__admin_init' ) );
-
 	}
 
 	/**
@@ -66,11 +65,20 @@ final class Plugin {
 	 *
 	 * @codeCoverageIgnore
 	 */
-	function action__template_redirect() : void {
+	public function action__template_redirect() : void {
 		static::include_files();
 	}
 
-	function action__admin_init() : void {
+	/**
+	 * Action: admin_init
+	 *
+	 * - include files, except for AJAX requests
+	 *
+	 * @uses static::includes()
+	 *
+	 * @codeCoverageIgnore
+	 */
+	public function action__admin_init() : void {
 		if ( ! wp_doing_ajax() ) {
 			return;
 		}
@@ -83,7 +91,7 @@ final class Plugin {
 	 *
 	 * @return string
 	 */
-	static function dir() : string {
+	public static function dir() : string {
 		return trailingslashit( __DIR__ );
 	}
 
@@ -93,7 +101,7 @@ final class Plugin {
 	 * @uses static::dir()
 	 * @return string
 	 */
-	static function inc() : string {
+	public static function inc() : string {
 		return static::dir() . 'includes/';
 	}
 
@@ -105,7 +113,7 @@ final class Plugin {
 	 *
 	 * @codeCoverageIgnore
 	 */
-	static function include_files() : void {
+	public static function include_files() : void {
 		$dir = static::inc();
 
 		# Interfaces.
@@ -126,11 +134,8 @@ final class Plugin {
 
 		# Base.
 		require_once $dir . 'types/Image_Tag.php';
-
 	}
 
 }
 
 Plugin::instance();
-
-?>

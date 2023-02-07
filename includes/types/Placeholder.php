@@ -8,6 +8,7 @@
 declare( strict_types=1 );
 
 namespace Image_Tag\Types;
+
 use Image_Tag\Data_Stores\Attributes;
 use Image_Tag\Data_Stores\Settings;
 
@@ -21,7 +22,7 @@ class Placeholder extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interf
 	const BASE_URL = 'https://via.placeholder.com';
 
 	/**
-	 * @var array Image types.
+	 * @var string[] Image types.
 	 */
 	const TYPES = array(
 		'placeholder',
@@ -31,11 +32,11 @@ class Placeholder extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interf
 	/**
 	 * Construct.
 	 *
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
 	 * @uses $this->construct()
 	 */
-	function __construct( $attributes = null, $settings = null ) {
+	public function __construct( $attributes = null, $settings = null ) {
 		$this->construct( $attributes, $settings );
 	}
 
@@ -48,26 +49,33 @@ class Placeholder extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interf
 	 */
 	protected function output_attributes() : Attributes {
 		$attributes = parent::output_attributes();
-		$attributes->update( 'src', $this->generate_source() );
-
 		$dimensions = array();
 
+		$attributes->update( 'src', $this->generate_source() );
+
 		# Width
-		     if ( $this->settings->has(   'width' ) ) $dimensions[] = $this->settings->get(   'width' );
-		else if ( $this->attributes->has( 'width' ) ) $dimensions[] = $this->attributes->get( 'width' );
+		if ( $this->settings->has( 'width' ) ) {
+			$dimensions[] = $this->settings->get( 'width' );
+		} else if ( $this->attributes->has( 'width' ) ) {
+			$dimensions[] = $this->attributes->get( 'width' );
+		}
 
 		# Height
-		     if ( $this->settings->has(   'height' ) ) $dimensions[] = $this->settings->get(   'height' );
-		else if ( $this->attributes->has( 'height' ) ) $dimensions[] = $this->attributes->get( 'height' );
+		if ( $this->settings->has( 'height' ) ) {
+			$dimensions[] = $this->settings->get( 'height' );
+		} else if ( $this->attributes->has( 'height' ) ) {
+			$dimensions[] = $this->attributes->get( 'height' );
+		}
 
-		if ( 1 === count( $dimensions ) )
+		if ( 1 === count( $dimensions ) ) {
 			$dimensions[] = $dimensions[0];
+		}
 
-		if ( ! $attributes->has( 'width' ) ) {
+		if ( ! $attributes->has( 'width' ) && ! empty( $dimensions[0] ) ) {
 			$attributes->set( 'width', $dimensions[0] );
 		}
 
-		if ( ! $attributes->has( 'height' ) ) {
+		if ( ! $attributes->has( 'height' ) && ! empty( $dimensions[1] ) ) {
 			$attributes->set( 'height', $dimensions[1] );
 		}
 
@@ -75,7 +83,7 @@ class Placeholder extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interf
 	}
 
 	/**
-	 * Generage image source.
+	 * Generate image source.
 	 *
 	 * @uses Settings::has()
 	 * @uses Settings::get()
@@ -83,24 +91,31 @@ class Placeholder extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interf
 	 * @uses Attributes::get()
 	 * @return string
 	 */
-	function generate_source() : string {
-		if ( array_key_exists( __FUNCTION__, $this->cache ) )
+	public function generate_source() : string {
+		if ( array_key_exists( __FUNCTION__, $this->cache ) ) {
 			return $this->cache[ __FUNCTION__ ];
-
-		$src = array( static::BASE_URL );
+		}
 
 		$dimensions = array();
+		$src        = array( static::BASE_URL );
 
 		# Width
-		     if ( $this->settings->has(   'width' ) ) $dimensions[] = $this->settings->get(   'width' );
-		else if ( $this->attributes->has( 'width' ) ) $dimensions[] = $this->attributes->get( 'width' );
+		if ( $this->settings->has( 'width' ) ) {
+			$dimensions[] = $this->settings->get( 'width' );
+		} else if ( $this->attributes->has( 'width' ) ) {
+			$dimensions[] = $this->attributes->get( 'width' );
+		}
 
 		# Height
-		     if ( $this->settings->has(   'height' ) ) $dimensions[] = $this->settings->get(   'height' );
-		else if ( $this->attributes->has( 'height' ) ) $dimensions[] = $this->attributes->get( 'height' );
+		if ( $this->settings->has( 'height' ) ) {
+			$dimensions[] = $this->settings->get( 'height' );
+		} else if ( $this->attributes->has( 'height' ) ) {
+			$dimensions[] = $this->attributes->get( 'height' );
+		}
 
-		if ( 1 === count( $dimensions ) )
+		if ( 1 === count( $dimensions ) ) {
 			$dimensions[] = $dimensions[0];
+		}
 
 		$src[] = implode( 'x', $dimensions );
 
@@ -108,16 +123,18 @@ class Placeholder extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interf
 		if ( $this->settings->has( 'bg_color' ) ) {
 			$src[] = $this->settings->get( 'bg_color' );
 
-			if ( $this->settings->has( 'text_color' ) )
+			if ( $this->settings->has( 'text_color' ) ) {
 				$src[] = $this->settings->get( 'text_color' );
+			}
 		}
 
 		# Convert to string
 		$src = implode( '/', $src );
 
 		# Custom text
-		if ( $this->settings->has( 'text' ) )
+		if ( $this->settings->has( 'text' ) ) {
 			$src = add_query_arg( 'text', $this->settings->get( 'text' ), $src );
+		}
 
 		$this->cache[ __FUNCTION__ ] = $src;
 
@@ -133,24 +150,29 @@ class Placeholder extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interf
 		$width  = 0;
 		$height = 0;
 
-		if ( $this->settings->has( 'width', false ) )
+		if ( $this->settings->has( 'width', false ) ) {
 			$width = $this->settings->get( 'width' );
-		else if ( $this->attributes->has( 'width', false ) )
+		} else if ( $this->attributes->has( 'width', false ) ) {
 			$width = $this->attributes->get( 'width' );
+		}
 
-		if ( $this->settings->has( 'height', false ) )
+		if ( $this->settings->has( 'height', false ) ) {
 			$height = $this->settings->get( 'height' );
-		else if ( $this->attributes->has( 'height', false ) )
+		} else if ( $this->attributes->has( 'height', false ) ) {
 			$height = $this->attributes->get( 'height' );
+		}
 
-		if ( empty( $height ) )
+		if ( empty( $height ) ) {
 			$height = $width;
+		}
 
-		if ( empty( $width ) )
+		if ( empty( $width ) ) {
 			$width = $height;
+		}
 
-		if ( empty( $height ) )
+		if ( empty( $height ) ) {
 			return 0;
+		}
 
 		return absint( $width ) / absint( $height );
 	}
@@ -159,7 +181,7 @@ class Placeholder extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interf
 	 * Perform validation checks.
 	 *
 	 * @uses $this->validate_dimensions()
-	 * @return WP_Error
+	 * @return \WP_Error
 	 */
 	protected function perform_validation_checks() : \WP_Error {
 		$errors = new \WP_Error;
@@ -182,12 +204,13 @@ class Placeholder extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interf
 	 */
 	protected function validate_dimensions() : void {
 		if (
-			   $this->settings->has(   'width',  false )
-			|| $this->attributes->has( 'width',  false )
-			|| $this->settings->has(   'height', false )
+			   $this->settings->has( 'width', false )
+			|| $this->settings->has( 'height', false )
+			|| $this->attributes->has( 'width', false )
 			|| $this->attributes->has( 'height', false )
-		)
+		) {
 			return;
+		}
 
 		throw new \Exception( 'Placeholder requires at least one dimension.' );
 	}
@@ -195,11 +218,11 @@ class Placeholder extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interf
 	/**
 	 * Prevent conversion to same type.
 	 *
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
 	 * @return self
 	 */
-	function placeholder( $attributes = null, $settings = null ) : self {
+	public function placeholder( $attributes = null, $settings = null ) : self {
 		trigger_error( sprintf( 'Image is already type <code>%s</code>', $this->get_type() ) );
 		return $this;
 	}
