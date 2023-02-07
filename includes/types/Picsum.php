@@ -23,7 +23,7 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 	const BASE_URL = 'https://picsum.photos';
 
 	/**
-	 * @var array Image types.
+	 * @var string[] Image types.
 	 */
 	const TYPES = array(
 		'picsum',
@@ -35,7 +35,7 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 	 *
 	 * @link https://picsum.photos/#list-images Documentation
 	 * @param int $page
-	 * @return array
+	 * @return mixed[]
 	 */
 	public static function list( int $page = 1 ) : array {
 		$url = add_query_arg( array(
@@ -88,8 +88,8 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 	/**
 	 * Construct.
 	 *
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
 	 * @uses $this->construct()
 	 */
 	public function __construct( $attributes = null, $settings = null ) {
@@ -127,11 +127,11 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 			$dimensions[] = $dimensions[0];
 		}
 
-		if ( ! $attributes->has( 'width' ) ) {
+		if ( ! $attributes->has( 'width' ) && ! empty( $dimensions[0] ) ) {
 			$attributes->set( 'width', $dimensions[0] );
 		}
 
-		if ( ! $attributes->has( 'height' ) ) {
+		if ( ! $attributes->has( 'height' ) && ! empty( $dimensions[1] ) ) {
 			$attributes->set( 'height', $dimensions[1] );
 		}
 
@@ -245,7 +245,7 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 	 * Perform validation checks.
 	 *
 	 * @uses $this->validate_dimensions()
-	 * @return WP_Error
+	 * @return \WP_Error
 	 */
 	protected function perform_validation_checks() : \WP_Error {
 		$errors = new \WP_Error;
@@ -282,8 +282,8 @@ class Picsum extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\
 	/**
 	 * Prevent conversion to same type.
 	 *
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
 	 * @return self
 	 */
 	public function picsum( $attributes = null, $settings = null ) : self {

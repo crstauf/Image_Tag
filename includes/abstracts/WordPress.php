@@ -11,6 +11,9 @@ defined( 'WPINC' ) || die();
  */
 abstract class WordPress extends Base {
 
+	/**
+	 * @var string
+	 */
 	protected $orientation = null;
 
 	/**
@@ -18,7 +21,7 @@ abstract class WordPress extends Base {
 	 *
 	 * @param string $path
 	 * @param int $count
-	 * @return array
+	 * @return string[]
 	 */
 	protected static function identify_colors( string $path, int $count = 3 ) : array {
 		require_once \Image_Tag\Plugin::inc() . 'class-get-image-most-common-colors.php';
@@ -47,6 +50,11 @@ abstract class WordPress extends Base {
 	 */
 	protected static function generate_lqip( string $path ) : string {
 		$editor = wp_get_image_editor( $path );
+
+		if ( is_wp_error( $editor ) ) {
+			return '';
+		}
+
 		$size   = $editor->get_size();
 		$ratio  = $size['height'] / $size['width'];
 
@@ -62,11 +70,22 @@ abstract class WordPress extends Base {
 		$editor->resize( $resize_width, $resize_height );
 		$editor->set_quality( 50 );
 
-		$path = $editor->generate_filename( 'lqip', get_temp_dir() );
+		$path = ( string ) $editor->generate_filename( 'lqip', get_temp_dir() );
+
+		if ( empty( $path ) ) {
+			return '';
+		}
+
 		$editor->save( $path );
 
-		$mime          = wp_get_image_mime( $path );
-		$plain_encoded = base64_encode( file_get_contents( $path ) );
+		$mime     = wp_get_image_mime( $path );
+		$contents = ( string ) file_get_contents( $path );
+
+		if ( empty( $contents ) ) {
+			return '';
+		}
+
+		$plain_encoded = base64_encode( $contents );
 		$data64        = sprintf( 'data:%s;base64,%s', $mime, $plain_encoded );
 
 		unlink( $path );
@@ -87,7 +106,7 @@ abstract class WordPress extends Base {
 			$this->orientation = 'portrait';
 		} else if ( $ratio < 1 ) {
 			$this->orientation = 'landscape';
-		} else if ( 1 === $ratio ) {
+		} else if ( floatval( 1 ) === $ratio ) {
 			$this->orientation = 'square';
 		} else {
 			$this->orientation = 'unknown';
@@ -106,7 +125,7 @@ abstract class WordPress extends Base {
 	 *
 	 * @param int $count
 	 * @uses static::identify_colors()
-	 * @return array
+	 * @return string[]
 	 */
 	abstract public function colors( int $count = 5 ) : array;
 

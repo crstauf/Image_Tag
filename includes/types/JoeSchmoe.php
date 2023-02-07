@@ -22,7 +22,7 @@ class JoeSchmoe extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfac
 	const BASE_URL = 'https://joeschmoe.io/api/v1';
 
 	/**
-	 * @var array Image types.
+	 * @var string[] Image types.
 	 */
 	const TYPES = array(
 		'joeschmoe',
@@ -33,8 +33,8 @@ class JoeSchmoe extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfac
 	/**
 	 * Construct.
 	 *
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
 	 * @uses $this->construct()
 	 */
 	public function __construct( $attributes = null, $settings = null ) {
@@ -94,7 +94,7 @@ class JoeSchmoe extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfac
 	 *
 	 * @uses Settings::has()
 	 * @uses Settings::get()
-	 * @return WP_Error
+	 * @return \WP_Error
 	 */
 	protected function perform_validation_checks() : \WP_Error {
 		$errors = new \WP_Error;

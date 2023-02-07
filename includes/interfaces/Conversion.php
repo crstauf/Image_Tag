@@ -4,6 +4,9 @@ declare( strict_types=1 );
 
 namespace Image_Tag\Interfaces;
 
+use Image_Tag\Data_Stores\Attributes;
+use Image_Tag\Data_Stores\Settings;
+
 defined( 'WPINC' ) || die();
 
 /**
@@ -14,8 +17,8 @@ interface Conversion {
 	/**
 	 * Convert to Joe Schmoe.
 	 *
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
 	 * @return \Image_Tag\Types\JoeSchmoe
 	 */
 	public function joeschmoe( $attributes = null, $settings = null ) : \Image_Tag\Types\JoeSchmoe;
@@ -23,8 +26,8 @@ interface Conversion {
 	/**
 	 * Convert to Picsum photo.
 	 *
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
 	 * @return \Image_Tag\Types\Picsum
 	 */
 	public function picsum( $attributes = null, $settings = null ) : \Image_Tag\Types\Picsum;
@@ -32,8 +35,8 @@ interface Conversion {
 	/**
 	 * Convert to Placeholder.com image.
 	 *
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
 	 * @return \Image_Tag\Types\Placeholder
 	 */
 	public function placeholder( $attributes = null, $settings = null ) : \Image_Tag\Types\Placeholder;
@@ -41,8 +44,8 @@ interface Conversion {
 	/**
 	 * Convert to Unsplash Source photo.
 	 *
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
 	 * @return \Image_Tag\Types\Unsplash
 	 */
 	public function unsplash( $attributes = null, $settings = null ) : \Image_Tag\Types\Unsplash;

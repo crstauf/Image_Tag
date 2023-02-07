@@ -23,19 +23,30 @@ defined( 'WPINC' ) || die();
 abstract class Base implements Conversion, Output, Validation {
 
 	/**
+	 * @var string[]
+	 */
+	const TYPES = array();
+
+	/**
 	 * Smallest transparent data URI image.
 	 * @var string
 	 */
 	const BLANK = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
 
 	/**
-	 * @var null|Attributes $attributes
-	 * @var null|Settings $settings
-	 * @var array $cache
+	 * @var Attributes $attributes
 	 */
-	protected $attributes = null;
-	protected $settings   = null;
-	protected $cache      = array();
+	protected $attributes;
+
+	/**
+	 * @var Settings $settings
+	 */
+	protected $settings;
+
+	/**
+	 * @var mixed[] $cache
+	 */
+	protected $cache = array();
 
 	/**
 	 * Getter.
@@ -52,8 +63,8 @@ abstract class Base implements Conversion, Output, Validation {
 	/**
 	 * Construct helper.
 	 *
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
 	 * @uses $this->create_Attributes()
 	 * @uses $this->create_Settings()
 	 * @return void
@@ -61,7 +72,7 @@ abstract class Base implements Conversion, Output, Validation {
 	 * @codeCoverageIgnore
 	 */
 	protected function construct( $attributes, $settings ) : void {
-		if ( is_a( $attributes, static::class ) ) {
+		if ( is_object( $attributes ) && is_a( $attributes, static::class ) ) {
 			foreach ( get_object_vars( $attributes ) as $key => $value ) {
 				$this->$key = $value;
 			}
@@ -74,12 +85,14 @@ abstract class Base implements Conversion, Output, Validation {
 	/**
 	 * Create Attributes object.
 	 *
-	 * @param void
+	 * @param null|mixed[]|Attributes $attributes
+	 *
+	 * @return void
 	 *
 	 * @codeCoverageIgnore
 	 */
 	protected function create_Attributes( $attributes ) : void {
-		if ( ! is_null( $this->attributes ) ) {
+		if ( is_object( $this->attributes ) && is_a( $this->attributes, Attributes::class ) ) {
 			return;
 		}
 
@@ -89,12 +102,14 @@ abstract class Base implements Conversion, Output, Validation {
 	/**
 	 * Create Settings object.
 	 *
+	 * @param null|mixed[]|Settings $settings
+	 *
 	 * @return void
 	 *
 	 * @codeCoverageIgnore
 	 */
 	protected function create_Settings( $settings ) : void {
-		if ( ! is_null( $this->settings ) ) {
+		if ( is_object( $this->settings ) && is_a( $this->settings, Settings::class ) ) {
 			return;
 		}
 
@@ -371,7 +386,7 @@ abstract class Base implements Conversion, Output, Validation {
 	/**
 	 * Get valid object, either this or fallback.
 	 *
-	 * @param null|string|array $test_types
+	 * @param null|string|string[] $test_types
 	 * @uses $this->is_valid()
 	 * @uses $this->fallback()
 	 * @return self
@@ -400,7 +415,7 @@ abstract class Base implements Conversion, Output, Validation {
 	/**
 	 * Test image type.
 	 *
-	 * @param null|string|array $test_types
+	 * @param null|string|string[] $test_types
 	 * @return bool
 	 */
 	public function is_type( $test_types ) : bool {
@@ -414,7 +429,7 @@ abstract class Base implements Conversion, Output, Validation {
 	/**
 	 * Check image is valid.
 	 *
-	 * @param null|string|array $test_types
+	 * @param null|string|string[] $test_types
 	 * @param bool $check_fallback
 	 * @uses $this->check_valid()
 	 * @uses $this->is_type()
@@ -469,13 +484,13 @@ abstract class Base implements Conversion, Output, Validation {
 	/**
 	 * Convert to JoeSchmoe.
 	 *
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
 	 * @uses $this->is_type()
 	 * @return \Image_Tag\Types\JoeSchmoe
 	 */
 	public function joeschmoe( $attributes = null, $settings = null ) : \Image_Tag\Types\JoeSchmoe {
-		if ( $this->is_type( 'joeschmoe' ) ) {
+		if ( is_a( $this, \Image_Tag\Types\JoeSchmoe::class ) ) {
 			trigger_error( sprintf( 'Image is already type <code>%s</code>', $this->get_type() ) );
 			return $this;
 		}
@@ -483,19 +498,25 @@ abstract class Base implements Conversion, Output, Validation {
 		$attributes = wp_parse_args( ( array ) $attributes, $this->attributes->store );
 		$settings   = wp_parse_args( ( array ) $settings, $this->settings->store );
 
-		return Image_Tag::create( 'joeschmoe', $attributes, $settings );
+		$created = Image_Tag::create( 'joeschmoe', $attributes, $settings );
+
+		if ( ! is_a( $created, \Image_Tag\Types\JoeSchmoe::class ) ) {
+			return new \Image_Tag\Types\JoeSchmoe;
+		}
+
+		return $created;
 	}
 
 	/**
 	 * Convert to Picsum photo.
 	 *
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
 	 * @uses $this->is_type()
 	 * @return \Image_Tag\Types\Picsum
 	 */
 	public function picsum( $attributes = null, $settings = null ) : \Image_Tag\Types\Picsum {
-		if ( $this->is_type( 'picsum' ) ) {
+		if ( is_a( $this, \Image_Tag\Types\Picsum::class ) ) {
 			trigger_error( sprintf( 'Image is already type <code>%s</code>', $this->get_type() ) );
 			return $this;
 		}
@@ -503,19 +524,25 @@ abstract class Base implements Conversion, Output, Validation {
 		$attributes = wp_parse_args( ( array ) $attributes, $this->attributes->store );
 		$settings   = wp_parse_args( ( array ) $settings, $this->settings->store );
 
-		return Image_Tag::create( 'picsum', $attributes, $settings );
+		$created = Image_Tag::create( 'picsum', $attributes, $settings );
+
+		if ( ! is_a( $created, \Image_Tag\Types\Picsum::class ) ) {
+			return new \Image_Tag\Types\Picsum;
+		}
+
+		return $created;
 	}
 
 	/**
 	 * Convert to Placeholder.com image.
 	 *
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
 	 * @uses $this->is_type()
 	 * @return \Image_Tag\Types\Placeholder
 	 */
 	public function placeholder( $attributes = null, $settings = null ) : \Image_Tag\Types\Placeholder {
-		if ( $this->is_type( 'placeholder' ) ) {
+		if ( is_a( $this, \Image_Tag\Types\Placeholder::class ) ) {
 			trigger_error( sprintf( 'Image is already type <code>%s</code>', $this->get_type() ) );
 			return $this;
 		}
@@ -523,19 +550,25 @@ abstract class Base implements Conversion, Output, Validation {
 		$attributes = wp_parse_args( ( array ) $attributes, $this->attributes->store );
 		$settings   = wp_parse_args( ( array ) $settings, $this->settings->store );
 
-		return Image_Tag::create( 'placeholder', $attributes, $settings );
+		$created = Image_Tag::create( 'placeholder', $attributes, $settings );
+
+		if ( ! is_a( $created, \Image_Tag\Types\Placeholder::class ) ) {
+			return new \Image_Tag\Types\Placeholder;
+		}
+
+		return $created;
 	}
 
 	/**
 	 * Convert to Unsplash Source photo.
 	 *
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
 	 * @uses $this->is_type()
 	 * @return \Image_Tag\Types\Unsplash
 	 */
 	public function unsplash( $attributes = null, $settings = null ) : \Image_Tag\Types\Unsplash {
-		if ( $this->is_type( 'unsplash' ) ) {
+		if ( is_a( $this, \Image_Tag\Types\Unsplash::class ) ) {
 			trigger_error( sprintf( 'Image is already type <code>%s</code>', $this->get_type() ) );
 			return $this;
 		}
@@ -543,7 +576,13 @@ abstract class Base implements Conversion, Output, Validation {
 		$attributes = wp_parse_args( ( array ) $attributes, $this->attributes->store );
 		$settings   = wp_parse_args( ( array ) $settings, $this->settings->store );
 
-		return Image_Tag::create( 'unsplash', $attributes, $settings );
+		$created = Image_Tag::create( 'unsplash', $attributes, $settings );
+
+		if ( ! is_a( $created, \Image_Tag\Types\Unsplash::class ) ) {
+			return new \Image_Tag\Types\Unsplash;
+		}
+
+		return $created;
 	}
 
 }

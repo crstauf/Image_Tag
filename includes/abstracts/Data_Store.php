@@ -8,18 +8,20 @@ defined( 'WPINC' ) || die();
 
 /**
  * Abstract class: Image_Tag\Abstracts\Data_Store
+ *
+ * @property mixed[] $store
  */
 class Data_Store implements \Image_Tag\Interfaces\Data_Store {
 
 	/**
-	 * @var array Data storage.
+	 * @var mixed[] Data storage.
 	 */
 	protected $store = array();
 
 	/**
 	 * Construct.
 	 *
-	 * @param array|object $data
+	 * @param null|mixed[]|self $data
 	 */
 	public function __construct( $data ) {
 		if (
@@ -65,13 +67,17 @@ class Data_Store implements \Image_Tag\Interfaces\Data_Store {
 	 * @return string
 	 */
 	public function __toString() : string {
+		if ( ! method_exists( $this, 'output' ) ) {
+			return '';
+		}
+
 		return $this->output();
 	}
 
 	/**
 	 * Set key/value pair.
 	 *
-	 * @param string|array $set
+	 * @param string|string[] $set
 	 * @param null|mixed $value
 	 * @return self
 	 */
@@ -108,7 +114,7 @@ class Data_Store implements \Image_Tag\Interfaces\Data_Store {
 	/**
 	 * Update key/value pair.
 	 *
-	 * @param string|array $update
+	 * @param string|string[] $update
 	 * @param null|mixed $value
 	 * @return self
 	 */
@@ -138,9 +144,9 @@ class Data_Store implements \Image_Tag\Interfaces\Data_Store {
 	/**
 	 * Check if key or value exists in store.
 	 *
-	 * @param string|array $has
+	 * @param string|string[] $has
 	 * @param bool $check_value
-	 * @return bool|array
+	 * @return bool|mixed[]
 	 */
 	public function has( $has = null, bool $check_value = true ) {
 		if ( in_array( $has, array( null, '', array() ) ) ) {
@@ -165,7 +171,7 @@ class Data_Store implements \Image_Tag\Interfaces\Data_Store {
 		$result = array();
 
 		foreach ( $has as $key ) {
-			$result[ $key ] = $this->has( $key, $check_value );
+			$result[ $key ] = $this->has( ( string ) $key, $check_value );
 		}
 
 		return $result;
@@ -175,9 +181,9 @@ class Data_Store implements \Image_Tag\Interfaces\Data_Store {
 	 * Check if key(s) does not exist in store,
 	 * or value is empty.
 	 *
-	 * @param string|array $empty
+	 * @param string|string[] $empty
 	 * @uses $this->has()
-	 * @return bool|array
+	 * @return bool|mixed[]
 	 */
 	public function empty( $empty = null ) {
 		if ( is_scalar( $empty ) ) {
@@ -195,12 +201,16 @@ class Data_Store implements \Image_Tag\Interfaces\Data_Store {
 		$result = array();
 
 		foreach ( $empty as $key ) {
-			$result[ $key ] = $this->empty( $key );
+			$result[ $key ] = $this->empty( ( string ) $key );
 		}
+
+		return $result;
 	}
 
 	/**
 	 * Get data by key.
+	 *
+	 * @param string|string[] $get
 	 *
 	 * @return mixed
 	 */

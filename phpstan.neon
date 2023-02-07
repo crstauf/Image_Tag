@@ -1,6 +1,3 @@
-includes:
-	- phpstan-baseline.neon
-
 parameters:
 	level: 8
 	paths:
@@ -8,6 +5,9 @@ parameters:
 		- Plugin.php
 	excludePaths:
 		- vendor
+		- includes/class-get-image-most-common-colors.php
+	scanFiles:
+		- includes/class-get-image-most-common-colors.php
 	bootstrapFiles:
 		- dev/phpstan-bootstrap.php
 		- vendor/php-stubs/wordpress-stubs/wordpress-stubs.php

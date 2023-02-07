@@ -17,12 +17,23 @@ defined( 'WPINC' ) || die();
  */
 class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 
+	/**
+	 * @var int
+	 */
 	protected $attachment_id;
+
+	/**
+	 * @var string
+	 */
 	protected $wp_largest_size  = 'thumbnail';
+
+	/**
+	 * @var string
+	 */
 	protected $wp_smallest_size = 'full';
 
 	/**
-	 * @var array Image types.
+	 * @var string[] Image types.
 	 */
 	const TYPES = array(
 		'attachment',
@@ -46,8 +57,8 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 	 * Construct.
 	 *
 	 * @param int $attachment_id
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
 	 * @uses $this->construct()
 	 * @uses $this->is_valid()
 	 * @uses $this->identify_sizes();
@@ -84,7 +95,7 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 	/**
 	 * Get attachment meta data.
 	 *
-	 * @return array
+	 * @return mixed[]
 	 */
 	protected function metadata() : array {
 		return ( array ) get_post_meta( $this->attachment_id, '_wp_attachment_metadata', true );
@@ -99,7 +110,7 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 	 */
 	protected function path( string $size = 'full' ) : string {
 		if ( 'full' === $size ) {
-			return get_attached_file( $this->attachment_id );
+			return ( string ) get_attached_file( $this->attachment_id );
 		}
 
 		$metadata = $this->metadata();
@@ -197,7 +208,7 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 	 *
 	 * @param int $count
 	 * @uses static::identify_colors()
-	 * @return array
+	 * @return string[]
 	 */
 	public function colors( int $count = 3 ) : array {
 		$meta = get_post_meta( $this->attachment_id, '_common_colors', true );
@@ -265,11 +276,15 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 	/**
 	 * Add source attributes.
 	 *
-	 * @param $attributes Reference to Attributes object.
+	 * @param Attributes $attributes Reference to Attributes object.
 	 * @return void
 	 */
 	protected function output_source_attributes( &$attributes ) : void {
 		$src = wp_get_attachment_image_src( $this->attachment_id, $this->wp_smallest_size );
+
+		if ( empty( $src ) || ! is_array( $src ) ) {
+			return;
+		}
 
 		$attributes->set( 'src', $src[0] );
 		$attributes->set( 'width', $src[1] );

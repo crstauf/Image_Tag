@@ -17,10 +17,13 @@ defined( 'WPINC' ) || die();
  */
 class WP_Theme extends \Image_Tag\Abstracts\WordPress {
 
+	/**
+	 * @var string
+	 */
 	protected $path = null;
 
 	/**
-	 * @var array Image types.
+	 * @var string[] Image types.
 	 */
 	const TYPES = array(
 		'theme',
@@ -33,8 +36,8 @@ class WP_Theme extends \Image_Tag\Abstracts\WordPress {
 	 * Construct.
 	 *
 	 * @param string $source
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
 	 */
 	public function __construct( string $source, $attributes = null, $settings = null ) {
 		$stylesheet = trailingslashit( get_stylesheet_directory() );
@@ -62,9 +65,7 @@ class WP_Theme extends \Image_Tag\Abstracts\WordPress {
 	 *
 	 * @param int $count
 	 * @uses static::identify_colors()
-	 * @return array
-	 *
-	 * @todo implement temporary caching
+	 * @return string[]
 	 */
 	public function colors( int $count = 3 ) : array {
 		$cache_key = sprintf( '%s-%d', __FUNCTION__, $count );
@@ -112,6 +113,10 @@ class WP_Theme extends \Image_Tag\Abstracts\WordPress {
 		}
 
 		$dimensions = getimagesize( $this->path );
+
+		if ( empty( $dimensions ) ) {
+			return 0;
+		}
 
 		return absint( $dimensions[0] ) / absint( $dimensions[1] );
 	}

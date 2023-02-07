@@ -22,7 +22,7 @@ class Unsplash extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interface
 	const BASE_URL = 'https://source.unsplash.com';
 
 	/**
-	 * @var array Image types.
+	 * @var string[] Image types.
 	 */
 	const TYPES = array(
 		'unsplash',
@@ -32,8 +32,8 @@ class Unsplash extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interface
 	/**
 	 * Construct.
 	 *
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
 	 * @uses $this->construct()
 	 */
 	public function __construct( $attributes = null, $settings = null ) {
@@ -202,7 +202,7 @@ class Unsplash extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interface
 	 * Perform validation checks.
 	 *
 	 * @uses $this->validate_dimensions()
-	 * @return WP_Error
+	 * @return \WP_Error
 	 */
 	protected function perform_validation_checks() : \WP_Error {
 		$errors = new \WP_Error;
@@ -239,8 +239,8 @@ class Unsplash extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interface
 	/**
 	 * Prevent conversion to same type.
 	 *
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
 	 * @return self
 	 */
 	public function unsplash( $attributes = null, $settings = null ) : self {

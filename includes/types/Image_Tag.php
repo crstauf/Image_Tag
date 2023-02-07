@@ -17,7 +17,7 @@ defined( 'WPINC' ) || die();
 class Image_Tag extends Base {
 
 	/**
-	 * @var array Image types.
+	 * @var string[] Image types.
 	 */
 	const TYPES = array(
 		'base',
@@ -27,13 +27,13 @@ class Image_Tag extends Base {
 	/**
 	 * Create image tag.
 	 *
-	 * @param int|string $source
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
-	 * @return Image_Tag
+	 * @param int|string|Base $source
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
+	 * @return Base
 	 */
 	public static function create( $source, $attributes = null, $settings = null ) : Base {
-		if ( is_a( $source, self::class ) ) {
+		if ( is_object( $source ) && is_a( $source, Base::class ) ) {
 			return $source;
 		}
 
@@ -82,8 +82,8 @@ class Image_Tag extends Base {
 	/**
 	 * Construct.
 	 *
-	 * @param null|array|Attributes $attributes
-	 * @param null|array|Settings $settings
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
 	 * @uses $this->construct()
 	 * @uses Attributes->set()
 	 */
