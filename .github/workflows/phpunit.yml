@@ -59,7 +59,7 @@ jobs:
       run: php -v
 
     - name: Get Composer cache directory
-      working-directory: ./tests
+      working-directory: ./
       id: composer-cache
       run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
