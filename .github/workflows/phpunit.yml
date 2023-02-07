@@ -1,12 +1,12 @@
 name: PHPUnit
 
-on: 
+on:
   push:
     paths:
-      Plugin.php
-      includes/**
-      tests/**
-      .github/workflows/phpunit.yml
+      - Plugin.php
+      - includes/**
+      - tests/**
+      - .github/workflows/phpunit.yml
   pull_request:
   workflow_dispatch:
 
@@ -73,4 +73,4 @@ jobs:
       run: ./bin/install-wp-tests.sh ${MYSQL_DATABASE} ${MYSQL_USER} ${MYSQL_PASSWORD} ${DB_HOST}:${DB_PORT} ${WP_VERSION}
 
     - name: phpunit tests
-      run: ./tests/vendor/bin/phpunit --coverage-text
+      run: ./vendor/bin/phpunit --coverage-text

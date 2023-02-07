@@ -1,0 +1,55 @@
+name: PHPStan
+run-name: Run PHPStan on `${{ github.head_ref }}`
+
+on:
+  pull_request:
+    paths:
+      - 'wp-content/themes/familysmiles/**/*.php'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  phpstan:
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@v3
+
+      - name: Detect File Changes
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          list-files: shell
+          filters: |
+            wpcontent:
+              - added|modified: 'wp-content/themes/familysmiles/**/*.php'
+              - added|modified: 'wp-content/mu-plugins/cssllc-acceptable-dynamic-headlines.php'
+              - added|modified: 'wp-content/mu-plugins/domain-verifications.php'
+              - added|modified: 'wp-content/mu-plugins/familysmiles-acf-list-columns.php'
+              - added|modified: 'wp-content/mu-plugins/familysmiles-cpt-location.php'
+              - added|modified: 'wp-content/mu-plugins/familysmiles-cpt-service.php'
+              - added|modified: 'wp-content/mu-plugins/favicons.php'
+              - added|modified: 'wp-content/mu-plugins/google-tag-manager.php'
+
+      - name: Setup PHP
+        if: ${{ steps.filter.outputs.wpcontent == 'true' }}
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "8.1"
+          ini-values: "memory_limit=1G"
+          coverage: none
+
+      - name: Validate composer.json and composer.lock
+        if: ${{ steps.filter.outputs.wpcontent == 'true' }}
+        run: composer validate --no-check-publish
+
+      - name: Install Composer dependencies
+        if: ${{ steps.filter.outputs.wpcontent == 'true' }}
+        run: |
+          composer install --prefer-dist --no-progress --no-suggest --optimize-autoloader
+
+      - name: Run PHPStan checks
+        if: ${{ steps.filter.outputs.wpcontent == 'true' }}
+        run: ./vendor/bin/phpstan analyse ${{ steps.filter.outputs.wpcontent_files }}
