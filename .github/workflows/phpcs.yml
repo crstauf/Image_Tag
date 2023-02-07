@@ -3,6 +3,8 @@ run-name: Run PHPCS on `${{ github.head_ref }}`
 
 on:
   push:
+    branches:
+      - master
     paths:
       - Plugin.php
       - includes/**
