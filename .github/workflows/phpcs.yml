@@ -2,9 +2,17 @@ name: PHPCS
 run-name: Run PHPCS on `${{ github.head_ref }}`
 
 on:
+  push:
+    paths:
+      - Plugin.php
+      - includes/**
+      - .github/workflows/phpcs.yml
   pull_request:
     paths:
-      - 'wp-content/themes/familysmiles/**/*.php'
+      - Plugin.php
+      - includes/**
+      - .github/workflows/phpcs.yml
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -24,14 +32,8 @@ jobs:
           list-files: shell
           filters: |
             wpcontent:
-              - added|modified: 'wp-content/themes/familysmiles/**/*.php'
-              - added|modified: 'wp-content/mu-plugins/cssllc-acceptable-dynamic-headlines.php'
-              - added|modified: 'wp-content/mu-plugins/domain-verifications.php'
-              - added|modified: 'wp-content/mu-plugins/familysmiles-acf-list-columns.php'
-              - added|modified: 'wp-content/mu-plugins/familysmiles-cpt-location.php'
-              - added|modified: 'wp-content/mu-plugins/familysmiles-cpt-service.php'
-              - added|modified: 'wp-content/mu-plugins/favicons.php'
-              - added|modified: 'wp-content/mu-plugins/google-tag-manager.php'
+              - added|modified: 'Plugin.php'
+              - added|modified: 'includes/**/*.php'
 
       - name: Setup PHP
         if: ${{ steps.filter.outputs.wpcontent == 'true' }}
