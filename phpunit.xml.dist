@@ -27,15 +27,16 @@
 		</exclude>
 	</groups>
 
-	<filter>
-		<whitelist processUncoveredFilesFromWhitelist="true">
+	<coverage
+		processUncoveredFiles="true"
+	>
+		<include>
 			<file>Plugin.php</file>
 			<file>includes/types/Image_Tag.php</file>
-		</whitelist>
-	</filter>
-
-	<logging>
-		<log type="coverage-html" target="./report" />
-	</logging>
+		</include>
+		<report>
+			<html outputDirectory="report"/>
+		</report>
+	</coverage>
 
 </phpunit>

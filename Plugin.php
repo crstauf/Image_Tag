@@ -69,6 +69,15 @@ final class Plugin {
 		static::include_files();
 	}
 
+	/**
+	 * Action: admin_init
+	 *
+	 * - include files, except for AJAX requests
+	 *
+	 * @uses static::includes()
+	 *
+	 * @codeCoverageIgnore
+	 */
 	public function action__admin_init() : void {
 		if ( ! wp_doing_ajax() ) {
 			return;
