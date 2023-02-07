@@ -55,8 +55,8 @@ abstract class WordPress extends Base {
 			return '';
 		}
 
-		$size   = $editor->get_size();
-		$ratio  = $size['height'] / $size['width'];
+		$size  = $editor->get_size();
+		$ratio = $size['height'] / $size['width'];
 
 		$resize_width  = 20;
 		$resize_height = 20;

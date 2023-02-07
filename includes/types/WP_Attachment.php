@@ -25,7 +25,7 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 	/**
 	 * @var string
 	 */
-	protected $wp_largest_size  = 'thumbnail';
+	protected $wp_largest_size = 'thumbnail';
 
 	/**
 	 * @var string
