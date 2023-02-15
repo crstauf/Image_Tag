@@ -19,7 +19,7 @@ defined( 'WPINC' ) || die();
  */
 class JoeSchmoe extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interfaces\Dynamic_Source {
 
-	const BASE_URL = 'https://joeschmoe.io/api/v1';
+	const BASE_URL = 'https://joeschmoe.crstauf.workers.dev';
 
 	/**
 	 * @var string[] Image types.
