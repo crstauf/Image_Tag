@@ -57,16 +57,20 @@ class Demo {
 			return;
 		}
 
+		get_header();
+
 		$this->header();
 		$this->attachment();
 		$this->attachment_lqip();
 		$this->theme();
 		$this->joeschmoe();
 		$this->picsum();
+		$this->unsplash();
 		$this->placeholder();
 		$this->url();
+		$this->fallback();
 
-		echo '</body></html>';
+		get_footer();
 
 		exit;
 	}
@@ -106,15 +110,16 @@ class Demo {
 
 					figcaption {
 						display: block;
-						max-width: 40vw;
-						padding: 10px 30px;
+						padding: 10px 20px;
 						margin-top: 10px;
-						background-color: #fff;
+						background-color: rgba( 255, 255, 255, 0.8 );
 						border: 1px solid #000;
+						white-space: pre-wrap;
 						box-sizing: border-box;
 						font-family: monospace;
 						letter-spacing: 1px;
-						font-weight: 300;
+						text-align: left;
+						font-weight: 400;
 						font-size: 12px;
 					}
 
@@ -137,11 +142,15 @@ class Demo {
 		<?php
 	}
 
-	protected function output( $image, $label ) {
+	protected function output( $image, $code ) {
+		if ( is_object( $image ) ) {
+			$image->attributes->loading = 'lazy';
+		}
+
 		printf(
 			'<figure>%s<figcaption>%s</figcaption></figure>',
 			$image,
-			$label
+			trim( $code )
 		);
 	}
 
@@ -157,7 +166,13 @@ class Demo {
 		$post_id = array_pop( $query->posts );
 		$image   = \Image_Tag::create( $post_id );
 
-		$this->output( $image, sprintf( '\Image_Tag::create( %d )', $post_id ) );
+		ob_start();
+		?>
+
+\Image_Tag::create( <?php echo $post_id ?> );
+
+		<?php
+		$this->output( $image, ob_get_clean() );
 	}
 
 	protected function attachment_lqip() {
@@ -170,15 +185,28 @@ class Demo {
 		) );
 
 		$post_id = array_pop( $query->posts );
-		$image   = \Image_Tag::create( $post_id );
-		$img     = sprintf( '<img src="%s" />', $image->lqip() );
+		$image   = \Image_Tag::create( $post_id )->lqip();
+		$img     = sprintf( '<img src="%s" />', $image );
 
-		$this->output( $img, sprintf( '\Image_Tag::create( %d )->lqip()', $post_id ) );
+		ob_start();
+		?>
+
+\Image_Tag::create( <?php echo $post_id ?> )->lqip();
+
+		<?php
+		$this->output( $img, ob_get_clean() );
 	}
 
 	protected function theme() : void {
 		$image = \Image_Tag::create( 'assets/images/Daffodils.jpg' );
-		$this->output( $image, '\Image_Tag::create( "assets/images/Daffodils.jpg" )' );
+
+		ob_start();
+		?>
+
+\Image_Tag::create( 'assets/images/Daffodils.jpg' )
+
+		<?php
+		$this->output( $image, ob_get_clean() );
 	}
 
 	protected function joeschmoe() : void {
@@ -187,7 +215,16 @@ class Demo {
 			'height' => 1000,
 		) );
 
-		$this->output( $image, '\Image_Tag::create( "joeschmoe" )' );
+		ob_start();
+		?>
+
+\Image_Tag::create( 'joeschmoe', array(
+	'width'  => 1000,
+	'height' => 1000,
+) );
+
+		<?php
+		$this->output( $image, ob_get_clean() );
 	}
 
 	protected function picsum() : void {
@@ -196,7 +233,38 @@ class Demo {
 			'height' => 1000,
 		) );
 
-		$this->output( $image, '\Image_Tag::create( "picsum" )' );
+		ob_start();
+		?>
+
+\Image_Tag::create( 'picsum', array(
+	'width'  => 1000,
+	'height' => 1000,
+) );
+
+		<?php
+		$this->output( $image, ob_get_clean() );
+	}
+
+	protected function unsplash() : void {
+		$image = \Image_Tag::create( 'unsplash', array(
+			'width'  => 400,
+			'height' => 300,
+		), array(
+			'random' => 1,
+		) );
+
+		ob_start();
+		?>
+
+\Image_Tag::create( 'unsplash', array(
+	'width'  => 400,
+	'height' => 300,
+), array(
+	'random' => 1,
+) );
+
+		<?php
+		$this->output( $image, ob_get_clean() );
 	}
 
 	protected function placeholder() : void {
@@ -207,7 +275,18 @@ class Demo {
 			'text' => 'Placeholder.com',
 		) );
 
-		$this->output( $image, '\Image_Tag::create( "placeholder" )' );
+		ob_start();
+		?>
+
+\Image_Tag::create( 'placeholder', array(
+	'width'  => 1000,
+	'height' => 350,
+), array(
+	'text' => 'Placeholder.com',
+) );
+
+		<?php
+		$this->output( $image, ob_get_clean() );
 	}
 
 	protected function url() {
@@ -218,7 +297,49 @@ class Demo {
 			'height' => 1424,
 		) );
 
-		$this->output( $image, sprintf( '\Image_Tag::create( "%s" )', $url ) );
+		ob_start();
+		?>
+
+\Image_Tag::create(
+	"<?php echo $url ?>",
+	array(
+		'width'  => 982,
+		'height' => 1424,
+	)
+);
+
+		<?php
+		$this->output( $image, ob_get_clean() );
+	}
+
+	protected function fallback() {
+		$image = \Image_Tag::create( 1, array(), array(
+			'width'       => 1000,
+			'height'      => 1000,
+			'image-sizes' => 'full',
+			'fallback'    => array(
+				'joeschmoe'   => ! empty( $_GET['person'] ),
+				'placeholder' => current_user_can( 'edit_post', get_queried_object_id() ),
+				'picsum'      => true
+			),
+		) );
+
+		ob_start();
+		?>
+
+\Image_Tag::create( 1, array(), array(
+	'width'       => 1000,
+	'height'      => 1000,
+	'image-sizes' => 'full',
+	'fallback'    => array(
+		'joeschmoe'   => ! empty( $_GET['person'] ),
+		'placeholder' => current_user_can( 'edit_post', get_queried_object_id() ),
+		'picsum'      => true
+	),
+) );
+
+		<?php
+		$this->output( $image, ob_get_clean() );
 	}
 
 }
