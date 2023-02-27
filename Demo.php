@@ -53,7 +53,15 @@ class Demo {
 			return;
 		}
 
-		if ( ! is_page( 'image-tag' ) ) {
+		$slug = 'image-tag';
+
+		if ( defined( 'IMAGE_TAG_DEMO_PAGE_SLUG' ) ) {
+			$slug = constant( 'IMAGE_TAG_DEMO_PAGE_SLUG' );
+		}
+
+		$slug = apply_filters( 'image-tag-demo-page-slug', $slug );
+
+		if ( ! is_page( $slug ) ) {
 			return;
 		}
 
