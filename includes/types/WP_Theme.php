@@ -101,7 +101,7 @@ class WP_Theme extends \Image_Tag\Abstracts\WordPress {
 	}
 
 	/**
-	 * Get image ratio.
+	 * Get image ratio: height divided by width.
 	 *
 	 * @uses $this->is_valid()
 	 * @uses getimagesize()
@@ -118,7 +118,7 @@ class WP_Theme extends \Image_Tag\Abstracts\WordPress {
 			return 0;
 		}
 
-		return absint( $dimensions[0] ) / absint( $dimensions[1] );
+		return absint( $dimensions[1] ) / absint( $dimensions[0] );
 	}
 
 	/**
