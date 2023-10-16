@@ -189,7 +189,7 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 	}
 
 	/**
-	 * Get ratio of image dimensions: width divided by height.
+	 * Get ratio of image dimensions: height divided by width.
 	 *
 	 * @return float
 	 */
@@ -200,7 +200,7 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 			return 0;
 		}
 
-		return absint( $size[1] ) / absint( $size[2] );
+		return absint( $size[2] ) / absint( $size[1] );
 	}
 
 	/**

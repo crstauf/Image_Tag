@@ -76,6 +76,8 @@ class GetImageMostCommonColors {
 			$image_orig = imagecreatefromjpeg($img);
 			if ($size[2] == 3)
 			$image_orig = imagecreatefrompng($img);
+			if ($size[2] == 18)
+			$image_orig = imagecreatefromwebp($img);
 			// WE NEED NEAREST NEIGHBOR RESIZING, BECAUSE IT DOESN'T ALTER THE COLORS
 			imagecopyresampled($image_resized, $image_orig, 0, 0, 0, 0, $width, $height, $size[0], $size[1]);
 			$im = $image_resized;
