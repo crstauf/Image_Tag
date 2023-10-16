@@ -164,13 +164,13 @@ class _Image_Tag extends \WP_UnitTestCase {
 			PHP_EOL, PHP_EOL,
 			1600, PHP_EOL,
 			900, PHP_EOL,
-			'https://doesnotexist.com/doesnotexist.jpg', PHP_EOL,
+			'https://picsum.photos/1600/900', PHP_EOL,
 			'',
 			PHP_EOL
 		);
 
 		$object = Image_Tag::create(
-			'https://doesnotexist.com/doesnotexist.jpg',
+			'https://picsum.photos/1600/900',
 			array(
 				'width' => 1600,
 				'height' => 900,
@@ -196,8 +196,8 @@ class _Image_Tag extends \WP_UnitTestCase {
 			),
 			array(
 				'fallback' => array(
-					'https://doesnotexist.com/doesnotexist.jpg' => false,
-					'https://doesnotexist.com/doesnotexist.png' => true,
+					'https://picsum.photos/1600/900.jpg' => false,
+					'https://picsum.photos/1600/900.png' => true,
 				),
 			),
 		);
@@ -206,7 +206,7 @@ class _Image_Tag extends \WP_UnitTestCase {
 			PHP_EOL, PHP_EOL,
 			1600, PHP_EOL,
 			900, PHP_EOL,
-			'https://doesnotexist.com/doesnotexist.png', PHP_EOL,
+			'https://picsum.photos/1600/900.png', PHP_EOL,
 			'',
 			PHP_EOL
 		);
@@ -219,7 +219,7 @@ class _Image_Tag extends \WP_UnitTestCase {
 	 */
 	function test_lazyload() : void {
 		$object = Image_Tag::create(
-			'https://doesnotexist.com/doesnotexist.jpg',
+			'https://picsum.photos/1600/900',
 			array(
 				'width' => 1600,
 				'height' => 900,
@@ -233,7 +233,7 @@ class _Image_Tag extends \WP_UnitTestCase {
 			Image_Tag::BLANK, PHP_EOL,
 			'', PHP_EOL,
 			'lazyload hide-if-no-js', PHP_EOL,
-			'https://doesnotexist.com/doesnotexist.jpg',
+			'https://picsum.photos/1600/900',
 			PHP_EOL
 		);
 
@@ -241,7 +241,7 @@ class _Image_Tag extends \WP_UnitTestCase {
 			PHP_EOL, PHP_EOL, PHP_EOL,
 			1600, PHP_EOL,
 			900, PHP_EOL,
-			'https://doesnotexist.com/doesnotexist.jpg', PHP_EOL,
+			'https://picsum.photos/1600/900', PHP_EOL,
 			'', PHP_EOL,
 			'no-js', PHP_EOL,
 			'lazy',
@@ -256,7 +256,7 @@ class _Image_Tag extends \WP_UnitTestCase {
 	 */
 	function test_noscript() : void {
 		$object = Image_Tag::create(
-			'https://doesnotexist.com/doesnotexist.jpg',
+			'https://picsum.photos/1600/900',
 			array(
 				'width' => 1600,
 				'height' => 900,
@@ -267,7 +267,7 @@ class _Image_Tag extends \WP_UnitTestCase {
 			PHP_EOL, PHP_EOL,
 			1600, PHP_EOL,
 			900, PHP_EOL,
-			'https://doesnotexist.com/doesnotexist.jpg', PHP_EOL,
+			'https://picsum.photos/1600/900', PHP_EOL,
 			'',
 			PHP_EOL
 		);
@@ -308,12 +308,12 @@ class _Image_Tag extends \WP_UnitTestCase {
 	 * @covers \Image_Tag::perform_validation_checks()
 	 */
 	function test_is_valid() : void {
-		$this->assertTrue( Image_Tag::create( 'https://doesnotexist.com/doesnotexist.jpg' )->is_valid() );
-		$this->assertTrue( Image_Tag::create( 'https://doesnotexist.com/doesnotexist.jpg' )->is_valid( 'base' ) );
-		$this->assertTrue( Image_Tag::create( 'https://doesnotexist.com/doesnotexist.jpg' )->is_valid( array( 'base', 'fdsjfew' ) ) );
+		$this->assertTrue( Image_Tag::create( 'https://picsum.photos/1600/900' )->is_valid() );
+		$this->assertTrue( Image_Tag::create( 'https://picsum.photos/1600/900' )->is_valid( 'base' ) );
+		$this->assertTrue( Image_Tag::create( 'https://picsum.photos/1600/900' )->is_valid( array( 'base', 'fdsjfew' ) ) );
 
-		$this->assertFalse( Image_Tag::create( 'https://doesnotexist.com/doesnotexist.jpg' )->is_valid( 'fdsfew' ) );
-		$this->assertFalse( Image_Tag::create( 'https://doesnotexist.com/doesnotexist.jpg' )->is_valid( array( 'fdsfew', 'fewls' ) ) );
+		$this->assertFalse( Image_Tag::create( 'https://picsum.photos/1600/900' )->is_valid( 'fdsfew' ) );
+		$this->assertFalse( Image_Tag::create( 'https://picsum.photos/1600/900' )->is_valid( array( 'fdsfew', 'fewls' ) ) );
 
 		$object = new Image_Tag;
 		$this->assertFalse( $object->is_valid() );
@@ -325,7 +325,7 @@ class _Image_Tag extends \WP_UnitTestCase {
 	protected function _test_is_valid_fallback() : void {
 		$object = new Image_Tag( null, array(
 			'fallback' => array(
-				'https://doesnotexist.com/doesnotexist.jpg' => true,
+				'https://picsum.photos/1600/900' => true,
 			),
 		) );
 
@@ -341,7 +341,7 @@ class _Image_Tag extends \WP_UnitTestCase {
 	 * @coversNothing
 	 */
 	function test_joeschmoe() : void {
-		$object = Image_Tag::create( 'https://doesnotexist.com/doesnotexist.jpg', array(
+		$object = Image_Tag::create( 'https://picsum.photos/1600/900', array(
 			'width' => 1600,
 			'height' => 900,
 		) );
@@ -356,7 +356,7 @@ class _Image_Tag extends \WP_UnitTestCase {
 			PHP_EOL, PHP_EOL,
 			1600, PHP_EOL,
 			900, PHP_EOL,
-			'https://doesnotexist.com/doesnotexist.jpg', PHP_EOL,
+			'https://picsum.photos/1600/900', PHP_EOL,
 			'',
 			PHP_EOL
 		);
@@ -368,7 +368,7 @@ class _Image_Tag extends \WP_UnitTestCase {
 	 * @coversNothing
 	 */
 	function test_picsum() : void {
-		$object = Image_Tag::create( 'https://doesnotexist.com/doesnotexist.jpg', array(
+		$object = Image_Tag::create( 'https://picsum.photos/1600/900', array(
 			'width' => 1600,
 			'height' => 900,
 		) );
@@ -383,7 +383,7 @@ class _Image_Tag extends \WP_UnitTestCase {
 			PHP_EOL, PHP_EOL,
 			1600, PHP_EOL,
 			900, PHP_EOL,
-			'https://doesnotexist.com/doesnotexist.jpg', PHP_EOL,
+			'https://picsum.photos/1600/900', PHP_EOL,
 			'',
 			PHP_EOL
 		);
@@ -395,7 +395,7 @@ class _Image_Tag extends \WP_UnitTestCase {
 	 * @coversNothing
 	 */
 	function test_placeholder() : void {
-		$object = Image_Tag::create( 'https://doesnotexist.com/doesnotexist.jpg', array(
+		$object = Image_Tag::create( 'https://picsum.photos/1600/900', array(
 			'width' => 1600,
 			'height' => 900,
 		) );
@@ -410,7 +410,7 @@ class _Image_Tag extends \WP_UnitTestCase {
 			PHP_EOL, PHP_EOL,
 			1600, PHP_EOL,
 			900, PHP_EOL,
-			'https://doesnotexist.com/doesnotexist.jpg', PHP_EOL,
+			'https://picsum.photos/1600/900', PHP_EOL,
 			'',
 			PHP_EOL
 		);
@@ -422,7 +422,7 @@ class _Image_Tag extends \WP_UnitTestCase {
 	 * @coversNothing
 	 */
 	function test_unsplash() : void {
-		$object = Image_Tag::create( 'https://doesnotexist.com/doesnotexist.jpg', array(
+		$object = Image_Tag::create( 'https://picsum.photos/1600/900', array(
 			'width' => 1600,
 			'height' => 900,
 		) );
@@ -437,7 +437,7 @@ class _Image_Tag extends \WP_UnitTestCase {
 			PHP_EOL, PHP_EOL,
 			1600, PHP_EOL,
 			900, PHP_EOL,
-			'https://doesnotexist.com/doesnotexist.jpg', PHP_EOL,
+			'https://picsum.photos/1600/900', PHP_EOL,
 			'',
 			PHP_EOL
 		);

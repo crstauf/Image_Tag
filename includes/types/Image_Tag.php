@@ -74,9 +74,13 @@ class Image_Tag extends Base {
 			return new Image_Tag( $attributes, $settings );
 		}
 
-		# Only option left is a theme image.
-		require_once Plugin::inc() . 'types/WP_Theme.php';
-		return new Image_Tag\Types\WP_Theme( $source, $attributes, $settings );
+		# WordPress theme image
+		if ( file_exists( get_theme_file_path( $source ) ) ) {
+			require_once Plugin::inc() . 'types/WP_Theme.php';
+			return new Image_Tag\Types\WP_Theme( $source, $attributes, $settings );
+		}
+
+		return new Image_Tag( $attributes, $settings );
 	}
 
 	/**
