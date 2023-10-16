@@ -12,9 +12,9 @@
     <arg value="-colors"/>
 
     <!--  Update to the PHP version your production/local docker container runs on -->
-    <config name="testVersion" value="7.3"/>
+    <config name="testVersion" value="8.2.8"/>
     <!-- php -r 'echo PHP_VERSION_ID;' -->
-    <config name="php_version" value="70305%"/>
+    <config name="php_version" value="80208%"/>
     <config name="minimum_supported_wp_version" value="6.1"/>
 
     <!-- Exclude files -->
