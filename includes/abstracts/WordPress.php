@@ -94,6 +94,31 @@ abstract class WordPress extends Base {
 	}
 
 	/**
+	 * Check if image has alpha transparency.
+	 *
+	 * Used to prevent LQIP.
+	 *
+	 * @param string $path
+	 *
+	 * @return bool
+	 */
+	public function has_alpha_channel( string $path ) : bool {
+		require_once ABSPATH . WPINC . '/class-wp-image-editor.php';
+		require_once ABSPATH . WPINC . '/class-wp-image-editor-imagick.php';
+
+		$imagick = new \WP_Image_Editor_Imagick( $path );
+
+		if ( ! $imagick->test() ) {
+			return false;
+		}
+
+		$object = new \Imagick();
+		$object->readImage( $path );
+
+		return ( bool ) $object->getImageAlphaChannel();
+	}
+
+	/**
 	 * Set image orientation.
 	 *
 	 * @uses $this->ratio()

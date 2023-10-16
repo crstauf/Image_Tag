@@ -14,6 +14,8 @@ defined( 'WPINC' ) || die();
 
 /**
  * Class: Image_Tag\Types\WP_Attachment
+ *
+ * @property int $attachment_id
  */
 class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 
@@ -254,6 +256,32 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 	}
 
 	/**
+	 * Tag output.
+	 *
+	 * Add do_action() call.
+	 *
+	 * @return string
+	 */
+	public function output() : string {
+		do_action( 'image_tag/output/attachment', $this );
+
+		return parent::output();
+	}
+
+	/**
+	 * Output lazyloaded image tag.
+	 *
+	 * Add do_action() call.
+	 *
+	 * @return string
+	 */
+	public function lazyload() : string {
+		do_action( 'image_tag/output/attachment', $this );
+
+		return parent::lazyload();
+	}
+
+	/**
 	 * Create Attributes object to use for output.
 	 *
 	 * @uses parent::output_attributes()
@@ -342,11 +370,18 @@ class WP_Attachment extends \Image_Tag\Abstracts\WordPress {
 	 * Gets LQIP from meta data, or generates and stores LQIP to
 	 * attachment meta data.
 	 *
+	 * @uses \Image_Tag\Abstracts\WordPress::has_alpha_channel()
 	 * @uses \Image_Tag\Abstracts\WordPress::generate_lqip()
 	 * @uses $this->path()
 	 * @return string
 	 */
 	public function lqip() : string {
+		$path = $this->path( 'full' );
+
+		if ( $this->has_alpha_channel( $path ) ) {
+			return '';
+		}
+
 		$meta = get_post_meta( $this->attachment_id, '_lqip', true );
 
 		if ( ! empty( $meta ) ) {
