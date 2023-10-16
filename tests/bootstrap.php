@@ -32,3 +32,5 @@ tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 // Start up the WP testing environment.
 require dirname( __DIR__ ) . '/vendor/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php';
 require $_tests_dir . '/includes/bootstrap.php';
+
+switch_theme( 'twentytwentyone' );
