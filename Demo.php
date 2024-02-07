@@ -27,8 +27,6 @@ class Demo {
 	 * Construct.
 	 */
 	protected function __construct() {
-		$this->theme = get_stylesheet();
-
 		add_action( 'template_redirect', array( $this, 'action__template_redirect' ), 101 );
 	}
 
@@ -65,8 +63,6 @@ class Demo {
 			return;
 		}
 
-		get_header();
-
 		$this->header();
 		$this->attachment();
 		$this->attachment_lqip();
@@ -76,6 +72,7 @@ class Demo {
 		$this->unsplash();
 		$this->placeholder();
 		$this->placehold();
+		$this->holderjs();
 		$this->url();
 		$this->fallback();
 
@@ -87,10 +84,12 @@ class Demo {
 	protected function header() : void {
 		?>
 
-		<html>
+		<html class="no-js">
 
 			<head>
 				<title>Image Tag demo</title>
+
+				<script>document.documentElement.className = document.documentElement.className.replace( 'no-js', 'js' );</script>
 
 				<style>
 
@@ -98,6 +97,10 @@ class Demo {
 						background-color: #eee;
 						margin: 0;
 						padding: 0;
+					}
+
+					html.no-js .hide-if-no-js {
+						display: none !important;
 					}
 
 					body,
@@ -144,6 +147,8 @@ class Demo {
 						box-sizing: border-box;
 					}
 				</style>
+
+				<?php wp_head() ?>
 			</head>
 
 			<body>
@@ -322,6 +327,28 @@ class Demo {
 		$this->output( $image, ob_get_clean() );
 	}
 
+	protected function holderjs() : void {
+		$image = \Image_Tag::create( 'holderjs', array(
+			'width'  => 750,
+			'height' => 500,
+		), array(
+			'random' => true,
+		) );
+
+		ob_start();
+		?>
+
+\Image_Tag::create( 'holderjs', array(
+	'width'  => 750,
+	'height' => 500,
+), array(
+	'random' => true,
+) );
+
+		<?php
+		$this->output( $image, ob_get_clean() );
+	}
+
 	protected function url() {
 		$url = 'https://placehold.co/982x1424@2x.png';
 
@@ -334,7 +361,7 @@ class Demo {
 		?>
 
 \Image_Tag::create(
-	"<?php echo $url ?>",
+	'<?php echo $url ?>',
 	array(
 		'width'  => 982,
 		'height' => 1424,
