@@ -15,7 +15,6 @@
     <config name="testVersion" value="8.2.8"/>
     <!-- php -r 'echo PHP_VERSION_ID;' -->
     <config name="php_version" value="80208%"/>
-    <config name="minimum_supported_wp_version" value="6.1"/>
 
     <!-- Exclude files -->
     <exclude-pattern>*-config.php</exclude-pattern>
@@ -58,7 +57,15 @@
         <exclude name="PSR2.ControlStructures.ElseIfDeclaration.NotAllowed"/>
         <exclude name="PSR12.Files.DeclareStatement.SpaceFoundBeforeDirective"/>
         <exclude name="PSR12.Files.DeclareStatement.SpaceFoundAfterDirectiveValue"/>
+        <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
     </rule>
+
+	<!--
+	Prevent errors caused by WordPress Coding Standards not supporting PHP 8.0+.
+	See https://github.com/WordPress/WordPress-Coding-Standards/issues/2035
+	and https://gist.github.com/shreyasikhar/f4495ac952586096eb81d505e9e914a4.
+	-->
+	<ini name="error_reporting" value="E_ALL &#38; ~E_DEPRECATED" />
 
     <!-- PSR12 -->
     <rule ref="PSR12.Files.DeclareStatement"/>
@@ -87,7 +94,6 @@
     <rule ref="WordPressVIPMinimum">
         <severity>3</severity>
         <exclude name="WordPressVIPMinimum.Constants.ConstantString.NotCheckingConstantName"/>
-        <exclude name="WordPressVIPMinimum.Variables.VariableAnalysis"/>
     </rule>
 
     <!-- Generic -->
