@@ -4,48 +4,9 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6c4014d654b2648c8c051dfb2aabd005",
+    "content-hash": "9f859918a5664791ed73bfed69930169",
     "packages": [],
     "packages-dev": [
-        {
-            "name": "assertwell/wp-core-test-framework",
-            "version": "v0.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/assertwell/wp-core-test-framework.git",
-                "reference": "04ae5f6e29a151e09559eeeed46e6c3cffea335f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/assertwell/wp-core-test-framework/zipball/04ae5f6e29a151e09559eeeed46e6c3cffea335f",
-                "reference": "04ae5f6e29a151e09559eeeed46e6c3cffea335f",
-                "shasum": ""
-            },
-            "bin": [
-                "bin/install-wp-tests.sh"
-            ],
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Steve Grunwell",
-                    "homepage": "https://stevegrunwell.com"
-                }
-            ],
-            "description": "Streamline testing WordPress plugins and themes using the WordPress core test framework",
-            "keywords": [
-                "testing",
-                "wordpress"
-            ],
-            "support": {
-                "issues": "https://github.com/assertwell/wp-core-test-framework/issues",
-                "source": "https://github.com/assertwell/wp-core-test-framework"
-            },
-            "time": "2023-02-19T17:23:27+00:00"
-        },
         {
             "name": "automattic/vipwpcs",
             "version": "3.0.0",
