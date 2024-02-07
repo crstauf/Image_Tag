@@ -6,12 +6,16 @@ on:
     branches:
       - master
     paths:
+      - composer.json
+      - composer.lock
       - Plugin.php
       - includes/**
       - tests/**
       - .github/workflows/phpunit.yml
   pull_request:
     paths:
+      - composer.json
+      - composer.lock
       - Plugin.php
       - includes/**
       - tests/**
