@@ -75,6 +75,7 @@ class Demo {
 		$this->picsum();
 		$this->unsplash();
 		$this->placeholder();
+		$this->placehold();
 		$this->url();
 		$this->fallback();
 
@@ -297,8 +298,32 @@ class Demo {
 		$this->output( $image, ob_get_clean() );
 	}
 
+	protected function placehold() : void {
+		$image = \Image_Tag::create( 'placehold', array(
+			'width'  => 1000,
+			'height' => 350,
+		), array(
+			'text'   => 'Placehold.co \n FTW',
+			'retina' => 2,
+		) );
+
+		ob_start();
+		?>
+
+\Image_Tag::create( 'placehold', array(
+	'width'  => 1000,
+	'height' => 350,
+), array(
+	'text'   => 'Placehold.co \n FTW',
+	'retina' => 2,
+) );
+
+		<?php
+		$this->output( $image, ob_get_clean() );
+	}
+
 	protected function url() {
-		$url = get_theme_file_uri( 'assets/images/playing-in-the-sand.jpg' );
+		$url = 'https://placehold.co/982x1424@2x.png';
 
 		$image = \Image_Tag::create( $url, array(
 			'width'  => 982,
@@ -327,7 +352,7 @@ class Demo {
 			'image-sizes' => 'full',
 			'fallback'    => array(
 				'joeschmoe'   => ! empty( $_GET['person'] ),
-				'placeholder' => current_user_can( 'edit_post', get_queried_object_id() ),
+				'placehold'   => current_user_can( 'edit_post', get_queried_object_id() ),
 				'picsum'      => true
 			),
 		) );
