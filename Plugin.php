@@ -7,7 +7,7 @@
  * Description: WordPress drop-in to generate <code>img</code> tags.
  * Author: Caleb Stauffer
  * Author URI: https://develop.calebstauffer.com
- * Version: 2.1
+ * Version: 2.2
  * Requires at least: 5.1
  * Requires PHP: 7.1
  *
@@ -29,7 +29,7 @@ final class Plugin {
 	/**
 	 * @var float
 	 */
-	const VERSION = 2.1;
+	const VERSION = 2.2;
 
 	/**
 	 * Get instance.
