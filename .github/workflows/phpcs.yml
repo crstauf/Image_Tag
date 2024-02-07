@@ -6,11 +6,15 @@ on:
     branches:
       - master
     paths:
+      - composer.json
+      - composer.lock
       - Plugin.php
       - includes/**
       - .github/workflows/phpcs.yml
   pull_request:
     paths:
+      - composer.json
+      - composer.lock
       - Plugin.php
       - includes/**
       - .github/workflows/phpcs.yml
