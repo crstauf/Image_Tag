@@ -58,6 +58,11 @@ class Image_Tag extends Base {
 			return new Image_Tag\Types\Picsum( $attributes, $settings );
 		}
 
+		if ( 'placehold' === $_source ) {
+			require_once Plugin::inc() . 'types/Placehold.php';
+			return new Image_Tag\Types\Placehold( $attributes, $settings );
+		}
+
 		if ( 'placeholder' === $_source ) {
 			require_once Plugin::inc() . 'types/Placeholder.php';
 			return new Image_Tag\Types\Placeholder( $attributes, $settings );

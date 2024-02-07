@@ -560,6 +560,32 @@ abstract class Base implements Conversion, Output, Validation {
 	}
 
 	/**
+	 * Convert to Placehold.co image.
+	 *
+	 * @param null|mixed[]|Attributes $attributes
+	 * @param null|mixed[]|Settings $settings
+	 * @uses $this->is_type()
+	 * @return \Image_Tag\Types\Placehold
+	 */
+	public function placehold( $attributes = null, $settings = null ) : \Image_Tag\Types\Placehold {
+		if ( is_a( $this, \Image_Tag\Types\Placehold::class ) ) {
+			trigger_error( sprintf( 'Image is already type <code>%s</code>', $this->get_type() ) );
+			return $this;
+		}
+
+		$attributes = wp_parse_args( ( array ) $attributes, $this->attributes->store );
+		$settings   = wp_parse_args( ( array ) $settings, $this->settings->store );
+
+		$created = Image_Tag::create( 'placehold', $attributes, $settings );
+
+		if ( ! is_a( $created, \Image_Tag\Types\Placehold::class ) ) {
+			return new \Image_Tag\Types\Placehold;
+		}
+
+		return $created;
+	}
+
+	/**
 	 * Convert to Unsplash Source photo.
 	 *
 	 * @param null|mixed[]|Attributes $attributes
