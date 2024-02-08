@@ -332,7 +332,7 @@ class Demo {
 			'width'  => 750,
 			'height' => 500,
 		), array(
-			'random' => true,
+			'theme' => 'random',
 		) );
 
 		ob_start();
@@ -342,7 +342,7 @@ class Demo {
 	'width'  => 750,
 	'height' => 500,
 ), array(
-	'random' => true,
+	'theme' => 'random',
 ) );
 
 		<?php

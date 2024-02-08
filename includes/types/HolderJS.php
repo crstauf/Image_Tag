@@ -39,57 +39,7 @@ class HolderJS extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interface
 	 * @uses $this->construct()
 	 */
 	public function __construct( $attributes = null, $settings = null ) {
-		$this->enqueue_script();
 		$this->construct( $attributes, $settings );
-	}
-
-	/**
-	 * Enqueue the script.
-	 *
-	 * @return void
-	 */
-	public function enqueue_script() : void {
-		static $once = false;
-
-		if ( $once ) {
-			return;
-		}
-
-		$compress = defined( 'COMPRESS_SCRIPTS' ) && constant( 'COMPRESS_SCRIPTS' );
-		$suffix   = $compress ? '.min' : '';
-
-		wp_enqueue_script( 'holderjs', 'https://cdnjs.cloudflare.com/ajax/libs/holder/2.9.8/holder' . $suffix . '.js', array(), '2.9.8', array(
-			'strategy'  => 'async',
-			'in_footer' => true,
-		) );
-
-		add_filter( 'script_loader_tag', array( $this, 'filter__script_loader_tag' ), 10, 2 );
-
-		$once = true;
-	}
-
-	/**
-	 * Filter: script_loader_tag
-	 *
-	 * Add subresource integrity hash.
-	 *
-	 * @param string $tag
-	 * @param string $handle
-	 * @return string
-	 */
-	public function filter__script_loader_tag( string $tag, string $handle ) : string {
-		if ( 'holderjs' !== $handle ) {
-			return $tag;
-		}
-
-		if ( defined( 'COMPRESS_SCRIPTS' ) && constant( 'COMPRESS_SCRIPTS' ) ) {
-			return $tag;
-		}
-
-		$search  = ' />';
-		$replace = sprintf( ' integrity=\'%s\' crossorigin=\'anonymous\' />', 'sha512-O6R6IBONpEcZVYJAmSC+20vdsM07uFuGjFf0n/Zthm8sOFW+lAq/OK1WOL8vk93GBDxtMIy6ocbj6lduyeLuqQ==' );
-
-		return str_replace( $search, $replace, $tag );
 	}
 
 	/**
@@ -325,6 +275,7 @@ class HolderJS extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interface
 	 * @return string
 	 */
 	public function output() : string {
+		$this->enqueue_script();
 		return parent::output() . $this->noscript();
 	}
 
@@ -350,6 +301,55 @@ class HolderJS extends \Image_Tag\Abstracts\Base implements \Image_Tag\Interface
 	 */
 	public function lazyload() : string {
 		return $this->output();
+	}
+
+	/**
+	 * Enqueue the script.
+	 *
+	 * @return void
+	 */
+	public function enqueue_script() : void {
+		static $once = false;
+
+		if ( $once ) {
+			return;
+		}
+
+		$compress = defined( 'COMPRESS_SCRIPTS' ) && constant( 'COMPRESS_SCRIPTS' );
+		$suffix   = $compress ? '.min' : '';
+
+		wp_enqueue_script( 'holderjs', 'https://cdnjs.cloudflare.com/ajax/libs/holder/2.9.8/holder' . $suffix . '.js', array(), '2.9.8', array(
+			'strategy'  => 'async',
+			'in_footer' => true,
+		) );
+
+		add_filter( 'script_loader_tag', array( $this, 'filter__script_loader_tag' ), 10, 2 );
+
+		$once = true;
+	}
+
+	/**
+	 * Filter: script_loader_tag
+	 *
+	 * Add subresource integrity hash.
+	 *
+	 * @param string $tag
+	 * @param string $handle
+	 * @return string
+	 */
+	public function filter__script_loader_tag( string $tag, string $handle ) : string {
+		if ( 'holderjs' !== $handle ) {
+			return $tag;
+		}
+
+		if ( defined( 'COMPRESS_SCRIPTS' ) && constant( 'COMPRESS_SCRIPTS' ) ) {
+			return $tag;
+		}
+
+		$search  = ' />';
+		$replace = sprintf( ' integrity=\'%s\' crossorigin=\'anonymous\' />', 'sha512-O6R6IBONpEcZVYJAmSC+20vdsM07uFuGjFf0n/Zthm8sOFW+lAq/OK1WOL8vk93GBDxtMIy6ocbj6lduyeLuqQ==' );
+
+		return str_replace( $search, $replace, $tag );
 	}
 
 }
