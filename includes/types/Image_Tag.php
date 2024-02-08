@@ -68,6 +68,11 @@ class Image_Tag extends Base {
 			return new Image_Tag\Types\Placeholder( $attributes, $settings );
 		}
 
+		if ( 'holderjs' === $_source ) {
+			require_once Plugin::inc() . 'types/HolderJS.php';
+			return new Image_Tag\Types\HolderJS( $attributes, $settings );
+		}
+
 		if ( 'unsplash' === $_source ) {
 			require_once Plugin::inc() . 'types/Unsplash.php';
 			return new Image_Tag\Types\Unsplash( $attributes, $settings );
