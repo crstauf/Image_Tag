@@ -24,15 +24,17 @@ trait Lazysizes {
 		$class  = $this->attributes->class ?? '';
 		$class .= ' lazysizes hide-if-no-js';
 
-		$this->attribute( 'data-src', $this->attributes->src )
-			->attribute( 'src', self::BLANK )
-			->attribute( 'class', $class )
-			->attributes->unset( 'loading' );
+		$this->attributes
+				->move( 'src', 'data-src' )
+				->unset( 'loading' );
+
+		$this->attribute( 'src', self::BLANK )
+			->attribute( 'class', trim( $class ) );
 
 		if ( isset( $this->attributes->srcset ) ) {
 			$this->attributes
-				->set( 'data-srcset', $this->attributes->srcset )
-				->set( 'data-sizes', 'auto' )
+				->move( 'srcset', 'data-srcset' )
+				->move( 'sizes', 'data-sizes', 'auto' )
 				->unset(
 					'sizes',
 					'srcset'

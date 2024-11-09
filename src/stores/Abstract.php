@@ -6,7 +6,23 @@ namespace Image_Tag\Stores;
 abstract class Store_Abstract {
 
 	/**
-	 * Set data (override).
+	 * Add data (no overwrite).
+	 *
+	 * @param string $key
+	 * @param mixed $value
+	 */
+	public function add( string $key, $value ) : self {
+		if ( isset( $this->$key ) ) {
+			return $this;
+		}
+
+		$this->set( $key, $value );
+
+		return $this;
+	}
+
+	/**
+	 * Set data (overwrite).
 	 *
 	 * @param string $key
 	 * @param mixed $value

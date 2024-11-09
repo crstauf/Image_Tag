@@ -50,7 +50,6 @@ final class Manager {
 
 		require_once 'traits/Attributes_Helper.php';
 		require_once 'traits/Lazysizes.php';
-		require_once 'traits/Noscript.php';
 		require_once 'traits/Output.php';
 		require_once 'traits/Settings_Helper.php';
 

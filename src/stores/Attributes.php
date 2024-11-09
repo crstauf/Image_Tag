@@ -16,4 +16,16 @@ class Attributes extends Store_Abstract {
 		return implode( ' ', $array );
 	}
 
+	public function move( string $source_key, string $dest_key, ?string $default = '' ) : self {
+		if ( ! isset( $this->$source_key ) ) {
+			$this->set( $dest_key, $default );
+			return $this;
+		}
+
+		$this->add( $dest_key, $this->$source_key );
+		$this->unset( $source_key );
+
+		return $this;
+	}
+
 }
