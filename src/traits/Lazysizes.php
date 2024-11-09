@@ -25,8 +25,8 @@ trait Lazysizes {
 		$class .= ' lazysizes hide-if-no-js';
 
 		$this->attributes
-				->move( 'src', 'data-src' )
-				->unset( 'loading' );
+			->move( 'src', 'data-src' )
+			->unset( 'loading' );
 
 		$this->attribute( 'src', self::BLANK )
 			->attribute( 'class', trim( $class ) );
