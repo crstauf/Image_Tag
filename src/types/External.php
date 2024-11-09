@@ -2,11 +2,11 @@
 
 namespace Image_Tag;
 
-class External {
+class External implements Interfaces\Image_Tag {
 
 	use Traits\Attributes_Helper,
 		Traits\Lazysizes,
-		Traits\Noscript,
+		Traits\Output,
 		Traits\Settings_Helper;
 
 	/** @var string */
@@ -27,14 +27,6 @@ class External {
 		$this->settings   = new Stores\Settings();
 
 		$this->attributes->update( 'src', $url );
-	}
-
-	public function __toString() : string {
-		$string  = '<picture><img ';
-		$string .= (string) $this->attributes;
-		$string .= ' /></picture>';
-
-		return $string;
 	}
 
 }
