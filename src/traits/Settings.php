@@ -2,7 +2,13 @@
 
 namespace Image_Tag\Traits;
 
-trait Settings_Helper {
+use Image_Tag\Stores\Attributes as Attributes_Store;
+use Image_Tag\Stores\Settings as Settings_Store;
+
+trait Settings {
+
+	/** @var \Image_Tag\Stores\Settings */
+	public Settings_Store $settings;
 
 	/**
 	 * Add setting to store.

@@ -4,6 +4,8 @@ namespace Image_Tag\Traits;
 
 trait Output {
 
+	use Fallbacks;
+
 	protected \Image_Tag\Interfaces\Image_Tag $nojs;
 
 	/**
@@ -38,6 +40,20 @@ trait Output {
 	 * Return image tag.
 	 */
 	public function output() : string {
+		$fallback = false;
+
+		if ( ! $this->is_valid() && $this->has_fallback() ) {
+			$fallback = $this->get_fallback();
+		}
+
+		if ( ! empty( $fallback ) && is_a( $fallback, \Image_Tag\Interfaces\Image_Tag::class ) ) {
+			return $fallback->output();
+		}
+
+		if ( ! $this->is_valid() ) {
+			return '';
+		}
+
 		$string  = '<picture>';
 
 		$string .= '<img ';

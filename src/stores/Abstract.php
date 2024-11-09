@@ -6,6 +6,15 @@ namespace Image_Tag\Stores;
 abstract class Store_Abstract {
 
 	/**
+	 * Construct.
+	 */
+	public function __construct( array $data = array() ) {
+		foreach ( $data as $key => $value ) {
+			$this->add( $key, $value );
+		}
+	}
+
+	/**
 	 * Add data (no overwrite).
 	 *
 	 * @param string $key

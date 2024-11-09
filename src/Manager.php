@@ -48,10 +48,12 @@ final class Manager {
 	public function include_files() : void {
 		require_once 'interfaces/Image_Tag.php';
 
-		require_once 'traits/Attributes_Helper.php';
+		require_once 'traits/Attributes.php';
+		require_once 'traits/Fallbacks.php';
 		require_once 'traits/Lazysizes.php';
 		require_once 'traits/Output.php';
-		require_once 'traits/Settings_Helper.php';
+		require_once 'traits/Settings.php';
+		require_once 'traits/Validation.php';
 
 		require_once 'stores/Attributes.php';
 		require_once 'stores/Settings.php';

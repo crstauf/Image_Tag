@@ -4,29 +4,42 @@ namespace Image_Tag;
 
 class External implements Interfaces\Image_Tag {
 
-	use Traits\Attributes_Helper,
+	use Traits\Attributes,
+		Traits\Fallbacks,
 		Traits\Lazysizes,
 		Traits\Output,
-		Traits\Settings_Helper;
+		Traits\Settings,
+		Traits\Validation;
 
 	/** @var string */
 	protected string $url;
 
-	/** @var Stores\Attributes */
-	public Stores\Attributes $attributes;
-
-	/** @var Stores\Settings */
-	public Stores\Settings $settings;
-
 	/**
 	 * Construct.
 	 */
-	public function __construct( string $url ) {
+	public function __construct(
+		string $url,
+		Stores\Attributes $attributes = new Stores\Attributes,
+		Stores\Settings $settings = new Stores\Settings
+	) {
 		$this->url        = $url;
-		$this->attributes = new Stores\Attributes();
-		$this->settings   = new Stores\Settings();
+		$this->attributes = $attributes;
+		$this->settings   = $settings;
 
 		$this->attributes->update( 'src', $url );
+	}
+
+	/**
+	 * Validation checks.
+	 */
+	protected function perform_validation_checks() : \WP_Error {
+		$errors = new \WP_Error;
+
+		if ( false === wp_http_validate_url( $this->url ) ) {
+			$errors->add( 'invalid_url', 'External URL is not valid.' );
+		}
+
+		return $errors;
 	}
 
 }
