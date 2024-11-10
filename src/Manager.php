@@ -49,6 +49,7 @@ final class Manager {
 		require_once 'interfaces/Image_Tag.php';
 
 		require_once 'traits/Attributes.php';
+		require_once 'traits/Constructed_URL.php';
 		require_once 'traits/Fallbacks.php';
 		require_once 'traits/Lazysizes.php';
 		require_once 'traits/Output.php';
@@ -59,6 +60,7 @@ final class Manager {
 		require_once 'stores/Settings.php';
 
 		require_once 'types/External.php';
+		require_once 'types/Picsum.php';
 	}
 
 }

@@ -12,7 +12,7 @@ class External implements Interfaces\Image_Tag {
 		Traits\Validation;
 
 	/** @var string */
-	protected string $url;
+	protected readonly string $url;
 
 	/**
 	 * Construct.

@@ -37,7 +37,14 @@ trait Output {
 	}
 
 	/**
-	 * Return image tag.
+	 * Print image tag.
+	 */
+	public function print() : void {
+		echo $this->output();
+	}
+
+	/**
+	 * Return image tag markup.
 	 */
 	public function output() : string {
 		$fallback = false;
@@ -71,13 +78,6 @@ trait Output {
 		$string .= '</picture>';
 
 		return $string;
-	}
-
-	/**
-	 * Print image tag.
-	 */
-	public function print() : void {
-		echo $this->output();
 	}
 
 }

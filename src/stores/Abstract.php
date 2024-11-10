@@ -8,10 +8,29 @@ abstract class Store_Abstract {
 	/**
 	 * Construct.
 	 */
-	public function __construct( array $data = array() ) {
-		foreach ( $data as $key => $value ) {
-			$this->add( $key, $value );
+	public function __construct( $data = array() ) {
+		if ( is_array( $data ) ) {
+			$data = (object) $data;
 		}
+
+		foreach ( get_object_vars( $data ) as $key => $value ) {
+			$this->$key = $value;
+		}
+	}
+
+	/**
+	 * Check for data.
+	 */
+	public function has( string $key ) : bool {
+		return isset( $this->$key );
+	}
+
+	public function get( string $key ) : mixed {
+		if ( ! $this->has( $key ) ) {
+			return null;
+		}
+
+		return $this->$key;
 	}
 
 	/**
@@ -21,7 +40,7 @@ abstract class Store_Abstract {
 	 * @param mixed $value
 	 */
 	public function add( string $key, $value ) : self {
-		if ( isset( $this->$key ) ) {
+		if ( $this->has( $key ) ) {
 			return $this;
 		}
 
