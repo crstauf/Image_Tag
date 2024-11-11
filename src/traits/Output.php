@@ -53,7 +53,7 @@ trait Output {
 			$fallback = $this->get_fallback();
 		}
 
-		if ( ! empty( $fallback ) && is_a( $fallback, \Image_Tag\Interfaces\Image_Tag::class ) ) {
+		if ( ! empty( $fallback ) && is_a( $fallback, \Image_Tag\Interfaces\Core::class ) ) {
 			return $fallback->output();
 		}
 

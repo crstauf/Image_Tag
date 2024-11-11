@@ -14,7 +14,7 @@ trait Settings {
 	 * Add setting to store.
 	 */
 	public function setting( string $key, $value ) {
-		$this->attributes->update( $key, $value );
+		$this->settings->update( $key, $value );
 
 		return $this;
 	}
@@ -24,7 +24,7 @@ trait Settings {
 	 */
 	public function settings( array $data ) {
 		foreach ( $data as $key => $value ) {
-			$this->attribute( $key, $value );
+			$this->setting( $key, $value );
 		}
 
 		return $this;

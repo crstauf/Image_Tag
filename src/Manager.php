@@ -46,10 +46,11 @@ final class Manager {
 	 * Include the files.
 	 */
 	public function include_files() : void {
-		require_once 'interfaces/Image_Tag.php';
+		require_once 'interfaces/Core.php';
 
 		require_once 'traits/Attributes.php';
 		require_once 'traits/Constructed_URL.php';
+		require_once 'traits/Dimensions.php';
 		require_once 'traits/Fallbacks.php';
 		require_once 'traits/Lazysizes.php';
 		require_once 'traits/Output.php';

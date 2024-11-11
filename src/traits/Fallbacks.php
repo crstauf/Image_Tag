@@ -7,7 +7,7 @@ trait Fallbacks {
 	/** @var string[] */
 	protected $fallbacks = array();
 
-	public function fallback( \Image_Tag\Interfaces\Image_Tag $object, bool $conditional = true ) {
+	public function fallback( \Image_Tag\Interfaces\Core $object, bool $conditional = true ) {
 		if ( ! $conditional || ! $object->is_valid() ) {
 			return $this;
 		}
@@ -21,7 +21,7 @@ trait Fallbacks {
 		return ! empty( $this->fallbacks );
 	}
 
-	public function get_fallback() : ?\Image_Tag\Interfaces\Image_Tag {
+	public function get_fallback() : ?\Image_Tag\Interfaces\Core {
 		if ( ! $this->has_fallback() ) {
 			return null;
 		}

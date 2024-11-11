@@ -2,9 +2,10 @@
 
 namespace Image_Tag;
 
-class External implements Interfaces\Image_Tag {
+class External implements Interfaces\Core {
 
 	use Traits\Attributes,
+		Traits\Dimensions,
 		Traits\Fallbacks,
 		Traits\Lazysizes,
 		Traits\Output,

@@ -2,9 +2,10 @@
 
 namespace Image_Tag;
 
-class Picsum implements Interfaces\Image_Tag {
+class Picsum implements Interfaces\Core {
 
 	use Traits\Attributes,
+		Traits\Dimensions,
 		Traits\Constructed_URL,
 		Traits\Fallbacks,
 		Traits\Lazysizes,
@@ -30,15 +31,8 @@ class Picsum implements Interfaces\Image_Tag {
 	 */
 	protected function perform_validation_checks() : \WP_Error {
 		$errors = new \WP_Error;
-		$width  = 0;
 
-		if ( $this->settings->has( 'width' ) ) {
-			$width = absint( $this->settings->get( 'width' ) );
-		} else if ( $this->attributes->has( 'width' ) ) {
-			$width = absint( $this->attributes->get( 'width' ) );
-		}
-
-		if ( empty( $width ) ) {
+		if ( empty( $this->width() ) ) {
 			$errors->add( 'required_width', 'Width is required.' );
 		}
 
@@ -50,9 +44,6 @@ class Picsum implements Interfaces\Image_Tag {
 	 */
 	public function construct_url() : void {
 		static $random = 1;
-
-		$width  = 0;
-		$height = 0;
 
 		$this->url_segment( self::BASE_URL );
 
@@ -66,24 +57,10 @@ class Picsum implements Interfaces\Image_Tag {
 			$this->url_segment( sprintf( 'seed/%s', sanitize_title_with_dashes( $this->settings->get( 'seed' ) ) ) );
 		}
 
-		// Width.
-		if ( $this->settings->has( 'width' ) ) {
-			$width = absint( $this->settings->get( 'width' ) );
-		} else if ( $this->attributes->has( 'width' ) ) {
-			$width = absint( $this->attributes->get( 'width' ) );
-		}
+		$this->url_segment( $this->width() );
 
-		// Height.
-		if ( $this->settings->has( 'height' ) ) {
-			$height = absint( $this->settings->get( 'height' ) );
-		} else if ( $this->attributes->has( 'height' ) ) {
-			$height = absint( $this->attributes->get( 'height' ) );
-		}
-
-		$this->url_segment( $width );
-
-		if ( ! empty( $height ) ) {
-			$this->url_segment( $height );
+		if ( ! empty( $this->height() ) ) {
+			$this->url_segment( $this->height() );
 		}
 
 		$url  = implode( '/', $this->constructed_url );
