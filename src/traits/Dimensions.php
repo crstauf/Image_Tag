@@ -16,7 +16,7 @@ trait Dimensions {
 		return match ( true ) {
 			$this->settings->has( 'height' )   => absint( $this->settings->get( 'height' ) ),
 			$this->attributes->has( 'height' ) => absint( $this->attributes->get( 'height' ) ),
-			default                            => $this->width(),
+			default                            => 0,
 		};
 	}
 

@@ -6,7 +6,7 @@ trait Output {
 
 	use Fallbacks;
 
-	protected \Image_Tag\Interfaces\Image_Tag $nojs;
+	protected \Image_Tag\Interfaces\Core $nojs;
 
 	/**
 	 * Handle cloning.
@@ -44,9 +44,16 @@ trait Output {
 	}
 
 	/**
-	 * Return image tag markup.
+	 * Output.
 	 */
 	public function output() : string {
+		return $this->markup();
+	}
+
+	/**
+	 * Return image tag markup.
+	 */
+	protected function markup() : string {
 		$fallback = false;
 
 		if ( ! $this->is_valid() && $this->has_fallback() ) {
@@ -62,17 +69,10 @@ trait Output {
 		}
 
 		$string  = '<picture>';
-
-		$string .= '<img ';
-		$string .= (string) $this->attributes;
-		$string .= ' />';
+		$string .= sprintf( '<img %s />', (string) $this->attributes );
 
 		if ( isset( $this->nojs ) ) {
-			$string .= '<noscript>';
-			$string .= '<img ';
-			$string .= (string) $this->nojs->attributes;
-			$string .= ' />';
-			$string .= '</noscript>';
+			$string .= sprintf( '<noscript><img %s /></noscript>', (string) $this->nojs->attributes );
 		}
 
 		$string .= '</picture>';
