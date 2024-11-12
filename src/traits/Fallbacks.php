@@ -2,7 +2,11 @@
 
 namespace Image_Tag\Traits;
 
+require_once 'Validation.php';
+
 trait Fallbacks {
+
+	use Validation;
 
 	/** @var string[] */
 	protected $fallbacks = array();
@@ -21,12 +25,24 @@ trait Fallbacks {
 		return ! empty( $this->fallbacks );
 	}
 
-	public function get_fallback() : ?\Image_Tag\Interfaces\Core {
+	public function get_fallback() : \Image_Tag\Interfaces\Core {
 		if ( ! $this->has_fallback() ) {
-			return null;
+			return new \Image_Tag\External( '' );
 		}
 
-		return array_shift( $this->fallbacks );
+		return $this->fallbacks[0];
+	}
+
+	public function get_valid() : \Image_Tag\Interfaces\Core {
+		if ( $this->is_valid() ) {
+			return $this;
+		}
+
+		if ( method_exists( $this, 'get_fallback' ) ) {
+			return $this->get_fallback();
+		}
+
+		return new Image_Tag\External( '' );
 	}
 
 }

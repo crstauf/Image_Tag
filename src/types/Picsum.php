@@ -26,6 +26,16 @@ class Picsum implements Interfaces\Core {
 		$this->settings   = new Stores\Settings( $settings );
 	}
 
+	public function height() : int {
+		$height = $this->find_height();
+
+		if ( empty( $height ) ) {
+			return $this->width();
+		}
+
+		return $height;
+	}
+
 	/**
 	 * Validation checks.
 	 */

@@ -4,7 +4,7 @@ namespace Image_Tag\Traits;
 
 trait Dimensions {
 
-	public function width() : int {
+	protected function find_width() : int {
 		return match ( true ) {
 			$this->settings->has( 'width' )   => absint( $this->settings->get( 'width' ) ),
 			$this->attributes->has( 'width' ) => absint( $this->attributes->get( 'width' ) ),
@@ -12,12 +12,20 @@ trait Dimensions {
 		};
 	}
 
-	public function height() : int {
+	protected function find_height() : int {
 		return match ( true ) {
 			$this->settings->has( 'height' )   => absint( $this->settings->get( 'height' ) ),
 			$this->attributes->has( 'height' ) => absint( $this->attributes->get( 'height' ) ),
 			default                            => 0,
 		};
+	}
+
+	public function width() : int {
+		return $this->find_width();
+	}
+
+	public function height() : int {
+		return $this->find_height();
 	}
 
 	public function ratio() : float {
