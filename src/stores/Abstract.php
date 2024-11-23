@@ -25,9 +25,9 @@ abstract class Store_Abstract {
 		return isset( $this->$key );
 	}
 
-	public function get( string $key ) : mixed {
+	public function get( string $key, $default = null ) : mixed {
 		if ( ! $this->has( $key ) ) {
-			return null;
+			return $default;
 		}
 
 		return $this->$key;

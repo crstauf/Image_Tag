@@ -180,10 +180,7 @@ class HolderJS implements Interfaces\Core {
 			unset( $args['auto'] );
 		}
 
-		$url = implode( '/', $this->constructed_url );
-		$url = add_query_arg( $args, $url );
-
-		$this->attribute( 'src', $url );
+		$this->set_constructed_url( $args );
 	}
 
 }

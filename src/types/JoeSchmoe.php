@@ -61,9 +61,7 @@ class JoeSchmoe implements Interfaces\Core {
 		$this->url_segment( self::BASE_URL );
 
 		// Gender.
-		if ( $this->settings->has( 'gender' ) ) {
-			$this->url_segment( $this->settings->get( 'gender' ) );
-		}
+		$this->url_segment( $this->settings->get( 'gender' ) );
 
 		// Seed.
 		$seed = $this->settings->get( 'seed', uniqid( 'random-' ) );

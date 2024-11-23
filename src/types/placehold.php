@@ -78,19 +78,17 @@ class Placehold implements Interfaces\Core {
 		}
 
 		// Format.
-		if ( $this->settings->has( 'format' ) ) {
-			$this->url_segment( $this->settings->get( 'format' ) );
-		}
+		$this->url_segment( $this->settings->get( 'format' ) );
 
-		$url = implode( '/', $this->constructed_url );
+		$args = array();
 
 		// Custom text.
 		if ( $this->settings->has( 'text' ) ) {
 			$text = urlencode( $this->settings->get( 'text' ) );
-			$url  = add_query_arg( 'text', $text, $url );
+			$args = array( 'text' => $text );
 		}
 
-		$this->attribute( 'src', $url );
+		$this->set_constructed_url( $args );
 	}
 
 }
