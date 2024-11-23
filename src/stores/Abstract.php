@@ -65,9 +65,7 @@ abstract class Store_Abstract {
 	 * Alias for set().
 	 */
 	public function update( string $key, $value ) : self {
-		$this->set( $key, $value );
-
-		return $this;
+		return $this->set( $key, $value );
 	}
 
 	/**
@@ -89,9 +87,7 @@ abstract class Store_Abstract {
 	 * @param string|string[]
 	 */
 	public function delete( ...$keys ) : self {
-		$this->unset( $keys );
-
-		return $this;
+		return $this->unset( $keys );
 	}
 
 }

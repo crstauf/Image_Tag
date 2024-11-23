@@ -28,4 +28,16 @@ class Attributes extends Store_Abstract {
 		return $this;
 	}
 
+	public function append( string $key, int|string $value, string $glue = ' ' ) : self {
+		if ( ! $this->has( $key ) ) {
+			return $this->set( $key, $value );
+		}
+
+		$value_with_appended = $this->get( $key );
+		$value_with_appended .= $glue;
+		$value_with_appended .= $value;
+
+		return $this->update( $key, $value_with_appended );
+	}
+
 }

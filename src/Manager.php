@@ -60,6 +60,7 @@ final class Manager {
 		require_once 'stores/Attributes.php';
 		require_once 'stores/Settings.php';
 
+		require_once 'types/Attachment.php';
 		require_once 'types/External.php';
 		require_once 'types/HolderJS.php';
 		require_once 'types/JoeSchmoe.php';
