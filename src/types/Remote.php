@@ -2,7 +2,7 @@
 
 namespace Image_Tag;
 
-class External implements Interfaces\Core {
+class Remote implements Interfaces\Core {
 
 	use Traits\Attributes,
 		Traits\Dimensions,
@@ -37,7 +37,7 @@ class External implements Interfaces\Core {
 		$errors = new \WP_Error;
 
 		if ( false === wp_http_validate_url( $this->url ) ) {
-			$errors->add( 'invalid_url', 'External URL is not valid.' );
+			$errors->add( 'invalid_url', 'Remote URL is not valid.' );
 		}
 
 		return $errors;
