@@ -66,6 +66,7 @@ final class Manager {
 		require_once 'types/Picsum.php';
 		require_once 'types/Placehold.php';
 		require_once 'types/Remote.php';
+		require_once 'types/Theme.php';
 	}
 
 }

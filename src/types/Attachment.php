@@ -64,19 +64,19 @@ class Attachment implements Interfaces\Core {
 	 */
 	protected function perform_validation_checks() : \WP_Error {
 		$errors = new \WP_Error;
-		$check  = true;
+		$checks = true;
 
 		if ( empty( $this->attachment_id ) ) {
 			$errors->add( 'attachment_id', 'Attachment ID is required.' );
-			$check = false;
+			$checks = false;
 		}
 
-		if ( $check && 'attachment' !== get_post_type( $this->attachment_id ) ) {
+		if ( $checks && 'attachment' !== get_post_type( $this->attachment_id ) ) {
 			$errors->add( 'not_attachment', 'Provided ID is not an attachment.' );
-			$check = false;
+			$checks = false;
 		}
 
-		if ( $check && ! wp_attachment_is_image( $this->attachment_id ) ) {
+		if ( $checks && ! wp_attachment_is_image( $this->attachment_id ) ) {
 			$errors->add( 'not_image', 'Attachment is not an image.' );
 		}
 

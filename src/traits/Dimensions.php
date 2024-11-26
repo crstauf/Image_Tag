@@ -28,12 +28,53 @@ trait Dimensions {
 		return $this->find_height();
 	}
 
-	public function ratio() : float {
+	public function ratio( string $format = 'float' ) : string|float {
+		return match ( $format ) {
+			'float' => $this->ratio_as_float(),
+			default => $this->ratio_as_string(),
+		};
+	}
+
+	protected function ratio_as_float() : float {
 		if ( empty( $this->width() ) || empty( $this->height() ) ) {
 			return (float) 0;
 		}
 
 		return $this->width() / $this->height();
+	}
+
+	protected function ratio_as_string() : string {
+		$w = $this->width();
+		$h = $this->height();
+		$g = $this->gcd();
+
+		$w = $w / $g;
+		$h = $h / $g;
+
+		return sprintf( '%d:%d', $w, $h );
+	}
+
+	protected function gcd() {
+		$a = $this->width();
+		$b = $this->height();
+
+		if ( $a < $b ) {
+			list( $b, $a ) = array( $a, $b );
+		}
+
+		if ( 0 === $b ) {
+			return $a;
+		}
+
+		$r = $a % $b;
+
+		while ( $r > 0 ) {
+			$a = $b;
+			$b = $r;
+			$r = $a % $b;
+		}
+
+		return $b;
 	}
 
 	public function oriented() : string {
