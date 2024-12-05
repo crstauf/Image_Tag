@@ -8,6 +8,8 @@ class Attachment implements Interfaces\Core {
 		Traits\Dimensions,
 		Traits\Fallbacks,
 		Traits\Lazysizes,
+		Traits\Local,
+		Traits\LQIP,
 		Traits\Output,
 		Traits\Settings,
 		Traits\Validation;
@@ -47,6 +49,7 @@ class Attachment implements Interfaces\Core {
 		$attachment_id = absint( apply_filters( 'image_tag/attachment/id', $attachment_id, $attributes, $settings ) );
 
 		$this->attachment_id = $attachment_id;
+		$this->path          = get_attached_file( $this->attachment_id );
 		$this->attributes    = $attributes;
 		$this->settings      = $settings;
 
@@ -93,7 +96,7 @@ class Attachment implements Interfaces\Core {
 			return array();
 		}
 
-		$meta = get_post_meta( $this->attachment_id, '_wp_attachment_metadata', true );
+		$meta = wp_get_attachment_metadata( $this->attachment_id );
 
 		if ( ! is_array( $meta ) ) {
 			$meta = array();
@@ -114,14 +117,14 @@ class Attachment implements Interfaces\Core {
 	 * @return string
 	 */
 	protected function path( string $size = 'full' ) : string {
-		$path = '';
+		$path = null;
 
 		if ( 'full' === $size ) {
 			$path = get_attached_file( $this->attachment_id );
 		}
 
 		if ( is_string( $path ) ) {
-			return '';
+			return $path;
 		}
 
 		$metadata = $this->metadata();
@@ -236,6 +239,28 @@ class Attachment implements Interfaces\Core {
 		}
 
 		$this->attributes->add( 'sizes', '100vw' );
+	}
+
+	public function lqip() : string {
+		if ( is_string( $this->lqip ) ) {
+			return $this->lqip;
+		}
+
+		$lqip = get_post_meta( $this->attachment_id, '_lqip', true );
+
+		if ( ! empty( $lqip ) && is_string( $lqip ) ) {
+			return $this->lqip = $lqip;
+		}
+
+		$this->generate_lqip();
+
+		if ( ! is_string( $this->lqip ) ) {
+			return '';
+		}
+
+		update_post_meta( $this->attachment_id, '_lqip', $this->lqip );
+
+		return $this->lqip;
 	}
 
 }

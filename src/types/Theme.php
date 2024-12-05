@@ -8,15 +8,14 @@ class Theme implements Interfaces\Core {
 		Traits\Dimensions,
 		Traits\Fallbacks,
 		Traits\Lazysizes,
+		Traits\Local,
+		Traits\LQIP,
 		Traits\Output,
 		Traits\Settings,
 		Traits\Validation;
 
 	/** @var string */
 	protected readonly string $relpath;
-
-	/** @var string */
-	protected readonly string $abspath;
 
 	/** @var string */
 	protected readonly string $url;
@@ -33,8 +32,8 @@ class Theme implements Interfaces\Core {
 		$this->attributes = $attributes;
 		$this->settings   = $settings;
 
-		$this->abspath = get_theme_file_path( $relpath );
-		$this->url     = get_theme_file_uri( $relpath );
+		$this->path = get_theme_file_path( $relpath );
+		$this->url  = get_theme_file_uri( $relpath );
 
 		$this->attribute( 'src', $this->url );
 	}
@@ -46,7 +45,7 @@ class Theme implements Interfaces\Core {
 		$errors = new \WP_Error;
 		$checks = true;
 
-		if ( ! file_exists( $this->abspath ) ) {
+		if ( ! file_exists( $this->path ) ) {
 			$errors->add( 'does_not_exist', 'Theme image file does not exist.' );
 			$checks = false;
 		}
@@ -66,29 +65,17 @@ class Theme implements Interfaces\Core {
 		}
 
 		if ( is_null( $dimensions ) ) {
-			$dimensions = getimagesize( $this->abspath );
+			$dimensions = getimagesize( $this->path );
 		}
 
 		return array_slice( $dimensions, 0, 2 );
 	}
 
-	public function width() : int {
-		$width = $this->find_width();
-
-		if ( ! empty( $width ) ) {
-			return $width;
-		}
-
+	protected function determine_width() : int {
 		return $this->dimensions()[0];
 	}
 
-	public function height() : int {
-		$height = $this->find_height();
-
-		if ( ! empty( $height ) ) {
-			return $height;
-		}
-
+	protected function determine_height() : int {
 		return $this->dimensions()[1];
 	}
 

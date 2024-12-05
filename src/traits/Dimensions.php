@@ -5,18 +5,30 @@ namespace Image_Tag\Traits;
 trait Dimensions {
 
 	protected function find_width() : int {
+		$width = 0;
+
+		if ( is_callable( array( $this, 'determine_width' ) ) ) {
+			$width = absint( $this->determine_width() );
+		}
+
 		return match ( true ) {
 			$this->settings->has( 'width' )   => absint( $this->settings->get( 'width' ) ),
 			$this->attributes->has( 'width' ) => absint( $this->attributes->get( 'width' ) ),
-			default                           => 0,
+			default                           => $width,
 		};
 	}
 
 	protected function find_height() : int {
+		$height = 0;
+
+		if ( is_callable( array( $this, 'determine_height' ) ) ) {
+			$height = absint( $this->determine_height() );
+		}
+
 		return match ( true ) {
 			$this->settings->has( 'height' )   => absint( $this->settings->get( 'height' ) ),
 			$this->attributes->has( 'height' ) => absint( $this->attributes->get( 'height' ) ),
-			default                            => 0,
+			default                            => $height,
 		};
 	}
 

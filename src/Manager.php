@@ -53,6 +53,8 @@ final class Manager {
 		require_once 'traits/Dimensions.php';
 		require_once 'traits/Fallbacks.php';
 		require_once 'traits/Lazysizes.php';
+		require_once 'traits/Local.php';
+		require_once 'traits/LQIP.php';
 		require_once 'traits/Output.php';
 		require_once 'traits/Settings.php';
 		require_once 'traits/Validation.php';
