@@ -4,6 +4,8 @@ namespace Image_Tag;
 
 final class Manager {
 
+	public const string AS_LQIP_GENERATE = 'image-tag/lqip/generate';
+
 	/**
 	 * Get singleton instance.
 	 */
@@ -30,6 +32,7 @@ final class Manager {
 
 		$instance = static::instance();
 
+		add_action( 'init', array( $instance, 'include_action_scheduler' ) );
 		add_action( 'template_redirect', array( $instance, 'include_files' ) );
 
 		$init = true;
@@ -69,6 +72,44 @@ final class Manager {
 		require_once 'types/Placehold.php';
 		require_once 'types/Remote.php';
 		require_once 'types/Theme.php';
+	}
+
+	public function has_action_scheduler() : bool {
+		return function_exists( 'as_enqueue_async_action' );
+	}
+
+	public function include_action_scheduler() : void {
+		if ( 'init' !== current_action() ) {
+			return;
+		}
+
+		include_once dirname( __DIR__ ) . '/vendor/woocommerce/action-scheduler/action-scheduler.php';
+
+		if ( ! $this->has_action_scheduler() ) {
+			return;
+		}
+
+		add_action( self::AS_LQIP_GENERATE, static function ( string $classname, array $args = array() ) {
+			Manager::instance()->include_files();
+
+			$classname = '\\' . $classname;
+
+			if ( isset( $args[1] ) && is_array( $args[1] ) ) {
+				$args[1] = new Stores\Attributes( $args[1] );
+			}
+
+			if ( isset( $args[2] ) && is_array( $args[2] ) ) {
+				$args[2] = new Stores\Settings( $args[2] );
+			}
+
+			$that = new $classname( ...$args );
+
+			if ( ! is_object( $that ) || ! is_callable( array( $that, 'lqip' ) ) ) {
+				return;
+			}
+
+			$that->lqip();
+		}, 10, 2 );
 	}
 
 }

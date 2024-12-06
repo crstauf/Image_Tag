@@ -2,6 +2,8 @@
 
 namespace Image_Tag\Traits;
 
+use Image_Tag\Manager;
+
 trait LQIP {
 
 	use Local;
@@ -32,8 +34,16 @@ trait LQIP {
 		return $this->lqip;
 	}
 
-	protected function generate_lqip( int $resize_width = 20, int $resize_height = 20 ) : void {
+	protected function generate_lqip() : void {
 		if ( is_string( $this->lqip ) ) {
+			return;
+		}
+
+		$async = Manager::AS_LQIP_GENERATE !== current_action();
+		$async = $async && has_action( Manager::AS_LQIP_GENERATE );
+
+		if ( $async ) {
+			$this->enqueue_generate_lqip();
 			return;
 		}
 
@@ -50,8 +60,10 @@ trait LQIP {
 			return;
 		}
 
-		$size  = $editor->get_size();
-		$ratio = absint( $size['width'] ) / absint( $size['height'] );
+		$size          = $editor->get_size();
+		$ratio         = absint( $size['width'] ) / absint( $size['height'] );
+		$resize_width  = 20;
+		$resize_height = 20
 
 		if ( $ratio > 1 ) {
 			$resize_height = $size['width'] * $ratio;
@@ -106,5 +118,11 @@ trait LQIP {
 
 		return ( bool ) $object->getImageAlphaChannel();
 	}
+
+	protected function enqueue_generate_lqip() : void {
+		as_enqueue_async_action( Manager::AS_LQIP_GENERATE, $this->lqip_as_args(), 'image-tag' );
+	}
+
+	protected abstract function lqip_as_args() : array;
 
 }

@@ -26,7 +26,6 @@ class Attachment implements Interfaces\Core {
 	/** @var array */
 	public readonly array $sizes;
 
-
 	/**
 	 * Get uploads directory path.
 	 *
@@ -261,6 +260,17 @@ class Attachment implements Interfaces\Core {
 		update_post_meta( $this->attachment_id, '_lqip', $this->lqip );
 
 		return $this->lqip;
+	}
+
+	protected function lqip_as_args() : array {
+		return array(
+			'classname' => self::class,
+			'args'      => array(
+				$this->attachment_id,
+				$this->attributes,
+				$this->settings,
+			),
+		);
 	}
 
 }
