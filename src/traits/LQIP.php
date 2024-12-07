@@ -2,6 +2,8 @@
 
 namespace Image_Tag\Traits;
 
+require_once 'Local.php';
+
 use Image_Tag\Manager;
 
 trait LQIP {
@@ -16,7 +18,7 @@ trait LQIP {
 			return $this->lqip;
 		}
 
-		$cache_key = sprintf( 'lqip_%s', hash( 'md5', $this->path ) );
+		$cache_key = sprintf( 'lqip_%s', hash( 'md5', $this->path() ) );
 		$lqip      = get_transient( $cache_key );
 
 		if ( ! empty( $lqip ) && is_string( $lqip ) ) {
@@ -63,7 +65,7 @@ trait LQIP {
 		$size          = $editor->get_size();
 		$ratio         = absint( $size['width'] ) / absint( $size['height'] );
 		$resize_width  = 20;
-		$resize_height = 20
+		$resize_height = 20;
 
 		if ( $ratio > 1 ) {
 			$resize_height = $size['width'] * $ratio;

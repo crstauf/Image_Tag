@@ -5,6 +5,7 @@ namespace Image_Tag;
 class Theme implements Interfaces\Core {
 
 	use Traits\Attributes,
+		Traits\Common_Colors,
 		Traits\Dimensions,
 		Traits\Fallbacks,
 		Traits\Lazysizes,

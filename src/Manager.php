@@ -52,6 +52,7 @@ final class Manager {
 		require_once 'interfaces/Core.php';
 
 		require_once 'traits/Attributes.php';
+		require_once 'traits/Common_Colors.php';
 		require_once 'traits/Constructed_URL.php';
 		require_once 'traits/Dimensions.php';
 		require_once 'traits/Fallbacks.php';

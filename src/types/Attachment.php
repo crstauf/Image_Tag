@@ -5,6 +5,7 @@ namespace Image_Tag;
 class Attachment implements Interfaces\Core {
 
 	use Traits\Attributes,
+		Traits\Common_Colors,
 		Traits\Dimensions,
 		Traits\Fallbacks,
 		Traits\Lazysizes,
@@ -271,6 +272,20 @@ class Attachment implements Interfaces\Core {
 				$this->settings,
 			),
 		);
+	}
+
+	protected function cached_colors() : void {
+		$meta = get_post_meta( $this->attachment_id, '_common_colors', true );
+
+		if ( empty( $meta ) || ! is_array( $meta ) ) {
+			return;
+		}
+
+		$this->colors = $meta;
+	}
+
+	protected function cache_colors() : void {
+		update_post_meta( $this->attachment_id, '_common_colors', $this->colors );
 	}
 
 }
