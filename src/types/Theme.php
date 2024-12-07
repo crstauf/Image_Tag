@@ -80,7 +80,7 @@ class Theme implements Interfaces\Core {
 		return $this->dimensions()[1];
 	}
 
-	protected function lqip_as_args() : array {
+	protected function async_create_args() : array {
 		return array(
 			'classname' => self::class,
 			'args'      => array(

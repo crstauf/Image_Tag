@@ -263,7 +263,7 @@ class Attachment implements Interfaces\Core {
 		return $this->lqip;
 	}
 
-	protected function lqip_as_args() : array {
+	protected function async_create_args() : array {
 		return array(
 			'classname' => self::class,
 			'args'      => array(

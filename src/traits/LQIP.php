@@ -2,12 +2,14 @@
 
 namespace Image_Tag\Traits;
 
+require_once 'Async_Create.php';
 require_once 'Local.php';
 
 use Image_Tag\Manager;
 
 trait LQIP {
 
+	use Async_Create;
 	use Local;
 
 	/** @var null|string */
@@ -45,7 +47,7 @@ trait LQIP {
 		$async = $async && has_action( Manager::AS_LQIP_GENERATE );
 
 		if ( $async ) {
-			$this->enqueue_generate_lqip();
+			$this->async_generate_lqip();
 			return;
 		}
 
@@ -121,10 +123,8 @@ trait LQIP {
 		return ( bool ) $object->getImageAlphaChannel();
 	}
 
-	protected function enqueue_generate_lqip() : void {
-		as_enqueue_async_action( Manager::AS_LQIP_GENERATE, $this->lqip_as_args(), 'image-tag' );
+	protected function async_generate_lqip() : void {
+		as_enqueue_async_action( Manager::AS_LQIP_GENERATE, $this->async_recreate_args(), 'image-tag' );
 	}
-
-	protected abstract function lqip_as_args() : array;
 
 }

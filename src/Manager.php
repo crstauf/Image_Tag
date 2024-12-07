@@ -5,6 +5,7 @@ namespace Image_Tag;
 final class Manager {
 
 	public const string AS_LQIP_GENERATE = 'image-tag/lqip/generate';
+	public const string AS_IDENTIFY_COLORS = 'image-tag/colors/identify';
 
 	/**
 	 * Get singleton instance.
@@ -51,6 +52,7 @@ final class Manager {
 	public function include_files() : void {
 		require_once 'interfaces/Core.php';
 
+		require_once 'traits/Async_Create.php';
 		require_once 'traits/Attributes.php';
 		require_once 'traits/Common_Colors.php';
 		require_once 'traits/Constructed_URL.php';
@@ -90,27 +92,54 @@ final class Manager {
 			return;
 		}
 
-		add_action( self::AS_LQIP_GENERATE, static function ( string $classname, array $args = array() ) {
-			Manager::instance()->include_files();
+		add_action( self::AS_LQIP_GENERATE, array( $this, 'as_lqip_generate' ), 10, 2 );
+		add_action( self::AS_IDENTIFY_COLORS, array( $this, 'as_identify_colors' ), 10, 2 );
+	}
 
-			$classname = '\\' . $classname;
+	protected function create( string $classname, array $args = array() ) : Interfaces\Core {
+		$classname = '\\' . $classname;
 
-			if ( isset( $args[1] ) && is_array( $args[1] ) ) {
-				$args[1] = new Stores\Attributes( $args[1] );
-			}
+		if ( isset( $args[1] ) && is_array( $args[1] ) ) {
+			$args[1] = new Stores\Attributes( $args[1] );
+		}
 
-			if ( isset( $args[2] ) && is_array( $args[2] ) ) {
-				$args[2] = new Stores\Settings( $args[2] );
-			}
+		if ( isset( $args[2] ) && is_array( $args[2] ) ) {
+			$args[2] = new Stores\Settings( $args[2] );
+		}
 
-			$that = new $classname( ...$args );
+		return new $classname( ...$args );
+	}
 
-			if ( ! is_object( $that ) || ! is_callable( array( $that, 'lqip' ) ) ) {
-				return;
-			}
+	public function as_lqip_generate( string $classname, array $args = array() ) : void {
+		if ( self::AS_LQIP_GENERATE !== current_action() ) {
+			return;
+		}
 
-			$that->lqip();
-		}, 10, 2 );
+		Manager::instance()->include_files();
+
+		$that = $this->create( $classname, $args );
+
+		if ( ! is_callable( array( $that, 'lqip' ) ) ) {
+			return;
+		}
+
+		$that->lqip();
+	}
+
+	public function as_identify_colors( string $classname, array $args = array() ) : void {
+		if ( self::AS_IDENTIFY_COLORS !== current_action() ) {
+			return;
+		}
+
+		Manager::instance()->include_files();
+
+		$that = $this->create( $classname, $args );
+
+		if ( ! is_callable( array( $that, 'colors' ) ) ) {
+			return;
+		}
+
+		$that->colors();
 	}
 
 }

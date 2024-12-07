@@ -2,18 +2,32 @@
 
 namespace Image_Tag\Traits;
 
+require_once 'Async_Create.php';
 require_once 'Local.php';
 
 use Image_Tag\Manager;
 
 trait Common_Colors {
 
+	use Async_Create;
 	use Local;
 
 	/** @var string[] */
 	protected array $colors = array();
 
 	protected function identify_colors( int $count = 3 ) : void {
+		if ( ! empty( $this->colors ) ) {
+			return;
+		}
+
+		$async = Manager::AS_IDENTIFY_COLORS !== current_action();
+		$async = $async && has_action( Manager::AS_IDENTIFY_COLORS );
+
+		if ( $async ) {
+			$this->async_identify_colors();
+			return;
+		}
+
 		require_once dirname( __DIR__ ) . '/class-get-image-most-common-colors.php';
 
 		$util    = new \GetImageMostCommonColors;
@@ -80,6 +94,10 @@ trait Common_Colors {
 		$cache_key = sprintf( 'common_colors_%s', hash( 'md5', $this->path() ) );
 
 		set_transient( $cache_key, $this->colors );
+	}
+
+	protected function async_identify_colors() : void {
+		as_enqueue_async_action( Manager::AS_IDENTIFY_COLORS, $this->async_create_args(), 'image-tag' );
 	}
 
 }
