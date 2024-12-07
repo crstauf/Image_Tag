@@ -51,9 +51,10 @@ trait Common_Colors {
 	 * Get most common colors.
 	 *
 	 * @param int $count
-	 * @return string|string[]
+	 * @param string|string[] $default
+	 * @return string[]
 	 */
-	public function colors( int $count = 3 ) : string|array {
+	public function colors( int $count = 3, $default = array() ) : array {
 		if ( ! empty( $this->colors ) && count( $this->colors ) >= $count ) {
 			return array_slice( $this->colors, 0, $count );
 		}
@@ -67,14 +68,11 @@ trait Common_Colors {
 		$this->identify_colors( $count );
 
 		if ( empty( $this->colors ) ) {
-			return array();
+			$default = ( array ) $default;
+			return array_slice( $default, 0, $count );
 		}
 
 		$this->cache_colors();
-
-		if ( 1 === $count ) {
-			return $this->colors[0];
-		}
 
 		return $this->colors;
 	}

@@ -2,6 +2,8 @@
 
 namespace Image_Tag\Traits;
 
+require_once 'Fallbacks.php';
+
 trait Output {
 
 	use Fallbacks;

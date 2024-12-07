@@ -124,7 +124,7 @@ trait LQIP {
 	}
 
 	protected function async_generate_lqip() : void {
-		as_enqueue_async_action( Manager::AS_LQIP_GENERATE, $this->async_recreate_args(), 'image-tag' );
+		as_enqueue_async_action( Manager::AS_LQIP_GENERATE, $this->async_create_args(), 'image-tag' );
 	}
 
 }
